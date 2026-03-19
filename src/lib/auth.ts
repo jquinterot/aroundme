@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers';
-import { createHash } from 'crypto';
+import { randomBytes, createHash, timingSafeEqual } from 'crypto';
+import { compare, hash } from 'bcrypt';
 import { prisma } from './prisma';
 
 const SESSION_COOKIE = 'aroundme_session';
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+const SALT_ROUNDS = 12;
 
 export interface SessionUser {
   id: string;
@@ -13,7 +15,13 @@ export interface SessionUser {
 }
 
 export async function createSession(userId: string): Promise<string> {
-  const token = Buffer.from(`${userId}:${Date.now()}`).toString('base64');
+  const token = randomBytes(32).toString('hex');
+  const tokenHash = createHash('sha256').update(token).digest('hex');
+  
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: tokenHash },
+  }).catch(() => {});
   
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
@@ -34,10 +42,10 @@ export async function getSession(): Promise<SessionUser | null> {
     
     if (!token) return null;
 
-    const [userId] = Buffer.from(token, 'base64').toString('utf-8').split(':');
+    const tokenHash = createHash('sha256').update(token).digest('hex');
     
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    const user = await prisma.user.findFirst({
+      where: { password: tokenHash },
       select: { id: true, email: true, name: true, role: true },
     });
 
@@ -52,10 +60,22 @@ export async function destroySession(): Promise<void> {
   cookieStore.delete(SESSION_COOKIE);
 }
 
+export async function hashPassword(password: string): Promise<string> {
+  return hash(password, SALT_ROUNDS);
+}
+
+export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  try {
+    return await compare(password, hashedPassword);
+  } catch {
+    return false;
+  }
+}
+
 export function simpleHash(password: string): string {
   return createHash('sha256').update(password + 'aroundme_salt').digest('hex');
 }
 
-export function verifyPassword(password: string, hash: string): boolean {
-  return simpleHash(password) === hash;
+export function verifySimpleHash(password: string, hash: string): boolean {
+  return timingSafeEqual(Buffer.from(simpleHash(password)), Buffer.from(hash));
 }

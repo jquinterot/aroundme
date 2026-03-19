@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 const FEATURED_TIERS = {
   basic: {
@@ -23,8 +24,17 @@ export async function POST(
   const { id } = await params;
 
   try {
+    const user = await getSession();
+    
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Please login to feature events' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
-    const { tier, userId } = body;
+    const { tier } = body;
 
     if (!tier || !['basic', 'premium'].includes(tier)) {
       return NextResponse.json(
@@ -44,9 +54,9 @@ export async function POST(
       );
     }
 
-    if (event.userId !== userId) {
+    if (event.userId !== user.id) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Unauthorized - you can only feature your own events' },
         { status: 403 }
       );
     }
@@ -90,6 +100,33 @@ export async function DELETE(
   const { id } = await params;
 
   try {
+    const user = await getSession();
+    
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Please login' },
+        { status: 401 }
+      );
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id },
+    });
+
+    if (!event) {
+      return NextResponse.json(
+        { success: false, error: 'Event not found' },
+        { status: 404 }
+      );
+    }
+
+    if (event.userId !== user.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 403 }
+      );
+    }
+
     const updatedEvent = await prisma.event.update({
       where: { id },
       data: {

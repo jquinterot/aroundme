@@ -1,14 +1,14 @@
 import { PrismaClient } from '../src/generated/prisma/client.js';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import path from 'path';
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 const dbPath = path.join(process.cwd(), 'dev.db');
 const adapter = new PrismaBetterSqlite3({ url: dbPath });
 const prisma = new PrismaClient({ adapter });
 
-function simpleHash(password: string): string {
-  return crypto.createHash('sha256').update(password + 'aroundme_salt').digest('hex');
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
 }
 
 async function main() {
@@ -68,12 +68,13 @@ async function main() {
 
   console.log(`✅ Created ${cities.length} cities`);
 
-  // Create admin user
+  // Create admin user with bcrypt
+  const adminPassword = await hashPassword('admin123');
   const admin = await prisma.user.create({
     data: {
       email: 'admin@aroundme.co',
       name: 'Admin',
-      password: simpleHash('admin123'),
+      password: adminPassword,
       role: 'admin',
       isVerified: true,
     },
@@ -393,12 +394,15 @@ async function main() {
   console.log(`✅ Created ${places.length} places`);
 
   // Create reviews for places
+  const user1Password = await hashPassword('password123');
+  const user2Password = await hashPassword('password123');
+  
   const users = await Promise.all([
     prisma.user.create({
       data: {
         email: 'maria@example.com',
         name: 'María García',
-        password: simpleHash('password123'),
+        password: user1Password,
         role: 'user',
       },
     }),
@@ -406,7 +410,7 @@ async function main() {
       data: {
         email: 'carlos@example.com',
         name: 'Carlos Rodríguez',
-        password: simpleHash('password123'),
+        password: user2Password,
         role: 'user',
       },
     }),
