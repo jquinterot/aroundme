@@ -129,6 +129,25 @@ export interface User {
   createdAt?: string;
 }
 
+export type NotificationType = 
+  | 'event_reminder'
+  | 'new_rsvp'
+  | 'new_review'
+  | 'event_update'
+  | 'venue_update';
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+  isRead: boolean;
+  data?: Record<string, unknown>;
+  createdAt: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;

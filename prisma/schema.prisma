@@ -42,6 +42,7 @@ model User {
   ownedPlaces Place[]
   saves       Save[]
   rsvps       RSVP[]
+  notifications Notification[]
 }
 
 model Event {
@@ -143,4 +144,20 @@ model RSVP {
   event     Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // event_reminder, new_rsvp, new_review, event_update, venue_update
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  data      String?  // JSON data for additional info
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
 }

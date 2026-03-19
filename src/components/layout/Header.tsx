@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationBell } from '@/components/ui';
 
 export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -32,56 +33,59 @@ export function Header() {
             {!loading && (
               <>
                 {user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <span className="text-indigo-600 font-medium text-sm">
-                          {user.name.charAt(0).toUpperCase()}
+                  <div className="flex items-center gap-2">
+                    <NotificationBell />
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                          <span className="text-indigo-600 font-medium text-sm">
+                            {user.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="hidden md:block font-medium text-gray-700">
+                          {user.name}
                         </span>
-                      </div>
-                      <span className="hidden md:block font-medium text-gray-700">
-                        {user.name}
-                      </span>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
+                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
 
-                    {isUserMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
-                        >
-                          <span>📊</span> Dashboard
-                        </Link>
-                        <Link
-                          href="/dashboard/events"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
-                        >
-                          <span>🎫</span> My Events
-                        </Link>
-                        <Link
-                          href="/dashboard/places"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
-                        >
-                          <span>📍</span> My Places
-                        </Link>
-                        <hr className="my-1" />
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
-                        >
-                          <span>🚪</span> Logout
-                        </button>
-                      </div>
-                    )}
+                      {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                          <Link
+                            href="/dashboard"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                          >
+                            <span>📊</span> Dashboard
+                          </Link>
+                          <Link
+                            href="/dashboard/events"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                          >
+                            <span>🎫</span> My Events
+                          </Link>
+                          <Link
+                            href="/dashboard/places"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                          >
+                            <span>📍</span> My Places
+                          </Link>
+                          <hr className="my-1" />
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
+                          >
+                            <span>🚪</span> Logout
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <>

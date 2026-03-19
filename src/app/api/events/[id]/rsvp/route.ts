@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { notifyEventOrganizer } from '@/lib/notifications';
 
 export async function POST(
   request: NextRequest,
@@ -60,6 +61,17 @@ export async function POST(
           status,
         },
       });
+
+      if (event.userId) {
+        await notifyEventOrganizer(
+          id,
+          'new_rsvp',
+          'New RSVP',
+          `${user.name} is ${status === 'going' ? 'going' : status === 'interested' ? 'interested' : 'marking maybe'} to your event "${event.title}"`,
+          `/event/${id}`
+        );
+      }
+
       return NextResponse.json({ success: true, data: { rsvp: created } });
     }
   } catch (error) {
