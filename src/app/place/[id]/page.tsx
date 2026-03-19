@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
 import { apiService } from '@/services';
@@ -116,10 +117,13 @@ export default function PlaceDetailPage() {
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="relative h-64 md:h-80 bg-gray-200">
             {place.image ? (
-              <img
+              <Image
                 src={place.image}
                 alt={place.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-cover"
+                priority
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">

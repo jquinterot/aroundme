@@ -56,6 +56,7 @@ export function ImageUpload({ value, onChange, placeholderImage }: ImageUploadPr
 
       {preview && (
         <div className="relative rounded-lg overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Preview"

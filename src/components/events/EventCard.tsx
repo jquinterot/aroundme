@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Event } from '@/types';
 
 interface EventCardProps {
@@ -86,15 +87,16 @@ export function EventCard({ event }: EventCardProps) {
               {!imageLoaded && (
                 <div className="absolute inset-0 bg-gray-200 animate-pulse" />
               )}
-              <img
-                src={event.image}
+              <Image
+                src={event.image!}
                 alt={event.title}
-                loading="lazy"
-                onLoad={() => setImageLoaded(true)}
-                onError={() => setImageError(true)}
-                className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className={`object-cover transition-all duration-300 group-hover:scale-105 ${
                   imageLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
               />
             </>
           ) : (

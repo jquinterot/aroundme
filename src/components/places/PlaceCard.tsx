@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Place } from '@/types';
 
 interface PlaceCardProps {
@@ -39,10 +40,12 @@ export function PlaceCard({ place }: PlaceCardProps) {
       <article className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg hover:border-indigo-200 transition-all duration-200">
         <div className="relative h-40 bg-gray-200">
           {place.image ? (
-            <img
+            <Image
               src={place.image}
               alt={place.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">

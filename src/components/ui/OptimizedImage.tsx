@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface OptimizedImageProps {
   src?: string;
@@ -66,18 +67,18 @@ export function OptimizedImage({
           <span className="text-4xl opacity-50">{placeholderIcon}</span>
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={alt}
-        width={width}
-        height={height}
-        loading={priority ? 'eager' : 'lazy'}
+        fill
+        sizes="100vw"
+        priority={priority}
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setHasError(true);
           setIsLoading(false);
         }}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${
+        className={`object-cover transition-opacity duration-300 ${
           isLoading ? 'opacity-0' : 'opacity-100'
         }`}
       />

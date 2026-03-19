@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
@@ -200,10 +201,13 @@ export default function EventDetailPage() {
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="relative h-64 md:h-80 bg-gray-200">
             {event.image ? (
-              <img
+              <Image
                 src={event.image}
                 alt={event.title}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-cover"
+                priority
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
