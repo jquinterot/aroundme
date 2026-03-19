@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Event } from '@/generated/prisma/client';
 
 export async function GET(
   request: NextRequest,
@@ -84,7 +85,7 @@ export async function GET(
       prisma.event.count({ where }),
     ]);
 
-    const formattedEvents = events.map((event) => ({
+    const formattedEvents = events.map((event: Event & { venueName: string; venueAddress: string; venueLat: number; venueLng: number }) => ({
       id: event.id,
       title: event.title,
       description: event.description,

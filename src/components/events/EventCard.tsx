@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Event } from '@/types';
 import { EventCardProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 import { FeaturedBadge, CategoryBadge, FreeBadge, PriceDisplay, VerifiedBadge } from './EventCardBadges';

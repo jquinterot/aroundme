@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Place } from '@/generated/prisma/client';
 
 export async function GET(
   request: NextRequest,
@@ -46,7 +47,7 @@ export async function GET(
       prisma.place.count({ where }),
     ]);
 
-    const formattedPlaces = places.map((place) => ({
+    const formattedPlaces = places.map((place: Place) => ({
       id: place.id,
       name: place.name,
       description: place.description,

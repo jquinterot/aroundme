@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Review, User } from '@/generated/prisma/client';
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +15,7 @@ export async function GET(
       orderBy: { createdAt: 'desc' },
     });
 
-    const formattedReviews = reviews.map((review) => ({
+    const formattedReviews = reviews.map((review: Review & { user: Pick<User, 'name'> }) => ({
       id: review.id,
       userId: review.userId,
       userName: review.user.name,

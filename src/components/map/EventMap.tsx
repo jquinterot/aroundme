@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Event } from '@/types';
 import { EventMapProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 

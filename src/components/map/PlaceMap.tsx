@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Place } from '@/types';
 import { PlaceMapProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 

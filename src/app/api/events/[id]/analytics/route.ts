@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import type { RSVP, Save } from '@/generated/prisma/client';
 
 export async function POST(
   request: NextRequest,
@@ -59,16 +60,16 @@ export async function GET(
     }
 
     const isOwner = user?.id === event.userId;
-    const isSaved = user ? event.saves.some(s => s.userId === user.id) : false;
-    const userRsvp = user ? event.rsvps.find(r => r.userId === user.id) : null;
+    const isSaved = user ? event.saves.some((s: Save) => s.userId === user.id) : false;
+    const userRsvp = user ? event.rsvps.find((r: RSVP) => r.userId === user.id) : null;
 
     const analytics = {
       viewCount: event.viewCount,
       saveCount: event.saveCount,
       rsvpCount: {
-        going: event.rsvps.filter(r => r.status === 'going').length,
-        interested: event.rsvps.filter(r => r.status === 'interested').length,
-        maybe: event.rsvps.filter(r => r.status === 'maybe').length,
+        going: event.rsvps.filter((r: RSVP) => r.status === 'going').length,
+        interested: event.rsvps.filter((r: RSVP) => r.status === 'interested').length,
+        maybe: event.rsvps.filter((r: RSVP) => r.status === 'maybe').length,
         total: event.rsvps.length,
       },
       isOwner,

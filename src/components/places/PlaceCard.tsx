@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Place } from '@/types';
 import { PlaceCardProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 import { PlaceCategoryBadge, PlaceVerifiedBadge, PlacePriceRange, PlaceRating } from './PlaceCardBadges';
