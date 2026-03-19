@@ -241,3 +241,30 @@ export interface Analytics {
   isSaved: boolean;
   userRsvp: { status: string } | null;
 }
+
+export interface AnalyticsPanelProps {
+  analytics: Pick<Analytics, 'viewCount' | 'saveCount' | 'rsvpCount'>;
+  showAnalytics: boolean;
+  onToggle: () => void;
+}
+
+export interface FeaturePromoProps {
+  isFeatured: boolean;
+  featuredTier?: 'basic' | 'premium' | 'none';
+  featuredUntil?: string;
+  onFeatureBasic: () => void;
+  onFeaturePremium: () => void;
+  onRemoveFeature: () => void;
+  isPending: boolean;
+}
+
+export interface EventActionsProps {
+  isSaved: boolean;
+  isAuthenticated: boolean;
+  onSave: () => void;
+}
+
+export interface RSVPButtonsProps {
+  userRsvp: { status: string } | null;
+  onRsvp: (status: string) => void;
+}

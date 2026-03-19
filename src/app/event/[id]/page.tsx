@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,27 +11,16 @@ import { EventMap } from '@/components/map';
 import { apiService } from '@/services';
 import { City } from '@/types';
 import { CATEGORY_ICONS, EVENT_CATEGORY_COLORS } from '@/lib/constants';
-
-interface Analytics {
-  viewCount: number;
-  saveCount: number;
-  rsvpCount: {
-    going: number;
-    interested: number;
-    maybe: number;
-    total: number;
-  };
-  isOwner: boolean;
-  isSaved: boolean;
-  userRsvp: { status: string } | null;
-}
+import { AnalyticsPanel } from '@/components/events/AnalyticsPanel';
+import { FeaturePromo } from '@/components/events/FeaturePromo';
+import { EventActions, RSVPButtons, LoginPrompt } from '@/components/events/EventActions';
+import { formatDetailDate, formatDetailTime } from '@/components/events/eventUtils';
 
 const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
 const getCategoryColor = (category: string) => EVENT_CATEGORY_COLORS[category] || 'bg-gray-100 text-gray-700';
 
 export default function EventDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { user } = useAuth();
   const eventId = (params.id as string) || '';
 
@@ -84,7 +73,7 @@ export default function EventDetailPage() {
       }).then(res => res.json()),
     onSuccess: () => {
       refetchAnalytics();
-      refetchEvent();
+      window.location.reload();
     },
   });
 
@@ -95,36 +84,21 @@ export default function EventDetailPage() {
       }).then(res => res.json()),
     onSuccess: () => {
       refetchAnalytics();
-      refetchEvent();
+      window.location.reload();
     },
   });
 
-  const refetchEvent = () => {
-    window.location.reload();
-  };
-
   const cities = citiesData?.data || [];
   const event = eventData?.data;
-  const analytics: Analytics = analyticsData?.data || { viewCount: 0, saveCount: 0, rsvpCount: { going: 0, interested: 0, maybe: 0, total: 0 }, isOwner: false, isSaved: false, userRsvp: null };
+  const analytics = analyticsData?.data || { 
+    viewCount: 0, 
+    saveCount: 0, 
+    rsvpCount: { going: 0, interested: 0, maybe: 0, total: 0 }, 
+    isOwner: false, 
+    isSaved: false, 
+    userRsvp: null 
+  };
   const city = cities.find((c: City) => c.id === event?.cityId) || cities[0];
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
 
   const formatPrice = () => {
     if (!event?.price) return 'Free';
@@ -222,13 +196,13 @@ export default function EventDetailPage() {
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span>{formatDate(event.date.start)}</span>
+                <span>{formatDetailDate(event.date.start)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>{formatTime(event.date.start)} - {formatTime(event.date.end)}</span>
+                <span>{formatDetailTime(event.date.start)} - {formatDetailTime(event.date.end)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,103 +254,23 @@ export default function EventDetailPage() {
             </div>
 
             {analytics.isOwner && (
-              <div className="mt-6 bg-indigo-50 rounded-lg p-4">
-                <button
-                  onClick={() => setShowAnalytics(!showAnalytics)}
-                  className="flex items-center gap-2 w-full text-indigo-600 font-medium"
-                >
-                  <span>📊</span>
-                  Event Analytics
-                  <svg className={`w-4 h-4 ml-auto transition-transform ${showAnalytics ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {showAnalytics && (
-                  <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-2xl font-bold text-indigo-600">{analytics.viewCount}</p>
-                      <p className="text-xs text-gray-500">Views</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-2xl font-bold text-pink-600">{analytics.saveCount}</p>
-                      <p className="text-xs text-gray-500">Saves</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-2xl font-bold text-green-600">{analytics.rsvpCount.going}</p>
-                      <p className="text-xs text-gray-500">Going</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-2xl font-bold text-gray-600">{analytics.rsvpCount.total}</p>
-                      <p className="text-xs text-gray-500">Total RSVPs</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <AnalyticsPanel 
+                analytics={analytics} 
+                showAnalytics={showAnalytics} 
+                onToggle={() => setShowAnalytics(!showAnalytics)} 
+              />
             )}
 
             {analytics.isOwner && (
-              <div className="mt-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">⭐</span>
-                  <h3 className="font-semibold text-gray-900">Boost Your Event</h3>
-                </div>
-                {!event.isFeatured ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">Get more visibility by featuring your event at the top of listings.</p>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => featureMutation.mutate('basic')}
-                        disabled={featureMutation.isPending}
-                        className="flex-1 bg-white border border-yellow-400 text-yellow-700 py-2 px-4 rounded-lg font-medium hover:bg-yellow-50 transition-colors disabled:opacity-50"
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <span>🌟</span>
-                          <div>
-                            <p className="text-sm font-semibold">Basic</p>
-                            <p className="text-xs">7 days · $45,000 COP</p>
-                          </div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => featureMutation.mutate('premium')}
-                        disabled={featureMutation.isPending}
-                        className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-2 px-4 rounded-lg font-medium hover:from-yellow-500 hover:to-orange-600 transition-colors disabled:opacity-50"
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <span>👑</span>
-                          <div>
-                            <p className="text-sm font-semibold">Premium</p>
-                            <p className="text-xs">30 days · $110,000 COP</p>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between bg-white rounded-lg p-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{event.featuredTier === 'premium' ? '👑' : '🌟'}</span>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {event.featuredTier === 'premium' ? 'Premium' : 'Basic'} Featured
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Expires: {event.featuredUntil ? new Date(event.featuredUntil).toLocaleDateString('es-CO') : 'N/A'}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => removeFeatureMutation.mutate()}
-                        disabled={removeFeatureMutation.isPending}
-                        className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <FeaturePromo
+                isFeatured={event.isFeatured}
+                featuredTier={event.featuredTier}
+                featuredUntil={event.featuredUntil}
+                onFeatureBasic={() => featureMutation.mutate('basic')}
+                onFeaturePremium={() => featureMutation.mutate('premium')}
+                onRemoveFeature={() => removeFeatureMutation.mutate()}
+                isPending={featureMutation.isPending || removeFeatureMutation.isPending}
+              />
             )}
 
             <div className="mt-8">
@@ -405,65 +299,19 @@ export default function EventDetailPage() {
               </div>
             </div>
 
-            <div className="mt-8 flex gap-4">
-              <button className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-indigo-700 transition-colors">
-                Register / Get Tickets
-              </button>
-              <button 
-                onClick={() => {
-                  if (!user) {
-                    router.push('/login');
-                    return;
-                  }
-                  saveMutation.mutate();
-                }}
-                className={`px-4 py-3 border rounded-xl transition-colors ${
-                  analytics.isSaved
-                    ? 'border-pink-300 bg-pink-50 text-pink-600'
-                    : 'border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                <svg className={`w-5 h-5 ${analytics.isSaved ? 'fill-pink-500' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </button>
-              <button className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
-            </div>
+            <EventActions 
+              isSaved={analytics.isSaved} 
+              isAuthenticated={!!user} 
+              onSave={() => saveMutation.mutate()} 
+            />
 
-            {user && (
-              <div className="mt-6 bg-gray-50 rounded-lg p-4">
-                <p className="text-sm font-medium text-gray-700 mb-3">Are you going?</p>
-                <div className="flex gap-2">
-                  {['going', 'interested', 'maybe'].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => rsvpMutation.mutate(status)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors ${
-                        analytics.userRsvp?.status === status
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {status === 'going' && '✓ '}
-                      {status === 'interested' && '⭐ '}
-                      {status === 'maybe' && '? '}
-                      {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {!user && (
-              <div className="mt-6 bg-blue-50 rounded-lg p-4 text-center">
-                <p className="text-sm text-blue-700">
-                  <Link href="/login" className="font-medium underline">Login</Link> to save events and RSVP
-                </p>
-              </div>
+            {user ? (
+              <RSVPButtons 
+                userRsvp={analytics.userRsvp} 
+                onRsvp={(status) => rsvpMutation.mutate(status)} 
+              />
+            ) : (
+              <LoginPrompt />
             )}
           </div>
         </div>
