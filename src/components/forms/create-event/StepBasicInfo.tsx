@@ -1,35 +1,10 @@
 'use client';
 
-import { City, EventCategory } from '@/types';
+import { City } from '@/types';
+import { EVENT_CATEGORY_OPTIONS } from '@/lib/constants';
+import { EventStepBasicInfoProps } from '@/types/components';
 
-const categories: { value: EventCategory; label: string; icon: string }[] = [
-  { value: 'music', label: 'Music', icon: '🎵' },
-  { value: 'food', label: 'Food', icon: '🍔' },
-  { value: 'sports', label: 'Sports', icon: '⚽' },
-  { value: 'art', label: 'Art', icon: '🎨' },
-  { value: 'tech', label: 'Tech', icon: '💻' },
-  { value: 'community', label: 'Community', icon: '👥' },
-  { value: 'nightlife', label: 'Nightlife', icon: '🌙' },
-  { value: 'outdoor', label: 'Outdoor', icon: '🌳' },
-  { value: 'education', label: 'Education', icon: '📚' },
-  { value: 'other', label: 'Other', icon: '📌' },
-];
-
-interface EventFormData {
-  cityId: string;
-  title: string;
-  description: string;
-  category: EventCategory | '';
-}
-
-interface StepBasicInfoProps {
-  formData: EventFormData;
-  cities: City[];
-  onUpdate: (field: string, value: string) => void;
-  onNext: () => void;
-}
-
-export function StepBasicInfo({ formData, cities, onUpdate, onNext }: StepBasicInfoProps) {
+export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepBasicInfoProps) {
   const isValid = formData.title && formData.category && formData.description;
 
   return (
@@ -72,7 +47,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: StepBasicI
           Category *
         </label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {categories.map((cat) => (
+          {EVENT_CATEGORY_OPTIONS.map((cat) => (
             <button
               key={cat.value}
               type="button"

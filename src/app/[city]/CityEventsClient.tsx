@@ -7,18 +7,8 @@ import { Header, HeroSection } from '@/components/layout';
 import { EventList, EventFilters } from '@/components/events';
 import { ViewModeToggle, CardSkeleton } from '@/components/ui';
 import { apiService } from '@/services';
-import { City, EventCategory } from '@/types';
-
-interface FilterState {
-  category: EventCategory | 'all';
-  date: 'today' | 'week' | 'month' | 'all';
-  price: 'all' | 'free' | 'paid';
-  search: string;
-}
-
-interface CityEventsClientProps {
-  citySlug: string;
-}
+import { City } from '@/types';
+import { CityEventsClientProps, EventFilterState } from '@/types/components';
 
 const viewModeOptions = [
   { value: 'list', label: 'List' },
@@ -27,7 +17,7 @@ const viewModeOptions = [
 ];
 
 export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<EventFilterState>({
     category: 'all',
     date: 'all',
     price: 'all',

@@ -1,23 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { PlaceStepLocationContactProps } from '@/types/components';
 
-interface StepLocationContactFormData {
-  address: string;
-  website: string;
-  instagram: string;
-  features: string;
-}
-
-interface StepLocationContactProps {
-  formData: StepLocationContactFormData;
-  onUpdate: (field: string, value: string) => void;
-  onSubmit: () => void;
-  onBack: () => void;
-  isLoading: boolean;
-}
-
-export function StepLocationContact({ formData, onUpdate, onSubmit, onBack, isLoading }: StepLocationContactProps) {
+export function StepLocationContact({ formData, onUpdate, onSubmit, onBack, isLoading }: PlaceStepLocationContactProps) {
   const isValid = formData.address;
 
   return (

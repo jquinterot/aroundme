@@ -8,12 +8,8 @@ import { Header, HeroSection, Footer } from '@/components/layout';
 import { PlaceList, PlaceFilters } from '@/components/places';
 import { ViewModeToggle, CardSkeleton } from '@/components/ui';
 import { apiService } from '@/services';
-import { City, PlaceCategory } from '@/types';
-
-interface FilterState {
-  category: PlaceCategory | 'all';
-  search: string;
-}
+import { City } from '@/types';
+import { PlaceFilterState } from '@/types/components';
 
 const viewModeOptions = [
   { value: 'grid', label: 'Grid' },
@@ -23,7 +19,7 @@ const viewModeOptions = [
 export default function PlacesPage() {
   const params = useParams();
   const citySlug = (params.city as string) || 'bogota';
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<PlaceFilterState>({
     category: 'all',
     search: '',
   });

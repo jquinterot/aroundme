@@ -1,23 +1,8 @@
 'use client';
 
-interface StepLocationFormData {
-  venueName: string;
-  venueAddress: string;
-  isFree: boolean;
-  price: string;
-  imageUrl: string;
-  tags: string;
-}
+import { EventStepLocationProps } from '@/types/components';
 
-interface StepLocationProps {
-  formData: StepLocationFormData;
-  onUpdate: (field: string, value: string | boolean) => void;
-  onSubmit: () => void;
-  onBack: () => void;
-  isLoading: boolean;
-}
-
-export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }: StepLocationProps) {
+export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }: EventStepLocationProps) {
   const isValid = formData.venueName && formData.venueAddress;
 
   return (

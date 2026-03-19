@@ -1,35 +1,10 @@
 'use client';
 
-import { City, PlaceCategory } from '@/types';
+import { City } from '@/types';
+import { PLACE_CATEGORY_OPTIONS } from '@/lib/constants';
+import { PlaceStepBasicInfoProps } from '@/types/components';
 
-const categories: { value: PlaceCategory; label: string; icon: string }[] = [
-  { value: 'restaurant', label: 'Restaurant', icon: '🍽️' },
-  { value: 'cafe', label: 'Café', icon: '☕' },
-  { value: 'bar', label: 'Bar', icon: '🍺' },
-  { value: 'club', label: 'Club', icon: '🎉' },
-  { value: 'park', label: 'Park', icon: '🌳' },
-  { value: 'museum', label: 'Museum', icon: '🏛️' },
-  { value: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { value: 'hotel', label: 'Hotel', icon: '🏨' },
-  { value: 'coworking', label: 'Coworking', icon: '💼' },
-  { value: 'other', label: 'Other', icon: '📍' },
-];
-
-interface PlaceFormData {
-  cityId: string;
-  name: string;
-  description: string;
-  category: PlaceCategory | '';
-}
-
-interface StepBasicInfoProps {
-  formData: PlaceFormData;
-  cities: City[];
-  onUpdate: (field: string, value: string) => void;
-  onNext: () => void;
-}
-
-export function StepBasicInfo({ formData, cities, onUpdate, onNext }: StepBasicInfoProps) {
+export function StepBasicInfo({ formData, cities, onUpdate, onNext }: PlaceStepBasicInfoProps) {
   const isValid = formData.name && formData.category && formData.description;
 
   return (
@@ -72,7 +47,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: StepBasicI
           Category *
         </label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {categories.map((cat) => (
+          {PLACE_CATEGORY_OPTIONS.map((cat) => (
             <button
               key={cat.value}
               type="button"

@@ -1,20 +1,8 @@
 'use client';
 
-interface StepDateTimeFormData {
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-}
+import { EventStepDateTimeProps } from '@/types/components';
 
-interface StepDateTimeProps {
-  formData: StepDateTimeFormData;
-  onUpdate: (field: string, value: string) => void;
-  onNext: () => void;
-  onBack: () => void;
-}
-
-export function StepDateTime({ formData, onUpdate, onNext, onBack }: StepDateTimeProps) {
+export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDateTimeProps) {
   const isValid = formData.startDate && formData.startTime;
 
   return (

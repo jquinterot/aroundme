@@ -1,10 +1,7 @@
 import { Metadata } from 'next';
 import { apiService } from '@/services';
 import CityEventsClient from './CityEventsClient';
-
-interface CityPageProps {
-  params: Promise<{ city: string }>;
-}
+import { CityPageProps } from '@/types/components';
 
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
   const { city: citySlug } = await params;

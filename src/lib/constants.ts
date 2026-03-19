@@ -73,3 +73,6 @@ export const PLACE_CATEGORIES = [
   { value: 'coworking', label: 'Coworking', icon: '💼' },
   { value: 'other', label: 'Other', icon: '📍' },
 ];
+
+export const EVENT_CATEGORY_OPTIONS = EVENT_CATEGORIES.filter(c => c.value !== 'all');
+export const PLACE_CATEGORY_OPTIONS = PLACE_CATEGORIES.filter(c => c.value !== 'all');

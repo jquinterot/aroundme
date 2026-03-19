@@ -135,6 +135,84 @@ export interface CityEventsClientProps {
   citySlug: string;
 }
 
+export interface CityPageProps {
+  params: Promise<{ city: string }>;
+}
+
+export interface EventFormData {
+  cityId: string;
+  title: string;
+  description: string;
+  category: EventCategory | '';
+}
+
+export interface PlaceFormData {
+  cityId: string;
+  name: string;
+  description: string;
+  category: PlaceCategory | '';
+}
+
+export interface EventStepBasicInfoProps {
+  formData: EventFormData;
+  cities: City[];
+  onUpdate: (field: string, value: string) => void;
+  onNext: () => void;
+}
+
+export interface PlaceStepBasicInfoProps {
+  formData: PlaceFormData;
+  cities: City[];
+  onUpdate: (field: string, value: string) => void;
+  onNext: () => void;
+}
+
+export interface EventStepDateTimeFormData {
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+}
+
+export interface EventStepDateTimeProps {
+  formData: EventStepDateTimeFormData;
+  onUpdate: (field: string, value: string) => void;
+  onNext: () => void;
+  onBack: () => void;
+}
+
+export interface EventStepLocationFormData {
+  venueName: string;
+  venueAddress: string;
+  isFree: boolean;
+  price: string;
+  imageUrl: string;
+  tags: string;
+}
+
+export interface EventStepLocationProps {
+  formData: EventStepLocationFormData;
+  onUpdate: (field: string, value: string | boolean) => void;
+  onSubmit: () => void;
+  onBack: () => void;
+  isLoading: boolean;
+}
+
+export interface PlaceStepLocationContactFormData {
+  address: string;
+  website: string;
+  instagram: string;
+  features: string;
+}
+
+export interface PlaceStepLocationContactProps {
+  formData: PlaceStepLocationContactFormData;
+  onUpdate: (field: string, value: string) => void;
+  onSubmit: () => void;
+  onBack: () => void;
+  isLoading: boolean;
+}
+
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
