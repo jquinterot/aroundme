@@ -126,7 +126,7 @@ export interface User {
   role: 'admin' | 'organizer' | 'user';
   cityId?: string;
   isVerified: boolean;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface ApiResponse<T> {

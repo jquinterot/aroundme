@@ -1,15 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Place, City } from '@/types';
+import { Place } from '@/types';
+import { PlaceListProps } from '@/types/components';
 import { PlaceCard } from './PlaceCard';
 import { PlaceMap } from '@/components/map';
-
-interface PlaceListProps {
-  places: Place[];
-  viewMode: 'grid' | 'map';
-  city: City;
-}
 
 export function PlaceList({ places, viewMode, city }: PlaceListProps) {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);

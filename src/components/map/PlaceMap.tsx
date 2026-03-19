@@ -2,16 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Place, City } from '@/types';
+import { Place } from '@/types';
+import { PlaceMapProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
-
-interface PlaceMapProps {
-  places: Place[];
-  city: City;
-  selectedPlace?: Place | null;
-  onPlaceSelect?: (place: Place | null) => void;
-  className?: string;
-}
 
 export function PlaceMap({ places, city, selectedPlace, onPlaceSelect, className = '' }: PlaceMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);

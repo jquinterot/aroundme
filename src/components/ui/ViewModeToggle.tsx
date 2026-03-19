@@ -1,10 +1,6 @@
 'use client';
 
-interface ViewModeToggleProps {
-  viewMode: string;
-  onViewModeChange: (mode: string) => void;
-  options: { value: string; label: string }[];
-}
+import { ViewModeToggleProps } from '@/types/components';
 
 export function ViewModeToggle({ viewMode, onViewModeChange, options }: ViewModeToggleProps) {
   return (

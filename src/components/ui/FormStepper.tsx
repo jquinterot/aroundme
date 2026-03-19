@@ -1,11 +1,6 @@
 'use client';
 
-interface FormStepperProps {
-  totalSteps: number;
-  currentStep: number;
-  colorScheme: 'indigo' | 'teal';
-  stepLabels?: string[];
-}
+import { FormStepperProps } from '@/types/components';
 
 const colorClasses = {
   indigo: 'bg-indigo-600 text-white',

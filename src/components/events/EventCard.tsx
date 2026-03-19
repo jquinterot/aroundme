@@ -4,11 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Event } from '@/types';
+import { EventCardProps } from '@/types/components';
 import { CATEGORY_ICONS, EVENT_CATEGORY_COLORS } from '@/lib/constants';
-
-interface EventCardProps {
-  event: Event;
-}
 
 export function EventCard({ event }: EventCardProps) {
   const [imageError, setImageError] = useState(false);

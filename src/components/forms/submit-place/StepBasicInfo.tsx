@@ -15,13 +15,15 @@ const categories: { value: PlaceCategory; label: string; icon: string }[] = [
   { value: 'other', label: 'Other', icon: '📍' },
 ];
 
+interface PlaceFormData {
+  cityId: string;
+  name: string;
+  description: string;
+  category: PlaceCategory | '';
+}
+
 interface StepBasicInfoProps {
-  formData: {
-    cityId: string;
-    name: string;
-    description: string;
-    category: PlaceCategory | '';
-  };
+  formData: PlaceFormData;
   cities: City[];
   onUpdate: (field: string, value: string) => void;
   onNext: () => void;

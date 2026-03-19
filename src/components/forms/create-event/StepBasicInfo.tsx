@@ -15,13 +15,15 @@ const categories: { value: EventCategory; label: string; icon: string }[] = [
   { value: 'other', label: 'Other', icon: '📌' },
 ];
 
+interface EventFormData {
+  cityId: string;
+  title: string;
+  description: string;
+  category: EventCategory | '';
+}
+
 interface StepBasicInfoProps {
-  formData: {
-    cityId: string;
-    title: string;
-    description: string;
-    category: EventCategory | '';
-  };
+  formData: EventFormData;
   cities: City[];
   onUpdate: (field: string, value: string) => void;
   onNext: () => void;

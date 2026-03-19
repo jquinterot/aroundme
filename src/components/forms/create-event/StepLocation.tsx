@@ -1,14 +1,16 @@
 'use client';
 
+interface StepLocationFormData {
+  venueName: string;
+  venueAddress: string;
+  isFree: boolean;
+  price: string;
+  imageUrl: string;
+  tags: string;
+}
+
 interface StepLocationProps {
-  formData: {
-    venueName: string;
-    venueAddress: string;
-    isFree: boolean;
-    price: string;
-    imageUrl: string;
-    tags: string;
-  };
+  formData: StepLocationFormData;
   onUpdate: (field: string, value: string | boolean) => void;
   onSubmit: () => void;
   onBack: () => void;

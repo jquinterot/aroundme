@@ -2,38 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-
-interface OptimizedImageProps {
-  src?: string;
-  alt: string;
-  category?: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  priority?: boolean;
-}
-
-const categoryPlaceholders: Record<string, string> = {
-  music: '🎵',
-  food: '🍔',
-  sports: '⚽',
-  art: '🎨',
-  tech: '💻',
-  community: '👥',
-  nightlife: '🌙',
-  outdoor: '🌳',
-  education: '📚',
-  restaurant: '🍽️',
-  cafe: '☕',
-  bar: '🍺',
-  club: '🎉',
-  park: '🌳',
-  museum: '🏛️',
-  shopping: '🛍️',
-  hotel: '🏨',
-  coworking: '💼',
-  other: '📍',
-};
+import { OptimizedImageProps } from '@/types/components';
+import { CATEGORY_ICONS } from '@/lib/constants';
 
 export function OptimizedImage({
   src,
@@ -47,7 +17,7 @@ export function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const placeholderIcon = category ? categoryPlaceholders[category] : '📍';
+  const placeholderIcon = category ? CATEGORY_ICONS[category] : '📍';
 
   if (!src || hasError) {
     return (

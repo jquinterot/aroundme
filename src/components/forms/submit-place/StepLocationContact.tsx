@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 
+interface StepLocationContactFormData {
+  address: string;
+  website: string;
+  instagram: string;
+  features: string;
+}
+
 interface StepLocationContactProps {
-  formData: {
-    address: string;
-    website: string;
-    instagram: string;
-    features: string;
-  };
+  formData: StepLocationContactFormData;
   onUpdate: (field: string, value: string) => void;
   onSubmit: () => void;
   onBack: () => void;

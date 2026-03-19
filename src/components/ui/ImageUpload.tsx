@@ -1,13 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-
-interface ImageUploadProps {
-  value?: string;
-  onChange: (url: string) => void;
-  category?: string;
-  placeholderImage?: string;
-}
+import { ImageUploadProps } from '@/types/components';
 
 export function ImageUpload({ value, onChange, placeholderImage }: ImageUploadProps) {
   const [preview, setPreview] = useState<string>(value || '');

@@ -1,19 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  refresh: () => void;
-}
+import { User, AuthContextType } from '@/types/components';
 
 const AuthContext = createContext<AuthContextType>({
   user: null,

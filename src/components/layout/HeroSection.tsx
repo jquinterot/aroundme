@@ -1,25 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { City } from '@/types';
 import { CitySelector } from '@/components/ui';
-
-interface Tab {
-  label: string;
-  href: string;
-  icon: string;
-}
-
-interface HeroSectionProps {
-  title: string;
-  subtitle: string;
-  gradient: 'indigo' | 'teal';
-  tabs: Tab[];
-  activeTab?: string;
-  cities: City[];
-  currentCity?: City;
-  showCitySelector?: boolean;
-}
+import { HeroSectionProps } from '@/types/components';
 
 const gradientClasses = {
   indigo: 'from-indigo-600 to-purple-600',
@@ -36,7 +19,7 @@ const activeBg = {
   teal: 'bg-white text-teal-600',
 };
 
-export function HeroSection({ 
+export function HeroSection({
   title, 
   subtitle, 
   gradient, 

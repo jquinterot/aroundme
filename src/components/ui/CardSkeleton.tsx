@@ -1,9 +1,6 @@
 'use client';
 
-interface CardSkeletonProps {
-  count?: number;
-  className?: string;
-}
+import { CardSkeletonProps } from '@/types/components';
 
 export function CardSkeleton({ count = 6, className = '' }: CardSkeletonProps) {
   return (

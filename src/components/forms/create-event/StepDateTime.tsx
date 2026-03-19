@@ -1,12 +1,14 @@
 'use client';
 
+interface StepDateTimeFormData {
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+}
+
 interface StepDateTimeProps {
-  formData: {
-    startDate: string;
-    startTime: string;
-    endDate: string;
-    endTime: string;
-  };
+  formData: StepDateTimeFormData;
   onUpdate: (field: string, value: string) => void;
   onNext: () => void;
   onBack: () => void;

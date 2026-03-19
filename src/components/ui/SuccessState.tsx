@@ -1,14 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-
-interface SuccessStateProps {
-  title: string;
-  message: string;
-  redirectDelay?: number;
-  redirectTo?: string;
-  colorScheme?: 'indigo' | 'teal';
-}
+import { SuccessStateProps } from '@/types/components';
 
 export function SuccessState({
   title,

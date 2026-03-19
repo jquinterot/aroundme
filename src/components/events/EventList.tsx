@@ -1,15 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Event, City } from '@/types';
+import { Event } from '@/types';
+import { EventListProps } from '@/types/components';
 import { EventCard } from './EventCard';
 import { EventMap } from '@/components/map';
-
-interface EventListProps {
-  events: Event[];
-  viewMode: 'list' | 'map' | 'split';
-  city: City;
-}
 
 export function EventList({ events, viewMode, city }: EventListProps) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);

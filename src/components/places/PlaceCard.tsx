@@ -3,11 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Place } from '@/types';
+import { PlaceCardProps } from '@/types/components';
 import { CATEGORY_ICONS, PLACE_CATEGORY_COLORS } from '@/lib/constants';
-
-interface PlaceCardProps {
-  place: Place;
-}
 
 export function PlaceCard({ place }: PlaceCardProps) {
   const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';

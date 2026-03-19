@@ -2,16 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Event, City } from '@/types';
+import { Event } from '@/types';
+import { EventMapProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
-
-interface EventMapProps {
-  events: Event[];
-  city: City;
-  selectedEvent?: Event | null;
-  onEventSelect?: (event: Event | null) => void;
-  className?: string;
-}
 
 export function EventMap({ events, city, selectedEvent, onEventSelect, className = '' }: EventMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);

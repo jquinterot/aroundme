@@ -1,25 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { PlaceCategory } from '@/types';
+import { PlaceFiltersProps, PlaceFilterState } from '@/types/components';
 import { PLACE_CATEGORIES } from '@/lib/constants';
 
-interface PlaceFiltersProps {
-  onFilterChange: (filters: FilterState) => void;
-}
-
-interface FilterState {
-  category: PlaceCategory | 'all';
-  search: string;
-}
-
 export function PlaceFilters({ onFilterChange }: PlaceFiltersProps) {
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<PlaceFilterState>({
     category: 'all',
     search: '',
   });
 
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
+  const handleFilterChange = (key: keyof PlaceFilterState, value: string) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     onFilterChange(newFilters);

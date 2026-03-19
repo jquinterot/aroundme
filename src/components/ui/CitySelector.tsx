@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { City } from '@/types';
-
-interface CitySelectorProps {
-  cities: City[];
-  currentCity?: City;
-}
+import { CitySelectorProps } from '@/types/components';
 
 export function CitySelector({ cities, currentCity }: CitySelectorProps) {
   const [isOpen, setIsOpen] = useState(false);

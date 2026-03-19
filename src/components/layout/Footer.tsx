@@ -1,15 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-
-interface FooterLink {
-  label: string;
-  href: string;
-}
-
-interface FooterProps {
-  links?: FooterLink[];
-}
+import { FooterLink, FooterProps } from '@/types/components';
 
 const defaultLinks: FooterLink[] = [
   { label: 'About', href: '#' },

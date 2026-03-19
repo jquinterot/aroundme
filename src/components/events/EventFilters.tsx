@@ -1,29 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { EventCategory } from '@/types';
+import { EventFiltersProps, EventFilterState } from '@/types/components';
 import { EVENT_CATEGORIES } from '@/lib/constants';
 
-interface EventFiltersProps {
-  onFilterChange: (filters: FilterState) => void;
-}
-
-interface FilterState {
-  category: EventCategory | 'all';
-  date: 'today' | 'week' | 'month' | 'all';
-  price: 'all' | 'free' | 'paid';
-  search: string;
-}
-
 export function EventFilters({ onFilterChange }: EventFiltersProps) {
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<EventFilterState>({
     category: 'all',
     date: 'all',
     price: 'all',
     search: '',
   });
 
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
+  const handleFilterChange = (key: keyof EventFilterState, value: string) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     onFilterChange(newFilters);
