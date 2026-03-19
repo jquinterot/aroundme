@@ -3,38 +3,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Place } from '@/types';
+import { CATEGORY_ICONS, PLACE_CATEGORY_COLORS } from '@/lib/constants';
 
 interface PlaceCardProps {
   place: Place;
 }
 
-const categoryIcons: Record<string, string> = {
-  restaurant: '🍽️',
-  cafe: '☕',
-  bar: '🍺',
-  club: '🎉',
-  park: '🌳',
-  museum: '🏛️',
-  shopping: '🛍️',
-  hotel: '🏨',
-  coworking: '💼',
-  other: '📍',
-};
-
-const categoryColors: Record<string, string> = {
-  restaurant: 'bg-orange-100 text-orange-700',
-  cafe: 'bg-amber-100 text-amber-700',
-  bar: 'bg-purple-100 text-purple-700',
-  club: 'bg-pink-100 text-pink-700',
-  park: 'bg-green-100 text-green-700',
-  museum: 'bg-blue-100 text-blue-700',
-  shopping: 'bg-rose-100 text-rose-700',
-  hotel: 'bg-indigo-100 text-indigo-700',
-  coworking: 'bg-cyan-100 text-cyan-700',
-  other: 'bg-gray-100 text-gray-700',
-};
-
 export function PlaceCard({ place }: PlaceCardProps) {
+  const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
+  const getCategoryColor = (category: string) => PLACE_CATEGORY_COLORS[category] || 'bg-gray-100 text-gray-700';
+
   return (
     <Link href={`/place/${place.id}`} className="group">
       <article className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg hover:border-indigo-200 transition-all duration-200">
@@ -49,12 +27,12 @@ export function PlaceCard({ place }: PlaceCardProps) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-              <span className="text-4xl">{categoryIcons[place.category]}</span>
+              <span className="text-4xl">{getCategoryIcon(place.category)}</span>
             </div>
           )}
           <div className="absolute top-3 left-3 flex gap-2">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${categoryColors[place.category]}`}>
-              {categoryIcons[place.category]} {place.category}
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(place.category)}`}>
+              {getCategoryIcon(place.category)} {place.category}
             </span>
             {place.isVerified && (
               <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white flex items-center gap-1">

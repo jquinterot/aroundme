@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { EventCategory } from '@/types';
+import { EVENT_CATEGORIES } from '@/lib/constants';
 
 interface EventFiltersProps {
   onFilterChange: (filters: FilterState) => void;
@@ -13,18 +14,6 @@ interface FilterState {
   price: 'all' | 'free' | 'paid';
   search: string;
 }
-
-const categories: { value: EventCategory | 'all'; label: string; icon: string }[] = [
-  { value: 'all', label: 'All', icon: '🎫' },
-  { value: 'music', label: 'Music', icon: '🎵' },
-  { value: 'food', label: 'Food', icon: '🍔' },
-  { value: 'sports', label: 'Sports', icon: '⚽' },
-  { value: 'art', label: 'Art', icon: '🎨' },
-  { value: 'tech', label: 'Tech', icon: '💻' },
-  { value: 'community', label: 'Community', icon: '👥' },
-  { value: 'nightlife', label: 'Nightlife', icon: '🌙' },
-  { value: 'outdoor', label: 'Outdoor', icon: '🌳' },
-];
 
 export function EventFilters({ onFilterChange }: EventFiltersProps) {
   const [filters, setFilters] = useState<FilterState>({
@@ -56,7 +45,7 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {categories.map((cat) => (
+        {EVENT_CATEGORIES.map((cat) => (
           <button
             key={cat.value}
             onClick={() => handleFilterChange('category', cat.value)}

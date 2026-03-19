@@ -10,6 +10,7 @@ import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
 import { apiService } from '@/services';
 import { City } from '@/types';
+import { CATEGORY_ICONS, EVENT_CATEGORY_COLORS } from '@/lib/constants';
 
 interface Analytics {
   viewCount: number;
@@ -25,31 +26,8 @@ interface Analytics {
   userRsvp: { status: string } | null;
 }
 
-const categoryColors: Record<string, string> = {
-  music: 'bg-purple-100 text-purple-700',
-  food: 'bg-orange-100 text-orange-700',
-  sports: 'bg-green-100 text-green-700',
-  art: 'bg-pink-100 text-pink-700',
-  tech: 'bg-blue-100 text-blue-700',
-  community: 'bg-teal-100 text-teal-700',
-  nightlife: 'bg-indigo-100 text-indigo-700',
-  outdoor: 'bg-emerald-100 text-emerald-700',
-  education: 'bg-amber-100 text-amber-700',
-  other: 'bg-gray-100 text-gray-700',
-};
-
-const categoryIcons: Record<string, string> = {
-  music: '🎵',
-  food: '🍔',
-  sports: '⚽',
-  art: '🎨',
-  tech: '💻',
-  community: '👥',
-  nightlife: '🌙',
-  outdoor: '🌳',
-  education: '📚',
-  other: '📌',
-};
+const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
+const getCategoryColor = (category: string) => EVENT_CATEGORY_COLORS[category] || 'bg-gray-100 text-gray-700';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -211,12 +189,12 @@ export default function EventDetailPage() {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-                <span className="text-6xl">{categoryIcons[event.category]}</span>
+                <span className="text-6xl">{getCategoryIcon(event.category)}</span>
               </div>
             )}
             <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
-              <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${categoryColors[event.category]}`}>
-                {categoryIcons[event.category]} {event.category}
+              <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(event.category)}`}>
+                {getCategoryIcon(event.category)} {event.category}
               </span>
               {event.price?.isFree && (
                 <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white">
@@ -279,7 +257,7 @@ export default function EventDetailPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg">{categoryIcons[event.category]}</span>
+                    <span className="text-lg">{getCategoryIcon(event.category)}</span>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{event.organizer.name}</p>

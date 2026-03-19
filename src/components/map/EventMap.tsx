@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Event, City } from '@/types';
+import { CATEGORY_ICONS } from '@/lib/constants';
 
 interface EventMapProps {
   events: Event[];
@@ -11,19 +12,6 @@ interface EventMapProps {
   onEventSelect?: (event: Event | null) => void;
   className?: string;
 }
-
-const categoryIcons: Record<string, string> = {
-  music: '🎵',
-  food: '🍔',
-  sports: '⚽',
-  art: '🎨',
-  tech: '💻',
-  community: '👥',
-  nightlife: '🌙',
-  outdoor: '🌳',
-  education: '📚',
-  other: '📌',
-};
 
 export function EventMap({ events, city, selectedEvent, onEventSelect, className = '' }: EventMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -65,7 +53,7 @@ export function EventMap({ events, city, selectedEvent, onEventSelect, className
             font-size: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             cursor: pointer;
-          ">${categoryIcons[event.category] || '📍'}</div>`,
+          ">${CATEGORY_ICONS[event.category] || '📍'}</div>`,
           iconSize: [36, 36],
           iconAnchor: [18, 36],
         });

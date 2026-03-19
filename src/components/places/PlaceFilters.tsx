@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PlaceCategory } from '@/types';
+import { PLACE_CATEGORIES } from '@/lib/constants';
 
 interface PlaceFiltersProps {
   onFilterChange: (filters: FilterState) => void;
@@ -11,18 +12,6 @@ interface FilterState {
   category: PlaceCategory | 'all';
   search: string;
 }
-
-const categories: { value: PlaceCategory | 'all'; label: string; icon: string }[] = [
-  { value: 'all', label: 'All', icon: '📍' },
-  { value: 'restaurant', label: 'Restaurant', icon: '🍽️' },
-  { value: 'cafe', label: 'Café', icon: '☕' },
-  { value: 'bar', label: 'Bar', icon: '🍺' },
-  { value: 'club', label: 'Club', icon: '🎉' },
-  { value: 'park', label: 'Park', icon: '🌳' },
-  { value: 'museum', label: 'Museum', icon: '🏛️' },
-  { value: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { value: 'coworking', label: 'Coworking', icon: '💼' },
-];
 
 export function PlaceFilters({ onFilterChange }: PlaceFiltersProps) {
   const [filters, setFilters] = useState<FilterState>({
@@ -52,7 +41,7 @@ export function PlaceFilters({ onFilterChange }: PlaceFiltersProps) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {categories.map((cat) => (
+        {PLACE_CATEGORIES.map((cat) => (
           <button
             key={cat.value}
             onClick={() => handleFilterChange('category', cat.value)}

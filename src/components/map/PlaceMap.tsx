@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Place, City } from '@/types';
+import { CATEGORY_ICONS } from '@/lib/constants';
 
 interface PlaceMapProps {
   places: Place[];
@@ -11,19 +12,6 @@ interface PlaceMapProps {
   onPlaceSelect?: (place: Place | null) => void;
   className?: string;
 }
-
-const categoryIcons: Record<string, string> = {
-  restaurant: '🍽️',
-  cafe: '☕',
-  bar: '🍺',
-  club: '🎉',
-  park: '🌳',
-  museum: '🏛️',
-  shopping: '🛍️',
-  hotel: '🏨',
-  coworking: '💼',
-  other: '📍',
-};
 
 export function PlaceMap({ places, city, selectedPlace, onPlaceSelect, className = '' }: PlaceMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -65,7 +53,7 @@ export function PlaceMap({ places, city, selectedPlace, onPlaceSelect, className
             font-size: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             cursor: pointer;
-          ">${categoryIcons[place.category] || '📍'}</div>`,
+          ">${CATEGORY_ICONS[place.category] || '📍'}</div>`,
           iconSize: [36, 36],
           iconAnchor: [18, 36],
         });
