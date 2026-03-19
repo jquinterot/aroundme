@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { FormInput, FormSection, FormNavigation } from '@/components/ui/FormComponents';
 import { PlaceStepLocationContactProps } from '@/types/components';
 
 export function StepLocationContact({ formData, onUpdate, onSubmit, onBack, isLoading }: PlaceStepLocationContactProps) {
@@ -8,78 +9,43 @@ export function StepLocationContact({ formData, onUpdate, onSubmit, onBack, isLo
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900">Location & Contact</h2>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Address *
-        </label>
-        <input
-          type="text"
+      <FormSection title="Location & Contact">
+        <FormInput
+          label="Address"
           value={formData.address}
-          onChange={(e) => onUpdate('address', e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          onChange={(value) => onUpdate('address', value)}
           placeholder="Street address, neighborhood"
           required
         />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Website (optional)
-        </label>
-        <input
+        <FormInput
+          label="Website (optional)"
           type="url"
           value={formData.website}
-          onChange={(e) => onUpdate('website', e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          onChange={(value) => onUpdate('website', value)}
           placeholder="https://..."
         />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Instagram (optional)
-        </label>
-        <input
-          type="text"
+        <FormInput
+          label="Instagram (optional)"
           value={formData.instagram}
-          onChange={(e) => onUpdate('instagram', e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          onChange={(value) => onUpdate('instagram', value)}
           placeholder="@username"
         />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notable Features (optional)
-        </label>
-        <input
-          type="text"
+        <FormInput
+          label="Notable Features (optional)"
           value={formData.features}
-          onChange={(e) => onUpdate('features', e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          onChange={(value) => onUpdate('features', value)}
           placeholder="WiFi, outdoor seating, live music..."
         />
-      </div>
+      </FormSection>
 
-      <div className="flex gap-4">
-        <button
-          type="button"
-          onClick={onBack}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-        >
-          Back
-        </button>
-        <button
-          type="submit"
-          onClick={onSubmit}
-          disabled={isLoading || !isValid}
-          className="flex-1 bg-teal-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Submitting...' : 'Submit Place'}
-        </button>
-      </div>
+      <FormNavigation
+        onBack={onBack}
+        onSubmit={onSubmit}
+        submitLabel={isLoading ? 'Submitting...' : 'Submit Place'}
+        isNextDisabled={!isValid}
+        isLoading={isLoading}
+        colorScheme="teal"
+      />
 
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
         <p className="text-sm text-amber-800">

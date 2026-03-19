@@ -178,3 +178,138 @@ export function FormButton({
     </button>
   );
 }
+
+interface DateTimeInputProps {
+  label: string;
+  dateValue: string;
+  timeValue: string;
+  onDateChange: (value: string) => void;
+  onTimeChange: (value: string) => void;
+  required?: boolean;
+}
+
+export function DateTimeInput({ 
+  label, 
+  dateValue, 
+  timeValue, 
+  onDateChange, 
+  onTimeChange, 
+  required 
+}: DateTimeInputProps) {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <FormInput
+        label={label}
+        type="date"
+        value={dateValue}
+        onChange={onDateChange}
+        required={required}
+      />
+      <FormInput
+        label=""
+        type="time"
+        value={timeValue}
+        onChange={onTimeChange}
+        required={required}
+      />
+    </div>
+  );
+}
+
+interface ToggleOptionProps {
+  options: {
+    value: boolean;
+    label: string;
+    icon: string;
+    description: string;
+  }[];
+  selected: boolean;
+  onChange: (value: boolean) => void;
+}
+
+export function ToggleOption({ options, selected, onChange }: ToggleOptionProps) {
+  return (
+    <div className="flex gap-4">
+      {options.map((option) => (
+        <button
+          key={String(option.value)}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={`flex-1 p-4 rounded-lg border text-center transition-colors ${
+            selected === option.value
+              ? 'border-indigo-500 bg-indigo-50'
+              : 'border-gray-200'
+          }`}
+        >
+          <span className="text-2xl">{option.icon}</span>
+          <p className="font-medium mt-1">{option.description}</p>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+interface FormSectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+export function FormSection({ title, children }: FormSectionProps) {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+interface FormNavigationProps {
+  onBack?: () => void;
+  onNext?: () => void;
+  onSubmit?: () => void;
+  nextLabel?: string;
+  backLabel?: string;
+  submitLabel?: string;
+  isNextDisabled?: boolean;
+  isLoading?: boolean;
+  colorScheme?: 'indigo' | 'teal';
+}
+
+export function FormNavigation({ 
+  onBack, 
+  onNext, 
+  onSubmit, 
+  nextLabel = 'Continue',
+  backLabel = 'Back',
+  submitLabel = 'Submit',
+  isNextDisabled,
+  isLoading,
+  colorScheme = 'indigo'
+}: FormNavigationProps) {
+  return (
+    <div className="flex gap-4">
+      {onBack && (
+        <FormButton onClick={onBack} variant="secondary" fullWidth={false}>
+          {backLabel}
+        </FormButton>
+      )}
+      {onSubmit ? (
+        <FormButton 
+          onClick={onSubmit} 
+          disabled={isLoading || isNextDisabled}
+          colorScheme={colorScheme}
+        >
+          {isLoading ? 'Loading...' : submitLabel}
+        </FormButton>
+      ) : onNext && (
+        <FormButton 
+          onClick={onNext} 
+          disabled={isNextDisabled}
+          colorScheme={colorScheme}
+        >
+          {nextLabel}
+        </FormButton>
+      )}
+    </div>
+  );
+}
