@@ -302,7 +302,14 @@ export default function EventDetailPage() {
             <EventActions 
               isSaved={analytics.isSaved} 
               isAuthenticated={!!user} 
-              onSave={() => saveMutation.mutate()} 
+              onSave={() => saveMutation.mutate()}
+              event={{
+                title: event.title,
+                description: event.description,
+                date: event.date,
+                venue: event.venue,
+              }}
+              eventUrl={`${process.env.NEXT_PUBLIC_APP_URL || ''}/event/${event.id}`}
             />
 
             {user ? (
