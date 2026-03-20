@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await createSession();
+    await createSession(user.id);
 
     return NextResponse.json({
       success: true,
