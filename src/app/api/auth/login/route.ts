@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { createSession, verifyPassword, verifySimpleHash } from '@/lib/auth';
+import { createSession } from '@/lib/auth';
 import { rateLimit } from '@/lib/rateLimit';
 
 const AUTH_RATE_LIMIT = rateLimit({ maxRequests: 5, windowMs: 60000 });
@@ -40,13 +40,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let isValidPassword = false;
-    
-    if (user.password.length === 64 && user.password.match(/^[a-f0-9]+$/)) {
-      isValidPassword = verifySimpleHash(password, user.password);
-    } else {
-      isValidPassword = await verifyPassword(password, user.password);
-    }
+    const bcrypt = await import('bcrypt');
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
       return NextResponse.json(
@@ -55,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await createSession(user.id);
+    await createSession();
 
     return NextResponse.json({
       success: true,

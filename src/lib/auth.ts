@@ -14,7 +14,7 @@ export interface SessionUser {
   role: string;
 }
 
-export async function createSession(_userId: string): Promise<string> {
+export async function createSession(): Promise<string> {
   const token = randomBytes(32).toString('hex');
   
   const cookieStore = await cookies();
