@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { randomBytes, createHash, timingSafeEqual } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import { compare, hash } from 'bcrypt';
 import { prisma } from './prisma';
 
@@ -14,14 +14,8 @@ export interface SessionUser {
   role: string;
 }
 
-export async function createSession(userId: string): Promise<string> {
+export async function createSession(_userId: string): Promise<string> {
   const token = randomBytes(32).toString('hex');
-  const tokenHash = createHash('sha256').update(token).digest('hex');
-  
-  await prisma.user.update({
-    where: { id: userId },
-    data: { password: tokenHash },
-  }).catch(() => {});
   
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
@@ -77,5 +71,6 @@ export function simpleHash(password: string): string {
 }
 
 export function verifySimpleHash(password: string, hash: string): boolean {
-  return timingSafeEqual(Buffer.from(simpleHash(password)), Buffer.from(hash));
+  const hashed = simpleHash(password);
+  return hashed === hash;
 }
