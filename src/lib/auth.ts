@@ -12,6 +12,11 @@ export interface SessionUser {
   role: string;
 }
 
+export async function hashPassword(password: string): Promise<string> {
+  const bcrypt = await import('bcrypt');
+  return bcrypt.hash(password, 12);
+}
+
 export async function createSession(userId: string): Promise<string> {
   const token = randomBytes(32).toString('hex');
   const tokenHash = createHash('sha256').update(token).digest('hex');

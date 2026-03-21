@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { LucideIcon } from 'lucide-react';
 import { CitySelector } from '@/components/ui';
 import { HeroSectionProps } from '@/types/components';
 
@@ -48,17 +49,19 @@ export function HeroSection({
         <div className="flex flex-wrap gap-4">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.label;
+            const Icon = tab.icon as LucideIcon;
             return (
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                   isActive
                     ? activeBg[gradient]
                     : 'bg-white/20 text-white hover:bg-white/30'
                 }`}
               >
-                {tab.icon} {tab.label}
+                <Icon size={20} />
+                {tab.label}
               </Link>
             );
           })}

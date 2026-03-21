@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { MapPin } from 'lucide-react';
 import { PlaceCardProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 import { PlaceCategoryBadge, PlaceVerifiedBadge, PlacePriceRange, PlaceRating } from './PlaceCardBadges';
 
 export function PlaceCard({ place }: PlaceCardProps) {
-  const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
+  const CategoryIcon = CATEGORY_ICONS[place.category] || CATEGORY_ICONS.other;
 
   return (
     <Link href={`/place/${place.id}`} className="group">
@@ -23,7 +24,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-              <span className="text-4xl">{getCategoryIcon(place.category)}</span>
+              <CategoryIcon className="w-14 h-14 text-indigo-300" />
             </div>
           )}
           <div className="absolute top-3 left-3 flex gap-2">
@@ -48,10 +49,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
               }}
               className="flex items-center gap-2 hover:text-indigo-600 transition-colors w-full text-left"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <MapPin className="w-4 h-4 text-gray-400" />
               <span className="line-clamp-1">{place.address}</span>
             </button>
           </div>

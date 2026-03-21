@@ -1,4 +1,5 @@
 import { City, Event, Place, EventCategory, PlaceCategory } from './index';
+import type { LucideIcon } from 'lucide-react';
 
 export interface EventCardProps {
   event: Event;
@@ -108,7 +109,7 @@ export interface CitySelectorProps {
 export interface HeroTab {
   label: string;
   href: string;
-  icon: string;
+  icon: LucideIcon;
 }
 
 export interface HeroSectionProps {

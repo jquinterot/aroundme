@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import type { Notification } from '@/generated/prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       where: { userId: user.id, isRead: false },
     });
 
-    const formattedNotifications = notifications.map((n) => ({
+    const formattedNotifications = notifications.map((n: Notification) => ({
       id: n.id,
       userId: n.userId,
       type: n.type,

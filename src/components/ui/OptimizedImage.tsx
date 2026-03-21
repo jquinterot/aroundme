@@ -17,7 +17,7 @@ export function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const placeholderIcon = category ? CATEGORY_ICONS[category] : '📍';
+  const PlaceholderIcon = category ? CATEGORY_ICONS[category] : CATEGORY_ICONS.other;
 
   if (!src || hasError) {
     return (
@@ -25,7 +25,7 @@ export function OptimizedImage({
         className={`flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 ${className}`}
         style={{ width, height }}
       >
-        <span className="text-6xl">{placeholderIcon}</span>
+        <PlaceholderIcon className="w-16 h-16 text-indigo-300" />
       </div>
     );
   }
@@ -34,7 +34,7 @@ export function OptimizedImage({
     <div className={`relative overflow-hidden ${className}`} style={{ width, height }}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-          <span className="text-4xl opacity-50">{placeholderIcon}</span>
+          <PlaceholderIcon className="w-12 h-12 text-gray-300" />
         </div>
       )}
       <Image

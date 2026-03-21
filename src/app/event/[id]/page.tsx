@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ArrowLeft, Calendar, Clock, MapPin, Star, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
@@ -16,7 +17,7 @@ import { FeaturePromo } from '@/components/events/FeaturePromo';
 import { EventActions, RSVPButtons, LoginPrompt } from '@/components/events/EventActions';
 import { formatDetailDate, formatDetailTime } from '@/components/events/eventUtils';
 
-const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
+const CategoryIcon = (category: string) => CATEGORY_ICONS[category] || CATEGORY_ICONS.other;
 const getCategoryColor = (category: string) => EVENT_CATEGORY_COLORS[category] || 'bg-gray-100 text-gray-700';
 
 export default function EventDetailPage() {
@@ -144,9 +145,7 @@ export default function EventDetailPage() {
           href={`/${city?.slug || 'bogota'}`}
           className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ArrowLeft className="w-4 h-4" />
           Back to events
         </Link>
 
@@ -163,12 +162,12 @@ export default function EventDetailPage() {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-                <span className="text-6xl">{getCategoryIcon(event.category)}</span>
+                {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-20 h-20 text-indigo-300" />; })()}
               </div>
             )}
             <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
-              <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(event.category)}`}>
-                {getCategoryIcon(event.category)} {event.category}
+              <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(event.category)}`}>
+                {(() => { const Icon = CategoryIcon(event.category); return <Icon size={16} />; })()} {event.category}
               </span>
               {event.price?.isFree && (
                 <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white">
@@ -176,10 +175,8 @@ export default function EventDetailPage() {
                 </span>
               )}
               {event.isFeatured && (
-                <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                  <Star className="w-4 h-4 fill-current" />
                   {event.featuredTier === 'premium' ? 'Premium' : 'Featured'}
                 </span>
               )}
@@ -193,21 +190,15 @@ export default function EventDetailPage() {
 
             <div className="flex flex-wrap gap-6 mb-6 text-gray-600">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Calendar className="w-5 h-5 text-gray-400" />
                 <span>{formatDetailDate(event.date.start)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Clock className="w-5 h-5 text-gray-400" />
                 <span>{formatDetailTime(event.date.start)} - {formatDetailTime(event.date.end)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
+                <MapPin className="w-5 h-5 text-gray-400" />
                 <span>{event.venue.name}</span>
               </div>
             </div>
@@ -231,15 +222,13 @@ export default function EventDetailPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg">{getCategoryIcon(event.category)}</span>
+                    {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-5 h-5 text-indigo-500" />; })()}
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{event.organizer.name}</p>
                     {event.organizer.isVerified && (
                       <p className="text-xs text-green-600 flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
+                        <CheckCircle className="w-3 h-3" />
                         Verified Organizer
                       </p>
                     )}
@@ -283,9 +272,7 @@ export default function EventDetailPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
+                  <MapPin className="w-4 h-4" />
                   Open in Google Maps
                 </a>
               </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiService } from '@/services';
+import { Users, Bell, Star, FileText, Megaphone, Bell as BellIcon } from 'lucide-react';
 import type { Notification } from '@/types';
 
 export function NotificationBell() {
@@ -12,7 +12,7 @@ export function NotificationBell() {
 
   const { data: notificationsData, isLoading } = useQuery({
     queryKey: ['notifications'],
-    queryFn: () => apiService.get<{ data: Notification[]; unreadCount: number }>('/api/notifications'),
+    queryFn: () => fetch('/api/notifications').then(res => res.json()),
     enabled: isOpen,
   });
 
@@ -27,8 +27,8 @@ export function NotificationBell() {
     },
   });
 
-  const notifications = notificationsData?.data?.data || [];
-  const unreadCount = notificationsData?.data?.unreadCount || 0;
+  const notifications = notificationsData?.data || [];
+  const unreadCount = notificationsData?.unreadCount || 0;
 
   useEffect(() => {
     if (unreadCount > 0) {
@@ -41,15 +41,15 @@ export function NotificationBell() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_rsvp':
-        return '👥';
+        return Users;
       case 'event_reminder':
-        return '🔔';
+        return Bell;
       case 'new_review':
-        return '⭐';
+        return Star;
       case 'event_update':
-        return '📝';
+        return FileText;
       default:
-        return '📢';
+        return Megaphone;
     }
   };
 
@@ -74,9 +74,7 @@ export function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-indigo-600 transition-colors"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
+        <BellIcon className="w-6 h-6" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -108,38 +106,41 @@ export function NotificationBell() {
                 <div className="p-4 text-center text-gray-500">Loading...</div>
               ) : notifications.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
-                  <span className="text-4xl mb-2 block">🔔</span>
+                  <BellIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                   <p>No notifications yet</p>
                 </div>
               ) : (
-                notifications.map((notification) => (
-                  <Link
-                    key={notification.id}
-                    href={notification.link || '#'}
-                    onClick={() => setIsOpen(false)}
-                    className={`block p-4 hover:bg-gray-50 border-b border-gray-100 last:border-0 ${
-                      !notification.isRead ? 'bg-indigo-50/50' : ''
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="text-xl">{getNotificationIcon(notification.type)}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {notification.title}
-                        </p>
-                        <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {formatTime(notification.createdAt)}
-                        </p>
+                notifications.map((notification: Notification) => {
+                  const Icon = getNotificationIcon(notification.type);
+                  return (
+                    <Link
+                      key={notification.id}
+                      href={notification.link || '#'}
+                      onClick={() => setIsOpen(false)}
+                      className={`block p-4 hover:bg-gray-50 border-b border-gray-100 last:border-0 ${
+                        !notification.isRead ? 'bg-indigo-50/50' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Icon className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {notification.title}
+                          </p>
+                          <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {formatTime(notification.createdAt)}
+                          </p>
+                        </div>
+                        {!notification.isRead && (
+                          <span className="w-2 h-2 bg-indigo-600 rounded-full flex-shrink-0 mt-1" />
+                        )}
                       </div>
-                      {!notification.isRead && (
-                        <span className="w-2 h-2 bg-indigo-600 rounded-full flex-shrink-0 mt-1" />
-                      )}
-                    </div>
-                  </Link>
-                ))
+                    </Link>
+                  );
+                })
               )}
             </div>
 

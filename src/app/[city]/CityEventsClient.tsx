@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Plus, Ticket, MapPin } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Header, HeroSection } from '@/components/layout';
 import { EventList, EventFilters } from '@/components/events';
@@ -45,8 +46,8 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
   const currentCity = cities.find((c: City) => c.slug === citySlug) || cities[0];
 
   const tabs = [
-    { label: 'Events', href: `/${citySlug}`, icon: '🎫' },
-    { label: 'Places', href: `/${citySlug}/places`, icon: '📍' },
+    { label: 'Events', href: `/${citySlug}`, icon: Ticket },
+    { label: 'Places', href: `/${citySlug}/places`, icon: MapPin },
   ];
 
   return (
@@ -70,9 +71,7 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
               href="/create-event"
               className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+              <Plus className="w-4 h-4" />
               Create Event
             </Link>
           </div>

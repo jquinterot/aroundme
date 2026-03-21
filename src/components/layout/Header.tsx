@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { LayoutDashboard, Ticket, MapPin, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationBell } from '@/components/ui';
 
@@ -60,28 +61,28 @@ export function Header() {
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
                           >
-                            <span>📊</span> Dashboard
+                            <LayoutDashboard className="w-4 h-4" /> Dashboard
                           </Link>
                           <Link
                             href="/dashboard/events"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
                           >
-                            <span>🎫</span> My Events
+                            <Ticket className="w-4 h-4" /> My Events
                           </Link>
                           <Link
                             href="/dashboard/places"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
                           >
-                            <span>📍</span> My Places
+                            <MapPin className="w-4 h-4" /> My Places
                           </Link>
                           <hr className="my-1" />
                           <button
                             onClick={handleLogout}
                             className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
                           >
-                            <span>🚪</span> Logout
+                            <LogOut className="w-4 h-4" /> Logout
                           </button>
                         </div>
                       )}

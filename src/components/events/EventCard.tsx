@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { MapPin } from 'lucide-react';
 import { EventCardProps } from '@/types/components';
 import { CATEGORY_ICONS } from '@/lib/constants';
 import { FeaturedBadge, CategoryBadge, FreeBadge, PriceDisplay, VerifiedBadge } from './EventCardBadges';
@@ -12,7 +13,7 @@ export function EventCard({ event }: EventCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const getCategoryIcon = (category: string) => CATEGORY_ICONS[category] || '📍';
+  const CategoryIcon = CATEGORY_ICONS[event.category] || CATEGORY_ICONS.other;
   const hasValidImage = event.image && !imageError;
 
   return (
@@ -43,7 +44,7 @@ export function EventCard({ event }: EventCardProps) {
             </>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-5xl">{getCategoryIcon(event.category)}</span>
+              <CategoryIcon className="w-16 h-16 text-indigo-300" />
             </div>
           )}
           {!event.isFeatured && (
@@ -77,10 +78,7 @@ export function EventCard({ event }: EventCardProps) {
               }}
               className="flex items-center gap-2 hover:text-indigo-600 transition-colors w-full text-left"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <MapPin className="w-4 h-4 text-gray-400" />
               <span className="line-clamp-1">{event.venue.name}</span>
             </button>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { Plus, Ticket, MapPin } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Header, HeroSection, Footer } from '@/components/layout';
 import { PlaceList, PlaceFilters } from '@/components/places';
@@ -43,8 +44,8 @@ export default function PlacesPage() {
   const currentCity = cities.find((c: City) => c.slug === citySlug) || cities[0];
 
   const tabs = [
-    { label: 'Events', href: `/${citySlug}`, icon: '🎫' },
-    { label: 'Places', href: `/${citySlug}/places`, icon: '📍' },
+    { label: 'Events', href: `/${citySlug}`, icon: Ticket },
+    { label: 'Places', href: `/${citySlug}/places`, icon: MapPin },
   ];
 
   return (
@@ -68,9 +69,7 @@ export default function PlacesPage() {
               href="/submit-place"
               className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+              <Plus className="w-4 h-4" />
               Add Place
             </Link>
           </div>
