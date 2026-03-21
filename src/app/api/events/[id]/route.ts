@@ -157,3 +157,42 @@ export async function DELETE(
     return NextResponse.json({ success: false, error: 'Failed to delete event' }, { status: 500 });
   }
 }
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { status } = await request.json();
+
+    if (!status || !['pending', 'approved', 'cancelled', 'rejected'].includes(status)) {
+      return NextResponse.json({ success: false, error: 'Invalid status' }, { status: 400 });
+    }
+
+    const existingEvent = await prisma.event.findUnique({ where: { id } });
+    if (!existingEvent) {
+      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+    }
+
+    if (existingEvent.userId !== session.id) {
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    const updatedEvent = await prisma.event.update({
+      where: { id },
+      data: { status },
+    });
+
+    return NextResponse.json({ success: true, data: { status: updatedEvent.status } });
+  } catch (error) {
+    console.error('Error updating event status:', error);
+    return NextResponse.json({ success: false, error: 'Failed to update event status' }, { status: 500 });
+  }
+}

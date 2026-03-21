@@ -267,6 +267,7 @@ export default function EventDetailPage() {
               <OwnerControls
                 eventId={event.id}
                 eventTitle={event.title}
+                eventStatus={event.status}
                 citySlug={city?.slug || 'bogota'}
               />
             )}

@@ -4,13 +4,16 @@ import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, MapPin, Star, Phone, Instagram, Heart, Share2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Star, Phone, Instagram, Heart, Share2, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
-import { ReviewForm } from '@/components/places';
+import { ReviewForm, ReviewCard } from '@/components/places';
 import { apiService } from '@/services';
 import { City } from '@/types';
 import { CATEGORY_ICONS, PLACE_CATEGORY_COLORS } from '@/lib/constants';
+import { useAuth } from '@/contexts/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 const CategoryIcon = (category: string) => CATEGORY_ICONS[category] || CATEGORY_ICONS.other;
 const getCategoryColor = (category: string) => PLACE_CATEGORY_COLORS[category] || 'bg-gray-100 text-gray-700';
@@ -18,6 +21,9 @@ const getCategoryColor = (category: string) => PLACE_CATEGORY_COLORS[category] |
 export default function PlaceDetailPage() {
   const params = useParams();
   const placeId = (params.id as string) || '';
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [isClaiming, setIsClaiming] = useState(false);
 
   const { data: citiesData } = useQuery({
     queryKey: ['cities'],
@@ -36,10 +42,43 @@ export default function PlaceDetailPage() {
     enabled: !!placeId,
   });
 
+  const refetchReviews = () => {
+    queryClient.invalidateQueries({ queryKey: ['place-reviews', placeId] });
+  };
+
   const cities = citiesData?.data || [];
   const place = placeData?.data;
   const reviews = reviewsData?.data || [];
   const city = cities.find((c: City) => c.id === place?.cityId) || cities[0];
+  const isOwner = user && place?.ownerId === user.id;
+
+  const handleClaim = async () => {
+    setIsClaiming(true);
+    try {
+      const response = await fetch(`/api/places/${placeId}/claim`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['place', placeId] });
+      }
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  const handleUnclaim = async () => {
+    setIsClaiming(true);
+    try {
+      const response = await fetch(`/api/places/${placeId}/claim`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['place', placeId] });
+      }
+    } finally {
+      setIsClaiming(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -131,9 +170,42 @@ export default function PlaceDetailPage() {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                   {place.name}
                 </h1>
-                {place.isClaimed && (
-                  <p className="text-sm text-indigo-600 mt-1">Business verified</p>
-                )}
+                <div className="flex items-center gap-2 mt-1">
+                  {place.isClaimed && (
+                    <p className="text-sm text-green-600 flex items-center gap-1">
+                      <CheckCircle className="w-4 h-4" />
+                      Claimed
+                    </p>
+                  )}
+                  {user && !place.isClaimed && (
+                    <button
+                      onClick={handleClaim}
+                      disabled={isClaiming}
+                      className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {isClaiming ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      Claim this place
+                    </button>
+                  )}
+                  {isOwner && (
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/place/${placeId}/edit`}
+                        className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                      >
+                        Edit place
+                      </Link>
+                      <button
+                        onClick={handleUnclaim}
+                        disabled={isClaiming}
+                        className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1 disabled:opacity-50"
+                      >
+                        {isClaiming ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+                        Unclaim
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1">
@@ -239,29 +311,14 @@ export default function PlaceDetailPage() {
                 <p className="text-gray-500">No reviews yet. Be the first to review!</p>
               ) : (
                 <div className="space-y-4">
-                  {reviews.slice(0, 5).map((review) => (
-                    <div key={review.id} className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-indigo-600">
-                              {review.userName.charAt(0)}
-                            </span>
-                          </div>
-                          <span className="font-medium text-gray-900">{review.userName}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-gray-700">{review.comment}</p>
-                      <p className="text-sm text-gray-500 mt-2">{formatDate(review.createdAt)}</p>
-                    </div>
+                  {reviews.slice(0, 10).map((review) => (
+                    <ReviewCard
+                      key={review.id}
+                      review={review}
+                      placeId={placeId}
+                      currentUserId={user?.id}
+                      onUpdate={refetchReviews}
+                    />
                   ))}
                 </div>
               )}
