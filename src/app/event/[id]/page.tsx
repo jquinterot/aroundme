@@ -16,6 +16,7 @@ import { AnalyticsPanel } from '@/components/events/AnalyticsPanel';
 import { FeaturePromo } from '@/components/events/FeaturePromo';
 import { EventActions, RSVPButtons, LoginPrompt } from '@/components/events/EventActions';
 import { OwnerControls } from '@/components/events/OwnerControls';
+import { EventCountdown } from '@/components/events/EventCountdown';
 import { formatDetailDate, formatDetailTime } from '@/components/events/eventUtils';
 
 const CategoryIcon = (category: string) => CATEGORY_ICONS[category] || CATEGORY_ICONS.other;
@@ -307,6 +308,12 @@ export default function EventDetailPage() {
                 venue: event.venue,
               }}
               eventUrl={`${process.env.NEXT_PUBLIC_APP_URL || ''}/event/${event.id}`}
+            />
+
+            <EventCountdown 
+              dateStart={event.date.start} 
+              eventId={event.id}
+              eventTitle={event.title}
             />
 
             {user ? (

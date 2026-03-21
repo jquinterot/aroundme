@@ -1,5 +1,88 @@
 import { describe, it, expect } from 'vitest';
 
+describe('Countdown calculation', () => {
+  const calculateTimeLeft = (dateStart: string): { days: number; hours: number; minutes: number; seconds: number; total: number } => {
+    const difference = new Date(dateStart).getTime() - new Date().getTime();
+    
+    if (difference <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 };
+    }
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+      total: difference,
+    };
+  };
+
+  it('should return zero for past dates', () => {
+    const pastDate = new Date(Date.now() - 1000).toISOString();
+    const result = calculateTimeLeft(pastDate);
+    expect(result.total).toBe(0);
+    expect(result.days).toBe(0);
+  });
+
+  it('should calculate future dates correctly', () => {
+    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const result = calculateTimeLeft(futureDate);
+    expect(result.days).toBe(1);
+    expect(result.total).toBeGreaterThan(0);
+  });
+
+  it('should handle hours correctly', () => {
+    const futureDate = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+    const result = calculateTimeLeft(futureDate);
+    expect(result.hours).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('Search query validation', () => {
+  const validateSearch = (query: string) => {
+    if (!query || query.length < 2) {
+      return { valid: false, error: 'Query must be at least 2 characters' };
+    }
+    return { valid: true };
+  };
+
+  it('should accept queries with 2+ characters', () => {
+    const result = validateSearch('te');
+    expect(result.valid).toBe(true);
+  });
+
+  it('should reject empty queries', () => {
+    const result = validateSearch('');
+    expect(result.valid).toBe(false);
+  });
+
+  it('should reject single character queries', () => {
+    const result = validateSearch('a');
+    expect(result.valid).toBe(false);
+  });
+});
+
+describe('Theme preferences', () => {
+  const getPreferredTheme = (stored: string | null, systemDark: boolean) => {
+    if (stored === 'dark') return 'dark';
+    if (stored === 'light') return 'light';
+    return systemDark ? 'dark' : 'light';
+  };
+
+  it('should return stored dark theme', () => {
+    expect(getPreferredTheme('dark', false)).toBe('dark');
+  });
+
+  it('should return stored light theme', () => {
+    expect(getPreferredTheme('light', true)).toBe('light');
+  });
+
+  it('should use system preference when no stored preference', () => {
+    expect(getPreferredTheme(null, true)).toBe('dark');
+    expect(getPreferredTheme(null, false)).toBe('light');
+  });
+});
+
 describe('Review validation', () => {
   const validateReview = (rating: number, comment: string) => {
     if (!rating || rating < 1 || rating > 5) {
