@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Ticket, MapPin, LogOut } from 'lucide-react';
+import { LayoutDashboard, Ticket, MapPin, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationBell } from '@/components/ui';
 
@@ -62,6 +62,13 @@ export function Header() {
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
                           >
                             <LayoutDashboard className="w-4 h-4" /> Dashboard
+                          </Link>
+                          <Link
+                            href="/profile"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                          >
+                            <User className="w-4 h-4" /> Profile
                           </Link>
                           <Link
                             href="/dashboard/events"

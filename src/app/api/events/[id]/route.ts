@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
@@ -54,5 +55,105 @@ export async function GET(
   } catch (error) {
     console.error('Error fetching event:', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch event' }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const {
+      title,
+      description,
+      category,
+      status,
+      venueName,
+      venueAddress,
+      venueLat,
+      venueLng,
+      dateStart,
+      dateEnd,
+      isFree,
+      priceMin,
+      priceMax,
+      currency,
+      imageUrl,
+      tags,
+    } = body;
+
+    const existingEvent = await prisma.event.findUnique({ where: { id } });
+    if (!existingEvent) {
+      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+    }
+
+    if (existingEvent.userId !== session.id) {
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    const updatedEvent = await prisma.event.update({
+      where: { id },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(description !== undefined && { description }),
+        ...(category !== undefined && { category }),
+        ...(status !== undefined && { status }),
+        ...(venueName !== undefined && { venueName }),
+        ...(venueAddress !== undefined && { venueAddress }),
+        ...(venueLat !== undefined && { venueLat }),
+        ...(venueLng !== undefined && { venueLng }),
+        ...(dateStart !== undefined && { dateStart: new Date(dateStart) }),
+        ...(dateEnd !== undefined && { dateEnd: dateEnd ? new Date(dateEnd) : null }),
+        ...(isFree !== undefined && { isFree }),
+        ...(priceMin !== undefined && { priceMin }),
+        ...(priceMax !== undefined && { priceMax }),
+        ...(currency !== undefined && { currency }),
+        ...(imageUrl !== undefined && { imageUrl }),
+        ...(tags !== undefined && { tags }),
+      },
+    });
+
+    return NextResponse.json({ success: true, data: updatedEvent });
+  } catch (error) {
+    console.error('Error updating event:', error);
+    return NextResponse.json({ success: false, error: 'Failed to update event' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const existingEvent = await prisma.event.findUnique({ where: { id } });
+    if (!existingEvent) {
+      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+    }
+
+    if (existingEvent.userId !== session.id) {
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    await prisma.event.delete({ where: { id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    return NextResponse.json({ success: false, error: 'Failed to delete event' }, { status: 500 });
   }
 }

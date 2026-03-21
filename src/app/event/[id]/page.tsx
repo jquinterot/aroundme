@@ -15,6 +15,7 @@ import { CATEGORY_ICONS, EVENT_CATEGORY_COLORS } from '@/lib/constants';
 import { AnalyticsPanel } from '@/components/events/AnalyticsPanel';
 import { FeaturePromo } from '@/components/events/FeaturePromo';
 import { EventActions, RSVPButtons, LoginPrompt } from '@/components/events/EventActions';
+import { OwnerControls } from '@/components/events/OwnerControls';
 import { formatDetailDate, formatDetailTime } from '@/components/events/eventUtils';
 
 const CategoryIcon = (category: string) => CATEGORY_ICONS[category] || CATEGORY_ICONS.other;
@@ -259,6 +260,14 @@ export default function EventDetailPage() {
                 onFeaturePremium={() => featureMutation.mutate('premium')}
                 onRemoveFeature={() => removeFeatureMutation.mutate()}
                 isPending={featureMutation.isPending || removeFeatureMutation.isPending}
+              />
+            )}
+
+            {user && analytics.isOwner && (
+              <OwnerControls
+                eventId={event.id}
+                eventTitle={event.title}
+                citySlug={city?.slug || 'bogota'}
               />
             )}
 

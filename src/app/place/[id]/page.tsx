@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ArrowLeft, MapPin, Star, Phone, Instagram, Heart, Share2 } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
+import { ReviewForm } from '@/components/places';
 import { apiService } from '@/services';
 import { City } from '@/types';
 import { CATEGORY_ICONS, PLACE_CATEGORY_COLORS } from '@/lib/constants';
@@ -266,16 +267,19 @@ export default function PlaceDetailPage() {
               )}
             </div>
 
-            <div className="mt-8 flex gap-4">
-              <button className="flex-1 bg-teal-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-teal-700 transition-colors">
-                Add Review
-              </button>
-              <button className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                <Heart className="w-5 h-5" />
-              </button>
-              <button className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                <Share2 className="w-5 h-5" />
-              </button>
+            <div className="mt-8">
+              <ReviewForm placeId={place.id} placeName={place.name} />
+              
+              <div className="flex gap-4 mt-4">
+                <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors text-gray-700">
+                  <Heart className="w-5 h-5" />
+                  Save
+                </button>
+                <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors text-gray-700">
+                  <Share2 className="w-5 h-5" />
+                  Share
+                </button>
+              </div>
             </div>
           </div>
         </div>
