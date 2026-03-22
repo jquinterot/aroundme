@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Ticket, MapPin, LogOut, User, Bell, Bookmark, CalendarCheck, Shield, BellRing, BellOff, Settings } from 'lucide-react';
+import { LayoutDashboard, Ticket, MapPin, LogOut, User, Bell, Bookmark, CalendarCheck, Shield, BellRing, BellOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationBell, SearchBar, DarkModeToggle } from '@/components/ui';
+import { NotificationBell, DarkModeToggle } from '@/components/ui';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const { user, loading, refresh } = useAuth();
   const router = useRouter();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
@@ -40,18 +39,14 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">AM</span>
-              </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">AroundMe</span>
-            </Link>
-
-            <div className="hidden md:block">
-              <SearchBar />
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">AM</span>
             </div>
+            <span className="font-bold text-xl text-gray-900 dark:text-white">AroundMe</span>
+          </Link>
 
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <DarkModeToggle />
             {!loading && (
               <>
@@ -83,15 +78,15 @@ export function Header() {
                       </button>
 
                       {isUserMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                          <div className="px-4 py-2 border-b border-gray-100">
-                            <p className="font-medium text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500">{user.email}</p>
+                        <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                          <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                            <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                             {user.role === 'admin' && (
                               <Link
                                 href="/admin"
                                 onClick={() => setIsUserMenuOpen(false)}
-                                className="mt-2 flex items-center gap-1 text-sm text-purple-600 hover:text-purple-700"
+                                className="mt-2 flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
                               >
                                 <Shield className="w-4 h-4" />
                                 Admin Dashboard
@@ -103,7 +98,7 @@ export function Header() {
                             <button
                               onClick={handlePushToggle}
                               disabled={pushLoading}
-                              className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700"
+                              className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                             >
                               {isSubscribed ? (
                                 <>
@@ -122,64 +117,64 @@ export function Header() {
                           <Link
                             href="/dashboard"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <LayoutDashboard className="w-4 h-4" /> Dashboard
                           </Link>
                           <Link
                             href="/dashboard/notifications"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <Bell className="w-4 h-4" /> Notifications
                           </Link>
                           <Link
                             href="/profile"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <User className="w-4 h-4" /> Profile
                           </Link>
-                          <hr className="my-1" />
+                          <hr className="my-1 border-gray-100 dark:border-gray-700" />
                           <Link
                             href="/dashboard/events"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <Ticket className="w-4 h-4" /> My Events
                           </Link>
                           <Link
                             href="/dashboard/places"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <MapPin className="w-4 h-4" /> My Places
                           </Link>
                           <Link
                             href="/dashboard/tickets"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <Bookmark className="w-4 h-4" /> My Tickets
                           </Link>
                           <Link
                             href="/dashboard/saved-events"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <Bookmark className="w-4 h-4" /> Saved Events
                           </Link>
                           <Link
                             href="/dashboard/my-rsvps"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                           >
                             <CalendarCheck className="w-4 h-4" /> My RSVPs
                           </Link>
-                          <hr className="my-1" />
+                          <hr className="my-1 border-gray-100 dark:border-gray-700" />
                           <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600"
+                            className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400"
                           >
                             <LogOut className="w-4 h-4" /> Logout
                           </button>
@@ -191,7 +186,7 @@ export function Header() {
                   <>
                     <Link
                       href="/login"
-                      className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+                      className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                     >
                       Login
                     </Link>

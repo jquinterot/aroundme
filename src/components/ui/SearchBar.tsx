@@ -85,7 +85,7 @@ export function SearchBar() {
   const totalResults = (results?.events?.length || 0) + (results?.places?.length || 0);
 
   return (
-    <div ref={searchRef} className="relative">
+    <div ref={searchRef} className="relative w-full md:w-96 lg:w-[480px]">
       <form onSubmit={handleSubmit} className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
         <input
@@ -93,7 +93,7 @@ export function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search events, places..."
-          className="w-full md:w-64 pl-10 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 dark:placeholder-gray-500"
+          className="w-full pl-10 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 dark:placeholder-gray-500 text-sm"
         />
         {query && (
           <button
@@ -110,7 +110,7 @@ export function SearchBar() {
       </form>
 
       {isOpen && results && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden min-w-full">
           {totalResults === 0 ? (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               No results found for &quot;{query}&quot;
