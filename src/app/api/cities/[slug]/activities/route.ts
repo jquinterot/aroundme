@@ -43,30 +43,51 @@ export async function GET(
       prisma.activity.count({ where }),
     ]);
 
-    const formattedActivities = activities.map((activity) => ({
-      id: activity.id,
-      title: activity.title,
-      description: activity.description,
-      category: activity.category,
-      subcategory: activity.subcategory,
-      cityId: activity.cityId,
-      providerName: activity.providerName,
-      schedule: activity.schedule,
-      scheduleDays: activity.scheduleDays ? JSON.parse(activity.scheduleDays) : null,
-      scheduleTime: activity.scheduleTime,
-      duration: activity.duration,
-      capacity: activity.capacity,
-      price: activity.price,
-      currency: activity.currency,
-      isFree: activity.isFree,
-      image: activity.imageUrl,
-      includes: activity.includes ? JSON.parse(activity.includes) : [],
-      skillLevel: activity.skillLevel,
-      status: activity.status,
-      viewCount: activity.viewCount,
-      bookingCount: activity.bookingCount,
-      createdAt: activity.createdAt.toISOString(),
-    }));
+    const formattedActivities = activities.map((activity) => {
+      let scheduleDays = null;
+      let includes: string[] = [];
+      
+      try {
+        if (activity.scheduleDays) {
+          scheduleDays = JSON.parse(activity.scheduleDays);
+        }
+      } catch (e) {
+        scheduleDays = null;
+      }
+      
+      try {
+        if (activity.includes) {
+          includes = JSON.parse(activity.includes);
+        }
+      } catch (e) {
+        includes = [];
+      }
+      
+      return {
+        id: activity.id,
+        title: activity.title,
+        description: activity.description,
+        category: activity.category,
+        subcategory: activity.subcategory,
+        cityId: activity.cityId,
+        providerName: activity.providerName,
+        schedule: activity.schedule,
+        scheduleDays,
+        scheduleTime: activity.scheduleTime,
+        duration: activity.duration,
+        capacity: activity.capacity,
+        price: activity.price,
+        currency: activity.currency,
+        isFree: activity.isFree,
+        image: activity.imageUrl,
+        includes,
+        skillLevel: activity.skillLevel,
+        status: activity.status,
+        viewCount: activity.viewCount,
+        bookingCount: activity.bookingCount,
+        createdAt: activity.createdAt.toISOString(),
+      };
+    });
 
     return NextResponse.json({
       success: true,

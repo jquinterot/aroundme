@@ -6,11 +6,6 @@ export async function GET() {
     const cities = await prisma.city.findMany({
       where: { isActive: true },
       orderBy: { name: 'asc' },
-      include: {
-        _count: {
-          select: { events: true, places: true },
-        },
-      },
     });
     
     return NextResponse.json({

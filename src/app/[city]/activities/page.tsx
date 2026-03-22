@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Ticket, MapPin, Star, Clock, Users, CheckCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +46,8 @@ interface Activity {
 }
 
 export default function ActivitiesPage() {
+  const params = useParams();
+  const citySlug = (params.city as string) || 'bogota';
   const [category, setCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -53,7 +56,6 @@ export default function ActivitiesPage() {
     queryFn: () => apiService.getCities(),
   });
 
-  const citySlug = 'bogota';
   const cities = citiesData?.data || [];
   const currentCity = cities.find((c: City) => c.slug === citySlug) || cities[0];
 
