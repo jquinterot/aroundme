@@ -126,7 +126,153 @@ export interface User {
   role: 'admin' | 'organizer' | 'user';
   cityId?: string;
   isVerified: boolean;
+  avatarUrl?: string;
+  bio?: string;
+  website?: string;
+  instagram?: string;
+  followerCount?: number;
+  followingCount?: number;
+  eventCount?: number;
   createdAt?: string;
+}
+
+export interface Activity {
+  id: string;
+  userId: string;
+  type: 'created_event' | 'rsvp' | 'review' | 'follow' | 'save' | 'check_in';
+  eventId?: string;
+  placeId?: string;
+  targetUserId?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    isVerified: boolean;
+  };
+  event?: {
+    id: string;
+    title: string;
+    imageUrl?: string;
+    dateStart: string;
+    venueName: string;
+    city?: { name: string };
+  };
+}
+
+export interface Recommendation {
+  id: string;
+  eventId: string;
+  title: string;
+  description: string;
+  category: string;
+  dateStart: string;
+  venueName: string;
+  venueAddress: string;
+  imageUrl?: string;
+  isFree: boolean;
+  priceMin?: number;
+  cityName: string;
+  score: number;
+  reason: string;
+}
+
+export interface WaitlistEntry {
+  id: string;
+  position: number;
+  status: 'waiting' | 'notified' | 'converted' | 'expired';
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
+export interface CheckIn {
+  id: string;
+  checkedInAt: string;
+  checkInMethod: 'qr_code' | 'manual' | 'api';
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl?: string;
+  };
+  ticketType?: {
+    name: string;
+  };
+}
+
+export interface EventSeries {
+  id: string;
+  name: string;
+  description?: string;
+  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  interval: number;
+  dayOfWeek?: number;
+  dayOfMonth?: number;
+  startDate: string;
+  endDate?: string;
+  events: {
+    id: string;
+    title: string;
+    dateStart: string;
+    status: string;
+  }[];
+  stats?: {
+    total: number;
+    upcoming: number;
+    past: number;
+    totalAttendees: number;
+    totalCheckIns: number;
+  };
+}
+
+export interface TicketType {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  quantity: number;
+  sold: number;
+  maxPerUser: number;
+  saleStart?: string;
+  saleEnd?: string;
+  isActive: boolean;
+}
+
+export interface Order {
+  id: string;
+  status: 'pending' | 'completed' | 'cancelled' | 'refunded';
+  total: number;
+  currency: string;
+  email: string;
+  name: string;
+  items: {
+    id: string;
+    quantity: number;
+    priceAtTime: number;
+    ticketType: {
+      name: string;
+      event: {
+        title: string;
+        dateStart: string;
+        venueName: string;
+      };
+    };
+  }[];
+  createdAt: string;
+}
+
+export interface Follow {
+  id: string;
+  followerId: string;
+  followingId: string;
+  createdAt: string;
+  follower?: User;
+  following?: User;
 }
 
 export type NotificationType = 
@@ -134,7 +280,12 @@ export type NotificationType =
   | 'new_rsvp'
   | 'new_review'
   | 'event_update'
-  | 'venue_update';
+  | 'venue_update'
+  | 'new_follower'
+  | 'check_in_confirmed'
+  | 'new_check_in'
+  | 'waitlist_available'
+  | 'ticket_purchase';
 
 export interface Notification {
   id: string;

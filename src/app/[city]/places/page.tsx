@@ -49,7 +49,7 @@ export default function PlacesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main>
@@ -77,7 +77,7 @@ export default function PlacesPage() {
           <PlaceFilters onFilterChange={setFilters} />
 
           <div className="flex items-center justify-between mt-6 mb-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {isLoading ? 'Loading...' : `${places.length} places found`}
             </p>
             <ViewModeToggle

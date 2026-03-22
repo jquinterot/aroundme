@@ -9,7 +9,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: PlaceStepB
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Information</h2>
 
       <FormInput
         label="Place Name"

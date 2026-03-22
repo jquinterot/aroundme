@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -36,4 +38,8 @@ body {
   height: 100% !important;
   width: 100% !important;
   border-radius: 0.75rem;
+}
+
+.dark {
+  color-scheme: dark;
 }

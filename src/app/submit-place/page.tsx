@@ -65,7 +65,7 @@ export default function SubmitPlacePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
         <SuccessState
           title="Place Submitted!"
@@ -79,25 +79,25 @@ export default function SubmitPlacePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <div className="mb-8">
           <Link
             href={`/${formData.cityId}/places`}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-4"
+            className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 mb-4"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Submit a Place</h1>
-          <p className="text-gray-500 mt-1">Recommend a cool place in your city</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Submit a Place</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Recommend a cool place in your city</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 md:p-8">
           <FormStepper totalSteps={2} currentStep={step} colorScheme="teal" />
 
           <form>

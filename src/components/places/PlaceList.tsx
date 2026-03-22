@@ -11,20 +11,20 @@ export function PlaceList({ places, viewMode, city }: PlaceListProps) {
   if (places.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
           <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No places found</h3>
-        <p className="text-gray-500">Try adjusting your filters or check back later</p>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No places found</h3>
+        <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or check back later</p>
       </div>
     );
   }
 
   if (viewMode === 'map') {
     return (
-      <div className="h-[600px] rounded-xl overflow-hidden shadow-inner">
+      <div className="h-[600px] rounded-xl overflow-hidden shadow-inner bg-white dark:bg-gray-800">
         <PlaceMap
           places={places}
           city={city}

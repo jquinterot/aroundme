@@ -87,19 +87,19 @@ export function SearchBar() {
   return (
     <div ref={searchRef} className="relative">
       <form onSubmit={handleSubmit} className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search events, places..."
-          className="w-full md:w-64 pl-10 pr-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="w-full md:w-64 pl-10 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 dark:placeholder-gray-500"
         />
         {query && (
           <button
             type="button"
             onClick={clearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <X className="w-4 h-4" />
           </button>
@@ -110,16 +110,16 @@ export function SearchBar() {
       </form>
 
       {isOpen && results && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
           {totalResults === 0 ? (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               No results found for &quot;{query}&quot;
             </div>
           ) : (
             <>
               {results.events.length > 0 && (
                 <div>
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                  <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                     Events
                   </div>
                   {results.events.map((event) => {
@@ -129,18 +129,18 @@ export function SearchBar() {
                         key={event.id}
                         href={`/event/${event.id}`}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-0"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-5 h-5 text-indigo-600" />
+                        <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{event.title}</p>
-                          <p className="text-sm text-gray-500 truncate">
+                          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{event.title}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                             {event.city.name} • {event.venueName}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-400 flex-shrink-0">
+                        <div className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
                           {format(new Date(event.dateStart), 'd MMM', { locale: es })}
                         </div>
                       </Link>
@@ -151,7 +151,7 @@ export function SearchBar() {
 
               {results.places.length > 0 && (
                 <div>
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                  <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                     Places
                   </div>
                   {results.places.map((place) => {
@@ -161,19 +161,19 @@ export function SearchBar() {
                         key={place.id}
                         href={`/place/${place.id}`}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-0"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-5 h-5 text-teal-600" />
+                        <div className="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{place.name}</p>
-                          <p className="text-sm text-gray-500 truncate">
+                          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{place.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                             {place.city.name} • {place.address}
                           </p>
                         </div>
                         {place.rating > 0 && (
-                          <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
+                          <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
                             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                             {place.rating.toFixed(1)}
                           </div>

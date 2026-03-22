@@ -25,7 +25,7 @@ export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Ticket Price</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ticket Price</label>
           <ToggleOption
             options={[
               { value: true, label: 'Free', icon: '🎉', description: 'Free Event' },
@@ -69,7 +69,7 @@ export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }
         isLoading={isLoading}
       />
 
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
         Your event will be reviewed before publishing. You&apos;ll be notified once it&apos;s live.
       </p>
     </div>

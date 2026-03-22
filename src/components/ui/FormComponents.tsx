@@ -19,11 +19,11 @@ export function FormInput({
   rows,
   className = ''
 }: FormInputProps) {
-  const baseClassName = `w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${className}`;
+  const baseClassName = `w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${className}`;
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         {label} {required && '*'}
       </label>
       {rows ? (
@@ -60,13 +60,13 @@ interface FormSelectProps {
 export function FormSelect({ label, value, onChange, options, required }: FormSelectProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         {label} {required && '*'}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         required={required}
       >
         {options.map((opt) => (
@@ -101,27 +101,27 @@ export function CategorySelector({
   colorScheme = 'indigo'
 }: CategorySelectorProps) {
   const selectedClass = colorScheme === 'indigo' 
-    ? 'border-indigo-500 bg-indigo-50' 
-    : 'border-teal-500 bg-teal-50';
-  const unselectedClass = 'border-gray-200 hover:border-gray-300';
+    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-400' 
+    : 'border-teal-500 bg-teal-50 dark:bg-teal-900/30 dark:border-teal-400';
+  const unselectedClass = 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600';
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         {label} *
       </label>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
         {options.map((cat) => (
           <button
             key={cat.value}
             type="button"
             onClick={() => onChange(cat.value)}
-            className={`p-3 rounded-lg border text-center transition-colors ${
+            className={`p-2 sm:p-3 rounded-lg border text-center transition-all overflow-hidden ${
               value === cat.value ? selectedClass : unselectedClass
-            }`}
+            } dark:bg-gray-800 dark:text-gray-200`}
           >
-            <span className="text-xl">{cat.icon}</span>
-            <p className="text-xs mt-1">{cat.label}</p>
+            <span className="text-lg sm:text-xl block">{cat.icon}</span>
+            <p className="text-[10px] sm:text-xs mt-1 truncate overflow-hidden text-ellipsis whitespace-nowrap">{cat.label}</p>
           </button>
         ))}
       </div>
@@ -237,12 +237,12 @@ export function ToggleOption({ options, selected, onChange }: ToggleOptionProps)
           onClick={() => onChange(option.value)}
           className={`flex-1 p-4 rounded-lg border text-center transition-colors ${
             selected === option.value
-              ? 'border-indigo-500 bg-indigo-50'
-              : 'border-gray-200'
+              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-400'
+              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
           }`}
         >
           <span className="text-2xl">{option.icon}</span>
-          <p className="font-medium mt-1">{option.description}</p>
+          <p className="font-medium mt-1 text-gray-900 dark:text-gray-100">{option.description}</p>
         </button>
       ))}
     </div>
@@ -257,7 +257,7 @@ interface FormSectionProps {
 export function FormSection({ title, children }: FormSectionProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
       {children}
     </div>
   );

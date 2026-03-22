@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Calendar, Clock, MapPin, Star, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Star, CheckCircle, Ticket, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
@@ -43,6 +43,12 @@ export default function EventDetailPage() {
   const { data: analyticsData, refetch: refetchAnalytics } = useQuery({
     queryKey: ['analytics', eventId],
     queryFn: () => fetch(`/api/events/${eventId}/analytics`).then(res => res.json()),
+    enabled: !!eventId,
+  });
+
+  const { data: ticketsData } = useQuery({
+    queryKey: ['event-tickets', eventId],
+    queryFn: () => fetch(`/api/events/${eventId}/tickets`).then(res => res.json()),
     enabled: !!eventId,
   });
 
@@ -111,13 +117,13 @@ export default function EventDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-gray-200 rounded-xl" />
-            <div className="h-8 bg-gray-200 rounded w-3/4" />
-            <div className="h-4 bg-gray-200 rounded w-1/2" />
+            <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
           </div>
         </div>
       </div>
@@ -126,11 +132,11 @@ export default function EventDetailPage() {
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Event not found</h1>
-          <Link href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 hover:text-indigo-700">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Event not found</h1>
+          <Link href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700dark:hover:text-indigo-300">
             ← Back to events
           </Link>
         </div>
@@ -139,20 +145,20 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <Link
           href={`/${city?.slug || 'bogota'}`}
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6"
+          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to events
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="relative h-64 md:h-80 bg-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+          <div className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700">
             {event.image ? (
               <Image
                 src={event.image}
@@ -163,8 +169,8 @@ export default function EventDetailPage() {
                 priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-                {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-20 h-20 text-indigo-300" />; })()}
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50">
+                {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-20 h-20 text-indigo-300 dark:text-indigo-600" />; })()}
               </div>
             )}
             <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
@@ -186,11 +192,11 @@ export default function EventDetailPage() {
           </div>
 
           <div className="p-6 md:p-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               {event.title}
             </h1>
 
-            <div className="flex flex-wrap gap-6 mb-6 text-gray-600">
+            <div className="flex flex-wrap gap-6 mb-6 text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <span>{formatDetailDate(event.date.start)}</span>
@@ -205,7 +211,7 @@ export default function EventDetailPage() {
               </div>
             </div>
 
-            <p className="text-gray-700 mb-6 whitespace-pre-wrap">
+            <p className="text-gray-700 dark:text-gray-300 mb-6 whitespace-pre-wrap">
               {event.description}
             </p>
 
@@ -213,23 +219,23 @@ export default function EventDetailPage() {
               {event.tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
+                  className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm"
                 >
                   #{tag}
                 </span>
               ))}
             </div>
 
-            <div className="border-t border-gray-200 pt-6">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                    {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-5 h-5 text-indigo-500" />; })()}
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
+                    {(() => { const Icon = CategoryIcon(event.category); return <Icon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />; })()}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{event.organizer.name}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{event.organizer.name}</p>
                     {event.organizer.isVerified && (
-                      <p className="text-xs text-green-600 flex items-center gap-1">
+                      <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" />
                         Verified Organizer
                       </p>
@@ -238,11 +244,54 @@ export default function EventDetailPage() {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Price</p>
-                  <p className="text-2xl font-bold text-indigo-600">{formatPrice()}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Price</p>
+                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{formatPrice()}</p>
                 </div>
               </div>
             </div>
+
+            {ticketsData?.data?.ticketTypes?.length > 0 && (
+              <div className="mt-6 p-4 bg-indigo-50 rounded-xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                    <Ticket className="w-5 h-5 text-indigo-600" />
+                    Get Tickets
+                  </h3>
+                </div>
+                <div className="space-y-2">
+                  {ticketsData.data.ticketTypes.map((ticket: any) => {
+                    const available = ticket.quantity - ticket.sold;
+                    const isOnSale = (!ticket.saleStart || new Date() >= new Date(ticket.saleStart)) &&
+                                   (!ticket.saleEnd || new Date() <= new Date(ticket.saleEnd));
+                    return (
+                      <div key={ticket.id} className="flex items-center justify-between bg-white rounded-lg p-3">
+                        <div>
+                          <p className="font-medium text-gray-900">{ticket.name}</p>
+                          <p className="text-sm text-gray-500">
+                            {available > 0 ? `${available} available` : 'Sold out'}
+                            {ticket.maxPerUser && ` • Max ${ticket.maxPerUser} per person`}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg font-bold text-gray-900">
+                            {ticket.price === 0 ? 'Free' : `$${ticket.price.toLocaleString('COP')}`}
+                          </span>
+                          {isOnSale && available > 0 && (
+                            <Link
+                              href={`/checkout?event_id=${event.id}`}
+                              className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-1"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Buy
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {analytics.isOwner && (
               <AnalyticsPanel 

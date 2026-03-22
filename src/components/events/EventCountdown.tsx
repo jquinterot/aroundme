@@ -84,8 +84,8 @@ export function EventCountdown({ dateStart, eventId, compact = false }: EventCou
 
   if (timeLeft.total <= 0) {
     return (
-      <div className={`flex items-center gap-2 text-gray-500 ${compact ? 'text-sm' : ''}`}>
-        <Clock className="w-4 h-4" />
+      <div className={`flex items-center gap-1.5 text-gray-500 dark:text-gray-400 ${compact ? 'text-xs' : 'text-sm'}`}>
+        <Clock className={compact ? 'w-3 h-3' : 'w-4 h-4'} />
         Event has ended
       </div>
     );
@@ -93,63 +93,62 @@ export function EventCountdown({ dateStart, eventId, compact = false }: EventCou
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2">
-        <Clock className="w-4 h-4 text-indigo-500" />
-        <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-          {timeLeft.days > 0 && `${timeLeft.days}d `}
-          {timeLeft.hours > 0 && `${timeLeft.hours}h `}
-          {timeLeft.minutes > 0 && `${timeLeft.minutes}m`}
+      <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+        <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+        <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+          {timeLeft.days > 0 ? `${timeLeft.days}d ` : ''}
+          {timeLeft.days > 0 && timeLeft.hours > 0 ? `${String(timeLeft.hours).padStart(2, '0')}h ` : timeLeft.days === 0 && timeLeft.hours > 0 ? `${timeLeft.hours}h ` : ''}
+          {timeLeft.days === 0 && timeLeft.hours === 0 ? `${timeLeft.minutes}m` : timeLeft.hours === 0 ? `${String(timeLeft.minutes).padStart(2, '0')}m` : `${String(timeLeft.minutes).padStart(2, '0')}m`}
         </span>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          {timeLeft.days > 0 ? 'Time until event' : 'Starting soon'}
+    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-4 text-white">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium flex items-center gap-1.5">
+          <Clock className="w-4 h-4" />
+          {timeLeft.days > 0 ? 'Tiempo restante' : 'Comienza pronto'}
         </h3>
         {eventId && (
           <button
             onClick={hasReminder ? handleRemoveReminder : handleSetReminder}
             disabled={isSettingReminder}
-            className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-colors disabled:opacity-50"
           >
             {hasReminder ? (
               <>
-                <BellOff className="w-4 h-4" />
-                Remove reminder
+                <BellOff className="w-3 h-3" />
+                <span className="hidden sm:inline">Quitar</span>
               </>
             ) : (
               <>
-                <Bell className="w-4 h-4" />
-                Remind me
+                <Bell className="w-3 h-3" />
+                <span className="hidden sm:inline">Recordar</span>
               </>
             )}
           </button>
         )}
       </div>
       
-      <div className="grid grid-cols-4 gap-4">
-        <div className="text-center">
-          <div className="text-3xl font-bold">{timeLeft.days}</div>
-          <div className="text-xs opacity-80">Days</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold">{String(timeLeft.hours).padStart(2, '0')}</div>
-          <div className="text-xs opacity-80">Hours</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold">{String(timeLeft.minutes).padStart(2, '0')}</div>
-          <div className="text-xs opacity-80">Minutes</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold">{String(timeLeft.seconds).padStart(2, '0')}</div>
-          <div className="text-xs opacity-80">Seconds</div>
-        </div>
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+        <CountdownUnit value={timeLeft.days} label="Días" show={timeLeft.days > 0} />
+        <CountdownUnit value={timeLeft.hours} label="Horas" />
+        <CountdownUnit value={timeLeft.minutes} label="Min" />
+        <CountdownUnit value={timeLeft.seconds} label="Seg" isSeconds />
       </div>
+    </div>
+  );
+}
+
+function CountdownUnit({ value, label, show = true, isSeconds = false }: { value: number; label: string; show?: boolean; isSeconds?: boolean }) {
+  return (
+    <div className={`text-center ${!show ? 'opacity-40' : ''}`}>
+      <div className={`font-bold tabular-nums ${isSeconds ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'} leading-none`}>
+        {show ? value : '0'}
+      </div>
+      <div className="text-[10px] sm:text-xs opacity-75 mt-0.5">{label}</div>
     </div>
   );
 }

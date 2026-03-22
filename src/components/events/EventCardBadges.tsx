@@ -17,6 +17,19 @@ export function FeaturedBadge({ event }: FeaturedBadgeProps) {
   );
 }
 
+const EVENT_CATEGORY_COLORS_DARK: Record<string, string> = {
+  music: 'bg-purple-900/50 text-purple-300',
+  food: 'bg-orange-900/50 text-orange-300',
+  sports: 'bg-green-900/50 text-green-300',
+  art: 'bg-pink-900/50 text-pink-300',
+  tech: 'bg-blue-900/50 text-blue-300',
+  community: 'bg-teal-900/50 text-teal-300',
+  nightlife: 'bg-indigo-900/50 text-indigo-300',
+  outdoor: 'bg-emerald-900/50 text-emerald-300',
+  education: 'bg-amber-900/50 text-amber-300',
+  other: 'bg-gray-700 text-gray-300',
+};
+
 interface CategoryBadgeProps {
   event: Event;
 }
@@ -24,9 +37,10 @@ interface CategoryBadgeProps {
 export function CategoryBadge({ event }: CategoryBadgeProps) {
   const CategoryIcon = CATEGORY_ICONS[event.category] || CATEGORY_ICONS.other;
   const colorClass = EVENT_CATEGORY_COLORS[event.category] || 'bg-gray-100 text-gray-700';
+  const darkColorClass = EVENT_CATEGORY_COLORS_DARK[event.category] || 'bg-gray-700 text-gray-300';
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${colorClass} dark:${darkColorClass}`}>
       <CategoryIcon size={12} />
       <span className="capitalize">{event.category}</span>
     </span>
@@ -62,7 +76,7 @@ export function PriceDisplay({ event, isFeatured }: PriceDisplayProps) {
   };
 
   return (
-    <span className={`font-semibold ${isFeatured ? 'text-yellow-600' : 'text-indigo-600'}`}>
+    <span className={`font-semibold ${isFeatured ? 'text-yellow-600 dark:text-yellow-400' : 'text-indigo-600 dark:text-indigo-400'}`}>
       {formatPrice()}
     </span>
   );
@@ -76,7 +90,7 @@ export function VerifiedBadge({ isVerified }: VerifiedBadgeProps) {
   if (!isVerified) return null;
 
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-green-600">
+    <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
       <CheckCircle className="w-3 h-3" />
       Verified
     </span>
