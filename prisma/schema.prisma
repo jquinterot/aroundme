@@ -436,6 +436,9 @@ model Activity {
   cityId      String
   providerName String  // Person or business offering the activity
   providerContact String? // Email or phone
+  address     String?  // Location address
+  lat         Float?
+  lng         Float?
   schedule    String   // Human readable: "Every Tuesday 7pm", "Fridays 9pm"
   scheduleDays String? // JSON: ["tuesday", "friday"]
   scheduleTime String? // Time: "19:00"

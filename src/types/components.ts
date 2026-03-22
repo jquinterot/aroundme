@@ -115,7 +115,7 @@ export interface HeroTab {
 export interface HeroSectionProps {
   title: string;
   subtitle: string;
-  gradient: 'indigo' | 'teal';
+  gradient: 'indigo' | 'teal' | 'amber';
   tabs: HeroTab[];
   activeTab?: string;
   cities: City[];

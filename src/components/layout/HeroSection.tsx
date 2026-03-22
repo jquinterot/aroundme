@@ -8,16 +8,19 @@ import { HeroSectionProps } from '@/types/components';
 const gradientClasses = {
   indigo: 'from-indigo-600 to-purple-600',
   teal: 'from-teal-600 to-cyan-600',
+  amber: 'from-amber-600 to-orange-600',
 };
 
 const textColor = {
   indigo: 'text-indigo-100',
   teal: 'text-teal-100',
+  amber: 'text-amber-100',
 };
 
 const activeBg = {
   indigo: 'bg-white text-indigo-600',
   teal: 'bg-white text-teal-600',
+  amber: 'bg-white text-amber-600',
 };
 
 export function HeroSection({

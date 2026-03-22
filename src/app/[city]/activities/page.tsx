@@ -78,9 +78,9 @@ export default function ActivitiesPage() {
 
       <main>
         <HeroSection
-          title={`Activities in ${currentCity?.name || 'your city'}`}
+          title={`Discover Activities in ${currentCity?.name || 'your city'}`}
           subtitle="Classes, tours, experiences and more"
-          gradient="indigo"
+          gradient="amber"
           tabs={tabs}
           activeTab="Activities"
           cities={cities}

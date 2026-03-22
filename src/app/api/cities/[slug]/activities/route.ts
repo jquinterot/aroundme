@@ -71,6 +71,8 @@ export async function GET(
         subcategory: activity.subcategory,
         cityId: activity.cityId,
         providerName: activity.providerName,
+        address: activity.address,
+        coordinates: activity.lat && activity.lng ? { lat: activity.lat, lng: activity.lng } : null,
         schedule: activity.schedule,
         scheduleDays,
         scheduleTime: activity.scheduleTime,
