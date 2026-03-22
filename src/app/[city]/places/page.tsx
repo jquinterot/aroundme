@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, Ticket, MapPin } from 'lucide-react';
+import { Plus, Ticket, MapPin, Star } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Header, HeroSection, Footer } from '@/components/layout';
 import { PlaceList, PlaceFilters } from '@/components/places';
@@ -46,6 +46,7 @@ export default function PlacesPage() {
   const tabs = [
     { label: 'Events', href: `/${citySlug}`, icon: Ticket },
     { label: 'Places', href: `/${citySlug}/places`, icon: MapPin },
+    { label: 'Activities', href: `/${citySlug}/activities`, icon: Star },
   ];
 
   return (

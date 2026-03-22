@@ -23,6 +23,7 @@ model City {
   events      Event[]
   places      Place[]
   users       User[]
+  activities  Activity[]
 }
 
 model User {
@@ -56,11 +57,13 @@ model User {
   orders        Order[]
   followers     Follow[] @relation("following")
   following     Follow[] @relation("follower")
+  userActivities UserActivity[]
   activities    Activity[]
   sentEmails    EmailLog[]
   waitlists     Waitlist[]
   checkIns      CheckIn[]
   recommendationsReceived Recommendation[] @relation("recommendedTo")
+  bookings      ActivityBooking[]
 }
 
 model Session {
@@ -115,7 +118,7 @@ model Event {
   ticketTypes   TicketType[]
   waitlist      Waitlist[]
   checkIns      CheckIn[]
-  activities    Activity[]
+  userActivities UserActivity[]
 }
 
 model EventSeries {
@@ -329,7 +332,7 @@ model Follow {
   @@index([followingId])
 }
 
-model Activity {
+model UserActivity {
   id          String   @id @default(cuid())
   userId      String
   type        String   // created_event, rsvp, review, follow, save, check_in
@@ -422,4 +425,59 @@ model EmailTemplate {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   // class, tour, entertainment, experience, wellness
+  subcategory String?  // salsa, yoga, coffee-tour, etc.
+  cityId      String
+  providerName String  // Person or business offering the activity
+  providerContact String? // Email or phone
+  schedule    String   // Human readable: "Every Tuesday 7pm", "Fridays 9pm"
+  scheduleDays String? // JSON: ["tuesday", "friday"]
+  scheduleTime String? // Time: "19:00"
+  duration    String?  // "2 hours", "Full day"
+  capacity    Int?
+  price       Float    @default(0)
+  currency    String   @default("COP")
+  isFree      Boolean  @default(false)
+  imageUrl    String?
+  includes    String?  // JSON array: ["Transport", "Equipment", "Coffee tasting"]
+  skillLevel  String?  // beginner, intermediate, all_levels
+  status      String   @default("active") // active, paused, cancelled
+  userId      String?
+  viewCount   Int      @default(0)
+  bookingCount Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  city        City     @relation(fields: [cityId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+  bookings    ActivityBooking[]
+
+  @@index([cityId, status])
+  @@index([category])
+}
+
+model ActivityBooking {
+  id            String   @id @default(cuid())
+  activityId    String
+  userId        String?
+  guestName     String
+  guestEmail    String
+  guestPhone    String?
+  tickets       Int      @default(1)
+  total         Float
+  status        String   @default("pending") // pending, confirmed, cancelled
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  activity      Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  user          User?    @relation(fields: [userId], references: [id])
+
+  @@index([activityId])
 }

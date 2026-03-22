@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Ticket, MapPin } from 'lucide-react';
+import { Plus, Ticket, MapPin, Star } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Header, HeroSection } from '@/components/layout';
 import { EventList, EventFilters } from '@/components/events';
@@ -48,6 +48,7 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
   const tabs = [
     { label: 'Events', href: `/${citySlug}`, icon: Ticket },
     { label: 'Places', href: `/${citySlug}/places`, icon: MapPin },
+    { label: 'Activities', href: `/${citySlug}/activities`, icon: Star },
   ];
 
   return (
