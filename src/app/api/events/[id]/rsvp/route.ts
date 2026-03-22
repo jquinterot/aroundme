@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
-import { notifyEventOrganizer } from '@/lib/notifications';
+import { notifyEventOwner } from '@/lib/notifications';
 
 export async function POST(
   request: NextRequest,
@@ -63,7 +63,7 @@ export async function POST(
       });
 
       if (event.userId) {
-        await notifyEventOrganizer(
+        await notifyEventOwner(
           id,
           'new_rsvp',
           'New RSVP',

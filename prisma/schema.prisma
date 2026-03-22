@@ -26,25 +26,41 @@ model City {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String
-  password    String
-  role        String   @default("user")
-  cityId      String?
-  isVerified  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  password      String
+  role          String   @default("user")
+  cityId        String?
+  isVerified    Boolean  @default(false)
+  avatarUrl     String?
+  bio           String?
+  website       String?
+  instagram     String?
+  followerCount Int      @default(0)
+  followingCount Int     @default(0)
+  eventCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   
-  city        City?    @relation(fields: [cityId], references: [id])
-  events      Event[]
-  reviews     Review[]
-  ownedPlaces Place[]
-  saves       Save[]
-  rsvps       RSVP[]
+  city          City?    @relation(fields: [cityId], references: [id])
+  events        Event[]
+  reviews       Review[]
+  ownedPlaces   Place[]
+  saves         Save[]
+  rsvps         RSVP[]
   notifications Notification[]
-  sessions    Session[]
-  viewHistory ViewHistory[]
+  sessions      Session[]
+  viewHistory   ViewHistory[]
+  pushSubscriptions PushSubscription[]
+  orders        Order[]
+  followers     Follow[] @relation("following")
+  following     Follow[] @relation("follower")
+  activities    Activity[]
+  sentEmails    EmailLog[]
+  waitlists     Waitlist[]
+  checkIns      CheckIn[]
+  recommendationsReceived Recommendation[] @relation("recommendedTo")
 }
 
 model Session {
@@ -60,37 +76,64 @@ model Session {
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  category    String
-  status      String   @default("pending")
-  cityId      String
-  venueName   String
-  venueAddress String
-  venueLat    Float
-  venueLng    Float
-  dateStart   DateTime
-  dateEnd     DateTime?
-  priceMin    Float?
-  priceMax    Float?
-  currency    String   @default("COP")
-  isFree      Boolean  @default(true)
-  imageUrl    String?
-  tags        String   @default("")
-  userId      String?
-  viewCount   Int      @default(0)
-  saveCount   Int      @default(0)
-  isFeatured  Boolean  @default(false)
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  category      String
+  status        String   @default("pending")
+  cityId        String
+  venueName     String
+  venueAddress  String
+  venueLat      Float
+  venueLng      Float
+  dateStart     DateTime
+  dateEnd       DateTime?
+  priceMin      Float?
+  priceMax      Float?
+  currency      String   @default("COP")
+  isFree        Boolean  @default(true)
+  imageUrl      String?
+  tags          String   @default("")
+  userId        String?
+  viewCount     Int      @default(0)
+  saveCount     Int      @default(0)
+  isFeatured    Boolean  @default(false)
   featuredUntil DateTime?
-  featuredTier String   @default("none") // none, basic, premium
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  featuredTier  String   @default("none")
+  isPrivate     Boolean  @default(false)
+  maxAttendees  Int?
+  currentAttendees Int   @default(0)
+  seriesId      String?
+  series        EventSeries? @relation(fields: [seriesId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   
-  city        City     @relation(fields: [cityId], references: [id])
-  user        User?    @relation(fields: [userId], references: [id])
-  saves       Save[]
-  rsvps       RSVP[]
+  city          City     @relation(fields: [cityId], references: [id])
+  user          User?    @relation(fields: [userId], references: [id])
+  saves         Save[]
+  rsvps         RSVP[]
+  ticketTypes   TicketType[]
+  waitlist      Waitlist[]
+  checkIns      CheckIn[]
+  activities    Activity[]
+}
+
+model EventSeries {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  frequency     String   // daily, weekly, biweekly, monthly
+  interval      Int      @default(1)
+  dayOfWeek     Int?     // 0-6 for weekly
+  dayOfMonth    Int?     // 1-31 for monthly
+  startDate     DateTime
+  endDate       DateTime?
+  occurrences   Int?     // number of times to repeat
+  parentEventId String?  // template event
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  events        Event[]
 }
 
 model Place {
@@ -187,4 +230,196 @@ model ViewHistory {
 
   @@index([userId, createdAt])
   @@index([userId, type])
+}
+
+model AdminReport {
+  id          String   @id @default(cuid())
+  reporterId  String?
+  type        String   // event, place, review, user
+  itemId      String
+  reason      String
+  description String?
+  status      String   @default("pending") // pending, reviewed, resolved, dismissed
+  adminId     String?
+  adminNote   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  keys      String   // JSON { p256dh, auth }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model TicketType {
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String
+  description String?
+  price       Float
+  quantity    Int
+  sold        Int      @default(0)
+  maxPerUser  Int      @default(10)
+  saleStart   DateTime?
+  saleEnd     DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@index([eventId])
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  userId          String
+  status          String   @default("pending") // pending, completed, cancelled, refunded
+  total           Float
+  currency        String   @default("COP")
+  stripeSessionId String?  @unique
+  stripePaymentId String?
+  email           String
+  name            String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id           String     @id @default(cuid())
+  orderId      String
+  ticketTypeId String
+  quantity     Int
+  priceAtTime  Float
+  createdAt    DateTime   @default(now())
+  
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // created_event, rsvp, review, follow, save, check_in
+  eventId     String?
+  placeId     String?
+  targetUserId String?
+  metadata    String?  // JSON data
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event       Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+model Waitlist {
+  id          String   @id @default(cuid())
+  eventId     String
+  userId      String
+  position    Int
+  notifyAt    Int?     // notify when X spots available
+  status      String   @default("waiting") // waiting, notified, converted, expired
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, userId])
+  @@index([eventId, position])
+}
+
+model CheckIn {
+  id          String   @id @default(cuid())
+  eventId     String
+  userId      String
+  ticketTypeId String?
+  checkedInAt DateTime @default(now())
+  checkInMethod String // qr_code, manual, api
+  createdAt   DateTime @default(now())
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, userId])
+  @@index([eventId])
+}
+
+model Recommendation {
+  id          String   @id @default(cuid())
+  userId      String
+  eventId     String?
+  placeId     String?
+  score       Float    @default(0)
+  reason      String?
+  isViewed    Boolean  @default(false)
+  isClicked   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation("recommendedTo", fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, isViewed])
+  @@index([userId, createdAt])
+}
+
+model EmailLog {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // digest, reminder, promotion, welcome
+  subject     String
+  content     String
+  sentAt      DateTime @default(now())
+  openedAt    DateTime?
+  clickedAt   DateTime?
+  bouncedAt   DateTime?
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, sentAt])
+}
+
+model EmailTemplate {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  type        String   // digest, reminder, promotion, welcome, event_update
+  subject     String
+  content     String   // HTML template with placeholders
+  variables   String   // JSON array of variable names
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

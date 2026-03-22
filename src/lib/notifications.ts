@@ -1,11 +1,21 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from './prisma';
+import { sendPushNotification } from './push-notifications';
 
 export type NotificationType = 
   | 'event_reminder'
   | 'new_rsvp'
   | 'new_review'
   | 'event_update'
-  | 'venue_update';
+  | 'venue_update'
+  | 'ticket_purchase'
+  | 'event_approved'
+  | 'event_rejected'
+  | 'report_resolved'
+  | 'check_in_confirmed'
+  | 'new_check_in'
+  | 'new_follower'
+  | 'waitlist_available'
+  | 'digest';
 
 interface CreateNotificationParams {
   userId: string;
@@ -16,34 +26,38 @@ interface CreateNotificationParams {
   data?: Record<string, unknown>;
 }
 
-export async function createNotification({
-  userId,
-  type,
-  title,
-  message,
-  link,
-  data,
-}: CreateNotificationParams) {
-  return prisma.notification.create({
+export async function createNotification(params: CreateNotificationParams) {
+  const notification = await prisma.notification.create({
     data: {
-      userId,
-      type,
-      title,
-      message,
-      link,
-      data: data ? JSON.stringify(data) : null,
+      userId: params.userId,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+      link: params.link,
+      data: params.data ? JSON.stringify(params.data) : null,
     },
   });
+
+  const subscriptions = await prisma.pushSubscription.findMany({
+    where: { userId: params.userId },
+  });
+
+  for (const sub of subscriptions) {
+    const keys = JSON.parse(sub.keys);
+    await sendPushNotification(
+      { endpoint: sub.endpoint, keys },
+      {
+        title: params.title,
+        body: params.message,
+        url: params.link ? `${process.env.NEXT_PUBLIC_APP_URL || ''}${params.link}` : undefined,
+      }
+    );
+  }
+
+  return notification;
 }
 
-export async function notifyEventOrganizer(
-  eventId: string,
-  type: NotificationType,
-  title: string,
-  message: string,
-  link?: string,
-  data?: Record<string, unknown>
-) {
+export async function notifyEventOwner(eventId: string, type: NotificationType, title: string, message: string, link?: string) {
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     select: { userId: true },
@@ -56,19 +70,11 @@ export async function notifyEventOrganizer(
       title,
       message,
       link,
-      data,
     });
   }
 }
 
-export async function notifyPlaceOwner(
-  placeId: string,
-  type: NotificationType,
-  title: string,
-  message: string,
-  link?: string,
-  data?: Record<string, unknown>
-) {
+export async function notifyPlaceOwner(placeId: string, type: NotificationType, title: string, message: string, link?: string) {
   const place = await prisma.place.findUnique({
     where: { id: placeId },
     select: { ownerId: true },
@@ -81,7 +87,6 @@ export async function notifyPlaceOwner(
       title,
       message,
       link,
-      data,
     });
   }
 }
