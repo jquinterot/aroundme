@@ -45,9 +45,7 @@ export async function POST(
       );
     }
 
-    const subtotal = activity.isFree ? 0 : activity.price * tickets;
-    const commissionAmount = subtotal * activity.commission;
-    const total = subtotal + commissionAmount;
+    const total = activity.isFree ? 0 : activity.price * tickets;
 
     const booking = await prisma.activityBooking.create({
       data: {
@@ -72,8 +70,6 @@ export async function POST(
       success: true,
       data: {
         id: booking.id,
-        subtotal,
-        commission: commissionAmount,
         total,
         status: booking.status,
       },

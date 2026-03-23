@@ -172,7 +172,7 @@ export async function createActivity(data: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: Record<string, any>;
 }) {
-  const activity = await prisma.activity.create({
+  const activity = await prisma.userActivity.create({
     data: {
       userId: data.userId,
       type: data.type,
@@ -211,7 +211,7 @@ export async function getActivityFeed(
   }
 
   const [activities, total] = await Promise.all([
-    prisma.activity.findMany({
+    prisma.userActivity.findMany({
       where,
       include: {
         user: {
@@ -237,7 +237,7 @@ export async function getActivityFeed(
       take: limit,
       skip: (page - 1) * limit,
     }),
-    prisma.activity.count({ where }),
+    prisma.userActivity.count({ where }),
   ]);
 
   return {

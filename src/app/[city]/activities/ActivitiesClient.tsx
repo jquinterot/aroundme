@@ -105,7 +105,6 @@ export default function ActivitiesClient({ citySlug, initialActivities = [], ini
                 { value: 'list', label: 'List' },
                 { value: 'map', label: 'Map' },
               ]}
-              colorScheme="amber"
             />
           </div>
 
