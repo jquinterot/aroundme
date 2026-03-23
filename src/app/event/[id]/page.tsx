@@ -17,6 +17,7 @@ import { OwnerControls } from '@/components/events/OwnerControls';
 import { EventCountdown } from '@/components/events/EventCountdown';
 import { EventDetailHeader } from '@/components/events/EventDetailHeader';
 import { TicketSection } from '@/components/events/TicketSection';
+import { WaitlistButton } from '@/components/events/WaitlistButton';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -236,6 +237,16 @@ export default function EventDetailPage() {
               />
             ) : (
               <LoginPrompt />
+            )}
+
+            {event.maxAttendees && (
+              <div className="mt-4">
+                <WaitlistButton
+                  eventId={event.id}
+                  maxAttendees={event.maxAttendees}
+                  currentAttendees={analytics.rsvpCount?.going || 0}
+                />
+              </div>
             )}
           </div>
         </div>

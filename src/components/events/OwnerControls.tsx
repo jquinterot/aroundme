@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Pencil, Trash2, AlertTriangle, Loader2, XCircle, Copy } from 'lucide-react';
+import { Pencil, Trash2, AlertTriangle, Loader2, XCircle, Copy, QrCode } from 'lucide-react';
 
 interface OwnerControlsProps {
   eventId: string;
@@ -124,6 +124,13 @@ export function OwnerControls({ eventId, eventTitle, eventStatus, citySlug }: Ow
             >
               <Pencil className="w-4 h-4" />
               Edit Event
+            </Link>
+            <Link
+              href={`/event/${eventId}/check-in`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <QrCode className="w-4 h-4" />
+              Check-in
             </Link>
             <button
               onClick={handleDuplicate}

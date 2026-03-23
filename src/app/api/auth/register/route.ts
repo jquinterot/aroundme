@@ -36,6 +36,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!/[A-Z]/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one uppercase letter' },
+        { status: 400 }
+      );
+    }
+
+    if (!/[a-z]/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one lowercase letter' },
+        { status: 400 }
+      );
+    }
+
+    if (!/\d/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one number' },
+        { status: 400 }
+      );
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one special character' },
+        { status: 400 }
+      );
+    }
+
     if (name.length < 2 || name.length > 100) {
       return NextResponse.json(
         { success: false, error: 'Name must be between 2 and 100 characters' },

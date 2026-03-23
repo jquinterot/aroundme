@@ -73,6 +73,7 @@ export interface Event {
   isFeatured: boolean;
   featuredUntil?: string;
   featuredTier: FeaturedTier;
+  maxAttendees?: number;
   createdAt: string;
   updatedAt: string;
 }

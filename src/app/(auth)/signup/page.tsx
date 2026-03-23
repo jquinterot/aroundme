@@ -6,6 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout';
 
+const passwordRequirements = [
+  { id: 'length', label: 'At least 8 characters', test: (p: string) => p.length >= 8 },
+  { id: 'upper', label: 'One uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
+  { id: 'lower', label: 'One lowercase letter', test: (p: string) => /[a-z]/.test(p) },
+  { id: 'number', label: 'One number', test: (p: string) => /\d/.test(p) },
+  { id: 'special', label: 'One special character', test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p) },
+];
+
 export default function SignupPage() {
   const router = useRouter();
   const { refresh } = useAuth();
@@ -16,11 +24,18 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
 
+  const passwordValid = passwordRequirements.every(req => req.test(password));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!acceptTerms) {
       setError('Please accept the terms and conditions');
+      return;
+    }
+
+    if (!passwordValid) {
+      setError('Please meet all password requirements');
       return;
     }
 
@@ -111,7 +126,18 @@ export default function SignupPage() {
                   placeholder="••••••••"
                   required
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Must be at least 8 characters</p>
+                <div className="mt-2 space-y-1">
+                  {passwordRequirements.map((req) => (
+                    <div key={req.id} className="flex items-center gap-2 text-xs">
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-white text-xs ${req.test(password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                        {req.test(password) ? '✓' : ''}
+                      </span>
+                      <span className={req.test(password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}>
+                        {req.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div>
