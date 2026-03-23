@@ -3,11 +3,10 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowLeft, MapPin, Star, Phone, Instagram, Heart, Share2, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
 import { EventMap } from '@/components/map';
-import { ReviewForm, ReviewCard } from '@/components/places';
+import { ReviewForm, ReviewCard, PlaceGallery } from '@/components/places';
 import { apiService } from '@/services';
 import { City } from '@/types';
 import { CATEGORY_ICONS, PLACE_CATEGORY_COLORS } from '@/lib/constants';
@@ -125,20 +124,13 @@ export default function PlaceDetailPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
           <div className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700">
             {place.image ? (
-              <Image
-                src={place.image}
-                alt={place.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 800px"
-                className="object-cover"
-                priority
-              />
+              <PlaceGallery images={[place.image]} placeName={place.name} />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/50 dark:to-cyan-900/50">
                 {(() => { const Icon = CategoryIcon(place.category); return <Icon className="w-20 h-20 text-teal-300 dark:text-teal-600" />; })()}
               </div>
             )}
-            <div className="absolute top-4 left-4 flex gap-2">
+            <div className="absolute top-4 left-4 flex gap-2 z-10">
               <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(place.category)}`}>
                 {(() => { const Icon = CategoryIcon(place.category); return <Icon size={16} />; })()} {place.category}
               </span>

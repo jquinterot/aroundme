@@ -3,3 +3,5 @@ export { PlaceList } from './PlaceList';
 export { PlaceFilters } from './PlaceFilters';
 export { ReviewForm } from './ReviewForm';
 export { ReviewCard } from './ReviewCard';
+export { PlaceGallery } from './PlaceGallery';
+export { OperatingHoursEditor } from './OperatingHoursEditor';

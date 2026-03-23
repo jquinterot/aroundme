@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Providers } from '@/components/Providers';
+import { MobileNav } from '@/components/layout/MobileNav';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className="antialiased">
         <Providers>
           {children}
+          <MobileNav />
         </Providers>
       </body>
     </html>

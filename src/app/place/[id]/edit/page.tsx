@@ -7,10 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, MapPin, Trash2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout';
+import { OperatingHoursEditor } from '@/components/places';
 import { apiService } from '@/services';
 import { useCities } from '@/hooks/useCities';
 import { PLACE_CATEGORY_OPTIONS } from '@/lib/constants';
 import { PlaceCategory } from '@/types';
+
+interface HoursData {
+  [key: string]: { open: string; close: string } | null;
+}
 
 interface PlaceData {
   id: string;
@@ -29,6 +34,7 @@ interface PlaceData {
     website?: string;
     instagram?: string;
   };
+  hours?: HoursData;
 }
 
 export default function EditPlacePage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,6 +58,7 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
     contactPhone: '',
     contactWebsite: '',
     contactInstagram: '',
+    hours: {} as HoursData,
   });
 
   useEffect(() => {
@@ -80,6 +87,7 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
           contactPhone: place.contact?.phone || '',
           contactWebsite: place.contact?.website || '',
           contactInstagram: place.contact?.instagram || '',
+          hours: place.hours || {},
         });
       });
     }
@@ -87,6 +95,10 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateHours = (hours: HoursData) => {
+    setFormData(prev => ({ ...prev, hours }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,6 +121,7 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
           contactPhone: formData.contactPhone || null,
           contactWebsite: formData.contactWebsite || null,
           contactInstagram: formData.contactInstagram || null,
+          hours: formData.hours,
         }),
       });
 
@@ -351,6 +364,10 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
                 />
               </div>
             </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-6">
+            <OperatingHoursEditor hours={formData.hours} onChange={updateHours} />
           </div>
 
           <div className="flex gap-4">
