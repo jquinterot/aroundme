@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Header } from '@/components/layout';
 import { Heart, Calendar, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
 
@@ -154,10 +154,4 @@ export default function SavedEventsPage() {
       </main>
     </div>
   );
-}
-
-function useMutation({ mutationFn }: { mutationFn: (eventId: string) => Promise<unknown> }) {
-  return {
-    mutate: (eventId: string) => mutationFn(eventId),
-  };
 }

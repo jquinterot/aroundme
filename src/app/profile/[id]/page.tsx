@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
-import { Calendar, MapPin, Check, Loader2, Settings, Activity } from 'lucide-react';
+import { Calendar, MapPin, Check, Loader2, Settings, Activity, UserPlus, UserMinus } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { User } from '@/types';
@@ -23,6 +23,15 @@ interface UserProfile extends User {
   isFollowing?: boolean;
 }
 
+interface FollowUser {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  isVerified?: boolean;
+  followerCount?: number;
+  eventCount?: number;
+}
+
 export default function UserProfilePage() {
   const params = useParams();
   const userId = (params?.id as string) || '';
@@ -32,6 +41,10 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState<'events' | 'activity' | 'followers' | 'following'>('events');
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [followers, setFollowers] = useState<FollowUser[]>([]);
+  const [following, setFollowing] = useState<FollowUser[]>([]);
+  const [followersLoading, setFollowersLoading] = useState(false);
+  const [followingLoading, setFollowingLoading] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -85,6 +98,44 @@ export default function UserProfilePage() {
       setFollowLoading(false);
     }
   };
+
+  const fetchFollowers = useCallback(async () => {
+    setFollowersLoading(true);
+    try {
+      const res = await fetch(`/api/follow?userId=${userId}&type=followers`);
+      const data = await res.json();
+      if (data.success) {
+        setFollowers(data.users || []);
+      }
+    } catch (error) {
+      console.error('Error fetching followers:', error);
+    } finally {
+      setFollowersLoading(false);
+    }
+  }, [userId]);
+
+  const fetchFollowing = useCallback(async () => {
+    setFollowingLoading(true);
+    try {
+      const res = await fetch(`/api/follow?userId=${userId}&type=following`);
+      const data = await res.json();
+      if (data.success) {
+        setFollowing(data.users || []);
+      }
+    } catch (error) {
+      console.error('Error fetching following:', error);
+    } finally {
+      setFollowingLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (activeTab === 'followers') {
+      fetchFollowers();
+    } else if (activeTab === 'following') {
+      fetchFollowing();
+    }
+  }, [activeTab, fetchFollowers, fetchFollowing]);
 
   if (loading) {
     return (
@@ -310,14 +361,78 @@ export default function UserProfilePage() {
             )}
 
             {activeTab === 'followers' && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">{user.followerCount} seguidores</p>
+              <div>
+                {followersLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                  </div>
+                ) : followers.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {followers.map((follower) => (
+                      <Link
+                        key={follower.id}
+                        href={`/profile/${follower.id}`}
+                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+                          {follower.avatarUrl ? (
+                            <Image src={follower.avatarUrl} alt={follower.name} width={40} height={40} className="object-cover" />
+                          ) : (
+                            follower.name.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 dark:text-white truncate">{follower.name}</p>
+                          <p className="text-xs text-gray-500">{follower.eventCount || 0} eventos</p>
+                        </div>
+                        {follower.isVerified && <Check className="w-4 h-4 text-blue-500 flex-shrink-0" />}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <UserMinus className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">No hay seguidores todavía</p>
+                  </div>
+                )}
               </div>
             )}
 
             {activeTab === 'following' && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">{user.followingCount} siguiendo</p>
+              <div>
+                {followingLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                  </div>
+                ) : following.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {following.map((user) => (
+                      <Link
+                        key={user.id}
+                        href={`/profile/${user.id}`}
+                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+                          {user.avatarUrl ? (
+                            <Image src={user.avatarUrl} alt={user.name} width={40} height={40} className="object-cover" />
+                          ) : (
+                            user.name.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+                          <p className="text-xs text-gray-500">{user.eventCount || 0} eventos</p>
+                        </div>
+                        {user.isVerified && <Check className="w-4 h-4 text-blue-500 flex-shrink-0" />}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <UserPlus className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">No está siguiendo a nadie todavía</p>
+                  </div>
+                )}
               </div>
             )}
           </div>

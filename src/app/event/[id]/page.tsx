@@ -126,7 +126,7 @@ export default function EventDetailPage() {
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Event not found</h1>
-          <Link href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700dark:hover:text-indigo-300">
+          <Link href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
             ← Back to events
           </Link>
         </div>

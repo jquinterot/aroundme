@@ -101,7 +101,7 @@ export default function PlaceDetailPage() {
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Place not found</h1>
-          <Link href={`/${city?.slug || 'bogota'}/places`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700dark:hover:text-indigo-300">
+          <Link href={`/${city?.slug || 'bogota'}/places`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
             ← Back to places
           </Link>
         </div>
