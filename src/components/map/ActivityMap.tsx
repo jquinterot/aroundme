@@ -26,13 +26,15 @@ interface ActivityMapItem extends MapItem {
 }
 
 export function ActivityMap({ activities, city, selectedActivity, onActivitySelect: _, className = '' }: ActivityMapProps) {
-  const items: ActivityMapItem[] = activities.map((activity) => ({
-    id: activity.id,
-    title: activity.title,
-    category: activity.category,
-    coordinates: activity.coordinates,
-    address: activity.address,
-  }));
+  const items: ActivityMapItem[] = activities
+    .filter((activity) => activity.coordinates?.lat != null && activity.coordinates?.lng != null)
+    .map((activity) => ({
+      id: activity.id,
+      title: activity.title,
+      category: activity.category,
+      coordinates: activity.coordinates as { lat: number; lng: number },
+      address: activity.address,
+    }));
 
   const { mapRef, isClient } = useMapInitialization<ActivityMapItem>({
     items,
