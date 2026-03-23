@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
+import { useEffect, useState, useCallback, startTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -60,7 +61,9 @@ export default function TicketsPage() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    fetchOrders();
+    startTransition(() => {
+      fetchOrders();
+    });
   }, [fetchOrders]);
 
   if (loading || !user) {
@@ -159,10 +162,13 @@ export default function TicketsPage() {
                     {primaryEvent && (
                       <div className="flex gap-4 p-4 bg-gray-50 rounded-lg mb-4">
                         {primaryEvent.imageUrl && (
-                          <img
+                          <Image
                             src={primaryEvent.imageUrl}
                             alt={primaryEvent.title}
-                            className="w-20 h-20 object-cover rounded-lg"
+                            width={80}
+                            height={80}
+                            className="object-cover rounded-lg"
+                            unoptimized
                           />
                         )}
                         <div className="flex-1">

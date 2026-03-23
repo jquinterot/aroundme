@@ -169,6 +169,7 @@ export async function createActivity(data: {
   eventId?: string;
   placeId?: string;
   targetUserId?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: Record<string, any>;
 }) {
   const activity = await prisma.activity.create({
@@ -192,7 +193,7 @@ export async function getActivityFeed(
   page: number = 1,
   limit: number = 20
 ) {
-  const where: any = {};
+  const where: Record<string, unknown> = {};
 
   if (followingOnly && userId) {
     const following = await prisma.follow.findMany({

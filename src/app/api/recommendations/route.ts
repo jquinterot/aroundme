@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { getRecommendations, recordRecommendationInteraction } from '@/lib/recommendations';
 
 export async function GET(request: NextRequest) {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     const city = citySlug
-      ? await prisma?.city.findUnique({ where: { slug: citySlug } })
+      ? await prisma.city.findUnique({ where: { slug: citySlug } })
       : null;
 
     const recommendations = await getRecommendations({
@@ -32,9 +33,10 @@ export async function GET(request: NextRequest) {
       success: true,
       data: recommendations,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -63,12 +65,11 @@ export async function POST(request: NextRequest) {
     await recordRecommendationInteraction(session.id, eventId, action);
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
-
-import { prisma } from '@/lib/prisma';

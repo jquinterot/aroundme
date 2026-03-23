@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -120,10 +121,12 @@ export default function MyRsvpsPage() {
                         className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex"
                       >
                         {rsvp.event.imageUrl ? (
-                          <img
+                          <Image
                             src={rsvp.event.imageUrl}
                             alt={rsvp.event.title}
-                            className="w-32 h-full object-cover"
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="w-32 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">

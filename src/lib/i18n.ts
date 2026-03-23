@@ -1,5 +1,3 @@
-import { es, enUS } from 'date-fns/locale';
-
 export type Locale = 'es' | 'en';
 
 export const locales: Record<Locale, string> = {
@@ -164,11 +162,6 @@ export function t(key: string, locale: Locale = defaultLocale): string {
 }
 
 export function formatDate(date: Date, locale: Locale = defaultLocale): string {
-  const localeMap: Record<Locale, Locale> = {
-    es: 'es',
-    en: 'en',
-  };
-  
   return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'es-CO', {
     year: 'numeric',
     month: 'long',

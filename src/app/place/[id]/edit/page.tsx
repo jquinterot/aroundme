@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Loader2, MapPin, Pencil, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Loader2, MapPin, Trash2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout';
 import { apiService } from '@/services';
@@ -38,7 +38,7 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { cities } = useCities();
+  useCities();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -67,18 +67,20 @@ export default function EditPlacePage({ params }: { params: Promise<{ id: string
   useEffect(() => {
     if (placeData?.data) {
       const place: PlaceData = placeData.data;
-      setFormData({
-        name: place.name,
-        description: place.description,
-        category: place.category as PlaceCategory,
-        address: place.address,
-        imageUrl: place.image || '',
-        priceRange: place.priceRange || '',
-        features: (place.features || []).join(', '),
-        tags: (place.tags || []).join(', '),
-        contactPhone: place.contact?.phone || '',
-        contactWebsite: place.contact?.website || '',
-        contactInstagram: place.contact?.instagram || '',
+      startTransition(() => {
+        setFormData({
+          name: place.name,
+          description: place.description,
+          category: place.category as PlaceCategory,
+          address: place.address,
+          imageUrl: place.image || '',
+          priceRange: place.priceRange || '',
+          features: (place.features || []).join(', '),
+          tags: (place.tags || []).join(', '),
+          contactPhone: place.contact?.phone || '',
+          contactWebsite: place.contact?.website || '',
+          contactInstagram: place.contact?.instagram || '',
+        });
       });
     }
   }, [placeData]);

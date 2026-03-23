@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Calendar, MapPin, Star, Loader2, X } from 'lucide-react';
+import { Search, Star, Loader2, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CATEGORY_ICONS } from '@/lib/constants';

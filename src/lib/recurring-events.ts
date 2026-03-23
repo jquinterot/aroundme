@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { addDays, addWeeks, addMonths, setDay, setDate } from 'date-fns';
+import { addDays, addWeeks, addMonths, setDate } from 'date-fns';
 
 export interface CreateSeriesInput {
   name: string;
@@ -14,10 +14,24 @@ export interface CreateSeriesInput {
   templateEventId?: string;
 }
 
+interface SeriesResult {
+  id: string;
+  name: string;
+  description: string | null;
+  frequency: string;
+}
+
+interface CreatedEvent {
+  id: string;
+  title: string;
+  dateStart: Date;
+  status: string;
+}
+
 export async function createEventSeries(
   userId: string,
   input: CreateSeriesInput
-): Promise<{ series: any; events: any[] }> {
+): Promise<{ series: SeriesResult; events: CreatedEvent[] }> {
   const templateEvent = input.templateEventId
     ? await prisma.event.findUnique({
         where: { id: input.templateEventId },
@@ -66,7 +80,6 @@ export async function createEventSeries(
         : null;
 
       const isFirst = index === 0;
-      const isLast = index === eventDates.length - 1;
 
       return prisma.event.create({
         data: {
@@ -247,7 +260,7 @@ export async function updateSeries(
     const eventDates = generateEventDates({
       startDate: updates.dateStart,
       endDate: series.endDate || undefined,
-      frequency: series.frequency as any,
+      frequency: series.frequency as 'daily' | 'weekly' | 'biweekly' | 'monthly',
       interval: series.interval,
       dayOfWeek: series.dayOfWeek || undefined,
       dayOfMonth: series.dayOfMonth || undefined,

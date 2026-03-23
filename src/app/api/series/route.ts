@@ -48,9 +48,10 @@ export async function POST(request: NextRequest) {
       data: result,
       message: `Serie creada con ${result.events.length} eventos`,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -81,9 +82,10 @@ export async function GET(request: NextRequest) {
       success: true,
       data: series,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -133,9 +135,10 @@ export async function PATCH(request: NextRequest) {
       data: result,
       message: 'Serie actualizada',
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -163,15 +166,16 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await deleteSeries(seriesId, deleteEvents as any);
+    await deleteSeries(seriesId, deleteEvents as 'all' | 'future' | 'none');
 
     return NextResponse.json({
       success: true,
       message: 'Serie eliminada',
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }

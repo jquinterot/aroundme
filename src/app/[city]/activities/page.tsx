@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -146,7 +147,7 @@ export default function ActivitiesPage() {
                   <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
                     {activity.image ? (
                       <div className="relative h-40 bg-gray-200">
-                        <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />
+                        <Image src={activity.image} alt={activity.title} fill className="object-cover" unoptimized />
                       </div>
                     ) : (
                       <div className="h-40 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 flex items-center justify-center">
@@ -198,8 +199,8 @@ export default function ActivitiesPage() {
                   <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all p-4">
                     <div className="flex gap-4">
                       {activity.image ? (
-                        <div className="w-32 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
-                          <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />
+                        <div className="w-32 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
+                          <Image src={activity.image} alt={activity.title} fill className="object-cover" unoptimized />
                         </div>
                       ) : (
                         <div className="w-32 h-24 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 flex items-center justify-center flex-shrink-0">

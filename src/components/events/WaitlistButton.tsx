@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface WaitlistButtonProps {
   eventId: string;
-  eventTitle: string;
+  eventTitle?: string;
   maxAttendees?: number | null;
   currentAttendees?: number;
   userPosition?: number | null;
@@ -14,7 +14,7 @@ interface WaitlistButtonProps {
 
 export function WaitlistButton({
   eventId,
-  eventTitle,
+  eventTitle: _,
   maxAttendees,
   currentAttendees = 0,
   userPosition,
@@ -22,7 +22,7 @@ export function WaitlistButton({
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState<number | null>(userPosition || null);
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
 
   const availableSpots = maxAttendees ? maxAttendees - currentAttendees : null;
   const isOnWaitlist = position !== null;
@@ -50,7 +50,7 @@ export function WaitlistButton({
       } else {
         setError(data.error || 'Error al unirse a la lista de espera');
       }
-    } catch (err) {
+    } catch {
       setError('Error al unirse a la lista de espera');
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export function WaitlistButton({
       } else {
         setError(data.error || 'Error al salir de la lista de espera');
       }
-    } catch (err) {
+    } catch {
       setError('Error al salir de la lista de espera');
     } finally {
       setLoading(false);

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -105,10 +106,12 @@ export default function SavedEventsPage() {
             {savedEvents.map((saved) => (
               <div key={saved.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 {saved.event.imageUrl ? (
-                  <img
+                  <Image
                     src={saved.event.imageUrl}
                     alt={saved.event.title}
-                    className="w-full h-32 object-cover"
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-full h-32 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">

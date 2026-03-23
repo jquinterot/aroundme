@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Camera, X, Check, AlertCircle, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, startTransition } from 'react';
+import { X, Check, AlertCircle, Loader2 } from 'lucide-react';
 
 interface QRScannerProps {
   onScan: (token: string) => Promise<{ success: boolean; message: string }>;
@@ -10,20 +11,16 @@ interface QRScannerProps {
   eventTitle: string;
 }
 
-export function QRScanner({ onScan, onClose, eventId, eventTitle }: QRScannerProps) {
+export function QRScanner({ onScan, onClose, eventTitle }: QRScannerProps) {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const processRef = useRef<() => void>(() => {});
 
-  useEffect(() => {
-    startCamera();
-    return () => stopCamera();
-  }, []);
-
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
@@ -36,16 +33,31 @@ export function QRScanner({ onScan, onClose, eventId, eventTitle }: QRScannerPro
       console.error('Camera error:', error);
       alert('No se pudo acceder a la cámara. Por favor usa el código manual.');
     }
-  };
+  }, []);
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
     }
+  }, []);
+
+  useEffect(() => {
+    startTransition(() => {
+      startCamera();
+    });
+    return () => stopCamera();
+  }, [startCamera, stopCamera]);
+
+  const scanQRCode = async (_: ImageData): Promise<string | null> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(null);
+      }, 100);
+    });
   };
 
-  const processQRCode = async () => {
+  const processQRCode = useCallback(async () => {
     if (!canvasRef.current || !videoRef.current) return;
 
     const video = videoRef.current;
@@ -74,17 +86,13 @@ export function QRScanner({ onScan, onClose, eventId, eventTitle }: QRScannerPro
     }
 
     if (scanning) {
-      requestAnimationFrame(processQRCode);
+      requestAnimationFrame(processRef.current);
     }
-  };
+  }, [onScan, scanning]);
 
-  const scanQRCode = async (imageData: ImageData): Promise<string | null> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(null);
-      }, 100);
-    });
-  };
+  useLayoutEffect(() => {
+    processRef.current = processQRCode;
+  });
 
   const handleManualSubmit = async () => {
     if (!manualCode.trim()) return;
@@ -100,7 +108,7 @@ export function QRScanner({ onScan, onClose, eventId, eventTitle }: QRScannerPro
       const interval = setInterval(processQRCode, 500);
       return () => clearInterval(interval);
     }
-  }, [scanning]);
+  }, [scanning, processQRCode]);
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
@@ -218,7 +226,7 @@ export function QRDisplay({ token, eventId, userId, eventTitle }: QRDisplayProps
       <p className="text-sm text-gray-500 mb-4">Escanea este código en el evento</p>
       
       <div className="inline-block p-4 bg-white rounded-xl shadow-sm border border-gray-200">
-        <img src={qrUrl} alt="QR Code" className="w-48 h-48" />
+        <Image src={qrUrl} alt="QR Code" width={192} height={192} unoptimized />
       </div>
 
       <div className="mt-4 text-xs text-gray-400">

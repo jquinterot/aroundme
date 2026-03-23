@@ -29,9 +29,10 @@ export async function POST(request: NextRequest) {
       data: result,
       message: `Te has agregado a la lista de espera en posición ${result.position}`,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -64,9 +65,10 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Has salido de la lista de espera',
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -99,9 +101,10 @@ export async function GET(request: NextRequest) {
       { success: false, error: 'Parámetros inválidos' },
       { status: 400 }
     );
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }

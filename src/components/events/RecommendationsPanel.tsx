@@ -34,22 +34,21 @@ export function RecommendationsPanel({ limit = 5, showTitle = true, compact = fa
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRecommendations();
-  }, []);
-
-  const fetchRecommendations = async () => {
-    try {
-      const res = await fetch(`/api/recommendations?limit=${limit}`);
-      const data = await res.json();
-      if (data.success) {
-        setRecommendations(data.data);
+    const fetchRecommendations = async () => {
+      try {
+        const res = await fetch(`/api/recommendations?limit=${limit}`);
+        const data = await res.json();
+        if (data.success) {
+          setRecommendations(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchRecommendations();
+  }, [limit]);
 
   const handleInteraction = async (eventId: string, action: 'view' | 'click') => {
     try {
@@ -111,7 +110,7 @@ export function RecommendationsPanel({ limit = 5, showTitle = true, compact = fa
       )}
 
       <div className={`divide-y divide-gray-100 ${compact ? '' : 'p-4'}`}>
-        {recommendations.map((rec, index) => {
+        {recommendations.map((rec) => {
           const reason = getReasonLabel(rec.reason);
           const ReasonIcon = reason.icon;
           const CategoryIcon = CATEGORY_ICONS[rec.category] || CATEGORY_ICONS.other;
@@ -201,22 +200,21 @@ export function RecommendationsCarousel({ limit = 10 }: RecommendationsCarouselP
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRecommendations();
-  }, []);
-
-  const fetchRecommendations = async () => {
-    try {
-      const res = await fetch(`/api/recommendations?limit=${limit}`);
-      const data = await res.json();
-      if (data.success) {
-        setRecommendations(data.data);
+    const fetchRecommendations = async () => {
+      try {
+        const res = await fetch(`/api/recommendations?limit=${limit}`);
+        const data = await res.json();
+        if (data.success) {
+          setRecommendations(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchRecommendations();
+  }, [limit]);
 
   if (loading) {
     return (

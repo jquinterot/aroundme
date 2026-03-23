@@ -80,15 +80,6 @@ export default function PlaceDetailPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   if (placeLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

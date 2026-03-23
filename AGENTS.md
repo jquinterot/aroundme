@@ -114,10 +114,18 @@ npm run db:generate   # Generate Prisma client
 
 ## Code Conventions
 
+### Workflow (IMPORTANT)
+For every change:
+1. Run `npm run lint` and fix any errors/warnings
+2. Run `npm run test` and ensure all tests pass
+3. Commit the changes
+
 ### Testing
 - Test framework: Vitest
 - Run tests: `npm run test`
 - Run lint: `npm run lint`
+- Good CI tests: Pure utility functions, i18n, validation, constants mapping
+- Avoid: Tests requiring database, network, or complex mocking
 
 ### Styling
 - Tailwind CSS 4 with custom variant for dark mode

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Ticket, Minus, Plus, Loader2, CreditCard, Check } from 'lucide-react';
 
@@ -20,16 +21,16 @@ interface TicketType {
 
 interface TicketSelectorProps {
   ticketTypes: TicketType[];
-  eventId: string;
-  eventTitle: string;
+  eventId?: string;
+  eventTitle?: string;
   currency?: string;
   onTicketsSelected?: (selected: Map<string, number>) => void;
 }
 
 export function TicketSelector({ 
   ticketTypes, 
-  eventId, 
-  eventTitle,
+  eventId: _,
+  eventTitle: _2,
   currency = 'COP',
   onTicketsSelected 
 }: TicketSelectorProps) {
@@ -134,12 +135,12 @@ export function TicketSelector({
           <Ticket className="w-12 h-12 mx-auto text-indigo-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Compra tus boletos</h3>
           <p className="text-gray-600 mb-4">Inicia sesión para comprar boletos para este evento</p>
-          <a
+          <Link
             href="/login"
             className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
           >
             Iniciar Sesión
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -338,12 +339,12 @@ export function TicketConfirmation({ order }: TicketConfirmationProps) {
         </div>
 
         <div className="mt-6 flex gap-4">
-          <a
+          <Link
             href="/dashboard/my-rsvps"
             className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors text-center"
           >
             Ver Mis Eventos
-          </a>
+          </Link>
           <button
             onClick={() => window.print()}
             className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"

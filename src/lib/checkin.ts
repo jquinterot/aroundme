@@ -116,7 +116,7 @@ export async function performCheckIn(
     return { success: false, message: 'El evento ha alcanzado su capacidad máxima' };
   }
 
-  const checkIn = await prisma.checkIn.create({
+  await prisma.checkIn.create({
     data: {
       eventId,
       userId,

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout';
-import { Bell, Check, CheckCheck, Calendar, Star, Heart, Loader2, MapPin, Trash2 } from 'lucide-react';
+import { Bell, Check, CheckCheck, Calendar, Star, Heart, Loader2, MapPin } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 

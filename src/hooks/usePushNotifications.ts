@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
 
 interface PushSubscriptionData {
   endpoint: string;
@@ -30,11 +30,17 @@ export function usePushNotifications() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
-      setIsSupported(true);
-      checkExistingSubscription();
+      startTransition(() => {
+        setIsSupported(true);
+      });
+      startTransition(() => {
+        checkExistingSubscription();
+      });
     } else {
-      setIsSupported(false);
-      setLoading(false);
+      startTransition(() => {
+        setIsSupported(false);
+        setLoading(false);
+      });
     }
   }, [checkExistingSubscription]);
 

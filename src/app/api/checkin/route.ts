@@ -4,9 +4,7 @@ import {
   performCheckIn, 
   getEventCheckIns, 
   getUserCheckIns, 
-  generateCheckInReport,
-  validateQRToken,
-  generateQRToken 
+  generateCheckInReport
 } from '@/lib/checkin';
 
 export async function POST(request: NextRequest) {
@@ -41,9 +39,10 @@ export async function POST(request: NextRequest) {
       data: result,
       message: result.message,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -85,9 +84,10 @@ export async function GET(request: NextRequest) {
       { success: false, error: 'Parámetros inválidos' },
       { status: 400 }
     );
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }

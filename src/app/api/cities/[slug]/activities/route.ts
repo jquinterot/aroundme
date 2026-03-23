@@ -51,7 +51,7 @@ export async function GET(
         if (activity.scheduleDays) {
           scheduleDays = JSON.parse(activity.scheduleDays);
         }
-      } catch (e) {
+      } catch {
         scheduleDays = null;
       }
       
@@ -59,7 +59,7 @@ export async function GET(
         if (activity.includes) {
           includes = JSON.parse(activity.includes);
         }
-      } catch (e) {
+      } catch {
         includes = [];
       }
       

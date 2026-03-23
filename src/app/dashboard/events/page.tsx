@@ -1,11 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout';
-import { Calendar, MapPin, Users, Eye, Loader2, Pencil, Trash2, Star } from 'lucide-react';
+import { Calendar, MapPin, Users, Eye, Loader2, Pencil, Star } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -133,7 +134,7 @@ export default function DashboardEventsPage() {
               <div key={event.id} className="bg-white rounded-xl shadow-sm p-4 flex gap-4">
                 <div className="relative w-32 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                   {event.image ? (
-                    <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                    <Image src={event.image} alt={event.title} fill className="object-cover" unoptimized />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
                       <Calendar className="w-8 h-8 text-indigo-300" />

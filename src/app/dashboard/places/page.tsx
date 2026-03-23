@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -106,7 +107,7 @@ export default function DashboardPlacesPage() {
                 <div key={place.id} className="bg-white rounded-xl shadow-sm p-4 flex gap-4">
                   <div className="relative w-32 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                     {place.image ? (
-                      <img src={place.image} alt={place.name} className="w-full h-full object-cover" />
+                      <Image src={place.image} alt={place.name} fill className="object-cover" unoptimized />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">
                         <Icon className="w-8 h-8 text-teal-300" />

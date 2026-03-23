@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, Check, Loader2, MapPin, Calendar, Star } from 'lucide-react';
-import { CATEGORY_ICONS } from '@/lib/constants';
 
 interface UserCardProps {
   user: {
@@ -170,7 +169,7 @@ interface ActivityCardProps {
       venueName: string;
       city?: { name: string };
     };
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -205,7 +204,10 @@ export function ActivityCard({ activity }: ActivityCardProps) {
     }
   };
 
-  const Icon = getActivityIcon();
+  const renderIcon = () => {
+    const ActivityIcon = getActivityIcon();
+    return <ActivityIcon className="w-4 h-4 text-indigo-600" />;
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -268,15 +270,22 @@ export function ActivityCard({ activity }: ActivityCardProps) {
         </div>
 
         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-          <Icon className="w-4 h-4 text-indigo-600" />
+          {renderIcon()}
         </div>
       </div>
     </div>
   );
 }
 
+interface FollowerUser {
+  id: string;
+  name: string;
+  avatarUrl?: string | null;
+  isVerified?: boolean;
+}
+
 interface FollowersListProps {
-  users: any[];
+  users: FollowerUser[];
   type: 'followers' | 'following';
   onLoadMore?: () => void;
   hasMore?: boolean;

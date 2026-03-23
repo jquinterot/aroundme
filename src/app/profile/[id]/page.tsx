@@ -1,34 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
-import { UserCard, ActivityCard } from '@/components/social';
-import { Calendar, MapPin, Star, Check, Loader2, Settings, Grid, Activity } from 'lucide-react';
-import { CATEGORY_ICONS } from '@/lib/constants';
+import { Calendar, MapPin, Check, Loader2, Settings, Activity } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { User } from '@/types';
+
+interface UserProfile extends User {
+  city?: { name: string };
+  events?: Array<{
+    id: string;
+    title: string;
+    imageUrl?: string;
+    dateStart: string;
+    venueName: string;
+  }>;
+  isFollowing?: boolean;
+}
 
 export default function UserProfilePage() {
   const params = useParams();
   const userId = (params?.id as string) || '';
   const { user: currentUser } = useAuth();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'activity' | 'followers' | 'following'>('events');
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      fetchProfile();
-    }
-  }, [userId]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const res = await fetch(`/api/users/${userId}`);
       const data = await res.json();
@@ -41,7 +46,13 @@ export default function UserProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchProfile();
+    }
+  }, [userId, fetchProfile]);
 
   const handleFollow = async () => {
     if (!currentUser) {
@@ -54,10 +65,10 @@ export default function UserProfilePage() {
       if (isFollowing) {
         await fetch(`/api/follow?userId=${userId}`, { method: 'DELETE' });
         setIsFollowing(false);
-        setUser((prev: any) => ({
+        setUser((prev) => prev ? {
           ...prev,
-          followerCount: prev.followerCount - 1,
-        }));
+          followerCount: (prev.followerCount || 0) - 1,
+        } : null);
       } else {
         await fetch('/api/follow', {
           method: 'POST',
@@ -65,10 +76,10 @@ export default function UserProfilePage() {
           body: JSON.stringify({ followingId: userId }),
         });
         setIsFollowing(true);
-        setUser((prev: any) => ({
+        setUser((prev) => prev ? {
           ...prev,
-          followerCount: prev.followerCount + 1,
-        }));
+          followerCount: (prev.followerCount || 0) + 1,
+        } : null);
       }
     } finally {
       setFollowLoading(false);
@@ -252,7 +263,7 @@ export default function UserProfilePage() {
             {activeTab === 'events' && (
               <div className="space-y-4">
                 {user.events && user.events.length > 0 ? (
-                  user.events.map((event: any) => (
+                  user.events.map((event) => (
                     <Link
                       key={event.id}
                       href={`/event/${event.id}`}

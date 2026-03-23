@@ -1,25 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
 import { ActivityCard } from '@/components/social';
-import { Activity, Users, Loader2, Filter } from 'lucide-react';
+import { Activity, Users, Loader2 } from 'lucide-react';
+import { Activity as ActivityType } from '@/types';
 
 export default function ActivityFeedPage() {
   const { user } = useAuth();
-  const [activities, setActivities] = useState<any[]>([]);
+  const [activities, setActivities] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState<'all' | 'following'>('all');
 
-  useEffect(() => {
-    fetchActivities();
-  }, [filter]);
-
-  const fetchActivities = async (loadMore = false) => {
+  const fetchActivities = useCallback(async (loadMore = false) => {
     if (loadMore && !hasMore) return;
 
     setLoading(true);
@@ -51,7 +48,11 @@ export default function ActivityFeedPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, user, page, hasMore]);
+
+  useEffect(() => {
+    fetchActivities();
+  }, [fetchActivities]);
 
   const handleFilterChange = (newFilter: 'all' | 'following') => {
     setFilter(newFilter);

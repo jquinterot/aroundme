@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
@@ -27,9 +27,13 @@ export function EventCard({ event }: EventCardProps) {
   const [timeUntil, setTimeUntil] = useState<{ days: number; hours: number; minutes: number; total: number } | null>(null);
 
   useEffect(() => {
-    setTimeUntil(getTimeUntilEvent(event.date.start));
-    const timer = setInterval(() => {
+    startTransition(() => {
       setTimeUntil(getTimeUntilEvent(event.date.start));
+    });
+    const timer = setInterval(() => {
+      startTransition(() => {
+        setTimeUntil(getTimeUntilEvent(event.date.start));
+      });
     }, 60000);
     return () => clearInterval(timer);
   }, [event.date.start]);

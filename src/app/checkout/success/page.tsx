@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, Suspense, startTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
 import Link from 'next/link';
 import { Header } from '@/components/layout';
 import { CheckCircle, Ticket, Loader2 } from 'lucide-react';
@@ -18,15 +17,6 @@ interface OrderItem {
   ticketType?: TicketType;
 }
 
-interface Event {
-  id: string;
-  title: string;
-  dateStart: string;
-  venueName: string;
-  venueAddress: string;
-  imageUrl?: string;
-}
-
 interface Order {
   id: string;
   total: number;
@@ -40,13 +30,7 @@ function SuccessContent() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (orderId) {
-      fetchOrder();
-    }
-  }, [orderId]);
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     if (!orderId) return;
     try {
       const res = await fetch(`/api/orders/${orderId}`);
@@ -58,7 +42,15 @@ function SuccessContent() {
       console.error(error);
     }
     setLoading(false);
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (orderId) {
+      startTransition(() => {
+        fetchOrder();
+      });
+    }
+  }, [orderId, fetchOrder]);
 
   if (loading) {
     return (

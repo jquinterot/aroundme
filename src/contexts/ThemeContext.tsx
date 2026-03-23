@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, startTransition, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -18,9 +18,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('theme') as Theme | null;
     if (stored) {
-      setThemeState(stored);
+      startTransition(() => {
+        setThemeState(stored);
+      });
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeState('dark');
+      startTransition(() => {
+        setThemeState('dark');
+      });
     }
   }, []);
 

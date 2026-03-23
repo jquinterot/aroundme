@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { followUser, unfollowUser, isFollowing, getFollowers, getFollowing } from '@/lib/social';
+import { followUser, unfollowUser, getFollowers, getFollowing } from '@/lib/social';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,9 +29,10 @@ export async function POST(request: NextRequest) {
       data: follow,
       message: 'Ahora sigues a este usuario',
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -64,9 +65,10 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Has dejado de seguir a este usuario',
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 400 }
     );
   }
@@ -93,9 +95,10 @@ export async function GET(request: NextRequest) {
       const data = await getFollowing(userId, page);
       return NextResponse.json({ success: true, ...data });
     }
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: message },
       { status: 500 }
     );
   }

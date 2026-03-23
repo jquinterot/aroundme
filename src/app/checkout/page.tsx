@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, startTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Header } from '@/components/layout';
@@ -40,12 +40,14 @@ function CheckoutContent() {
       const res = await fetch(`/api/events/${eventId}/tickets`);
       const data = await res.json();
       if (data.success) {
-        setEvent(data.data);
         const initialCart: Record<string, number> = {};
         data.data.ticketTypes.forEach((tt: TicketType) => {
           initialCart[tt.id] = 0;
         });
-        setCart(initialCart);
+        setEvent(data.data);
+        startTransition(() => {
+          setCart(initialCart);
+        });
       }
     } catch (error) {
       console.error(error);
@@ -54,7 +56,9 @@ function CheckoutContent() {
   }, [eventId]);
 
   useEffect(() => {
-    fetchEvent();
+    startTransition(() => {
+      fetchEvent();
+    });
   }, [fetchEvent]);
 
   const updateQuantity = (ticketTypeId: string, delta: number) => {

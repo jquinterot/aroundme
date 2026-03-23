@@ -64,7 +64,7 @@ export async function getRecommendations(input: RecommendationInput): Promise<Re
   });
 
   const now = new Date();
-  const eventWhere: any = {
+  const eventWhere: Record<string, unknown> = {
     status: 'approved',
     dateStart: { gte: now },
   };

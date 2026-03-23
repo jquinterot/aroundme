@@ -11,7 +11,7 @@ interface CreateSeriesFormProps {
 }
 
 export function CreateSeriesForm({ templateEventId, onSuccess, onCancel }: CreateSeriesFormProps) {
-  const { user } = useAuth();
+  useAuth(); // Keep hook for auth context
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -55,7 +55,7 @@ export function CreateSeriesForm({ templateEventId, onSuccess, onCancel }: Creat
       } else {
         setError(data.error || 'Error al crear la serie');
       }
-    } catch (err) {
+    } catch {
       setError('Error al crear la serie');
     } finally {
       setLoading(false);
@@ -261,7 +261,7 @@ interface SeriesCardProps {
   onDelete?: () => void;
 }
 
-export function SeriesCard({ series, onView, onEdit, onDelete }: SeriesCardProps) {
+export function SeriesCard({ series, onView, onEdit, onDelete: _ }: SeriesCardProps) {
   const getFrequencyLabel = () => {
     switch (series.frequency) {
       case 'daily': return 'Diario';

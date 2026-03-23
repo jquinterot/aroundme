@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
 
-    const itemIds = views.map(v => v.itemId);
     const eventViews = views.filter(v => v.type === 'event');
     const placeViews = views.filter(v => v.type === 'place');
 
