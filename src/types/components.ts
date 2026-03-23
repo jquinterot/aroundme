@@ -43,8 +43,8 @@ export interface EventFiltersProps {
 
 export interface EventFilterState {
   category: EventCategory | 'all';
-  date: 'today' | 'week' | 'month' | 'all';
-  price: 'all' | 'free' | 'paid';
+  date: 'today' | 'week' | 'month' | 'all' | string;
+  price: 'all' | 'free' | 'paid' | string;
   search: string;
 }
 

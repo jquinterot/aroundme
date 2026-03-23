@@ -315,8 +315,8 @@ export interface ApiResponse<T> {
 export interface FilterParams {
   cityId?: string;
   category?: EventCategory | 'all';
-  date?: 'today' | 'week' | 'month' | 'all';
-  price?: 'free' | 'paid' | 'all';
+  date?: 'today' | 'week' | 'month' | 'all' | string;
+  price?: 'free' | 'paid' | 'all' | string;
   search?: string;
   page?: number;
   limit?: number;
