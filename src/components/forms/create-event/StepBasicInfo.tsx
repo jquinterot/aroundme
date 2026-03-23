@@ -5,7 +5,7 @@ import { EVENT_CATEGORY_OPTIONS } from '@/lib/constants';
 import { EventStepBasicInfoProps } from '@/types/components';
 
 export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepBasicInfoProps) {
-  const isValid = formData.title && formData.category && formData.description;
+  const isValid = formData.title && formData.category && formData.description && formData.cityId;
 
   return (
     <div className="space-y-6">

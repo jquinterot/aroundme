@@ -1,4 +1,4 @@
-import { City, Event, Place, EventCategory, PlaceCategory } from './index';
+import { City, Event, Place, EventCategory, PlaceCategory, User } from './index';
 import type { LucideIcon } from 'lucide-react';
 
 export interface EventCardProps {
@@ -218,15 +218,6 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   refresh: () => void;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'organizer' | 'user';
-  cityId?: string;
-  isVerified: boolean;
 }
 
 export interface Analytics {

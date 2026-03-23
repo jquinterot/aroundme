@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock, Users, Check, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -171,16 +171,20 @@ interface WaitlistCountProps {
 export function WaitlistCount({ eventId }: WaitlistCountProps) {
   const [count, setCount] = useState(0);
 
-  useState(() => {
-    fetch(`/api/waitlist?eventId=${eventId}`)
-      .then(res => res.json())
-      .then(data => {
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const res = await fetch(`/api/waitlist?eventId=${eventId}`);
+        const data = await res.json();
         if (data.success && data.data) {
-          setCount(data.data.length);
+          setCount(Array.isArray(data.data) ? data.data.length : 0);
         }
-      })
-      .catch(console.error);
-  });
+      } catch (error) {
+        console.error('Error fetching waitlist count:', error);
+      }
+    };
+    fetchCount();
+  }, [eventId]);
 
   if (count === 0) return null;
 

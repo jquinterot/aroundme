@@ -41,7 +41,7 @@ export default function ActivityFeedPage() {
           setActivities(data.activities);
         }
         setPage(pageNum);
-        setHasMore(data.hasMore);
+        setHasMore(data.page < data.pages);
       }
     } catch (error) {
       console.error('Error fetching activities:', error);

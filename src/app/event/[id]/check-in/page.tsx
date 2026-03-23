@@ -31,7 +31,8 @@ export default function CheckInPage() {
           }
           setEventLoading(false);
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('Error fetching event:', error);
           setEventLoading(false);
         });
     }
@@ -52,7 +53,8 @@ export default function CheckInPage() {
       } else {
         return { success: false, message: data.error || 'Error en check-in' };
       }
-    } catch {
+    } catch (error) {
+      console.error('Check-in error:', error);
       return { success: false, message: 'Error de conexión' };
     }
   };

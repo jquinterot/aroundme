@@ -8,6 +8,7 @@ interface EventActionsProps {
   isAuthenticated: boolean;
   onSave: () => void;
   event: {
+    id: string;
     title: string;
     description?: string;
     date: {
@@ -27,7 +28,10 @@ export function EventActions({ isSaved, isAuthenticated, onSave, event, eventUrl
 
   return (
     <div className="mt-8 flex gap-4">
-      <button className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-indigo-700 transition-colors">
+      <button 
+        onClick={() => router.push(`/checkout?event_id=${event.id}`)}
+        className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+      >
         Register / Get Tickets
       </button>
       <button 

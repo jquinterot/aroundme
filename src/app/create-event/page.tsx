@@ -18,14 +18,14 @@ export default function CreateEventPage() {
   const { cities } = useCities();
 
   const [formData, setFormData] = useState({
-    cityId: 'bogota',
+    cityId: '',
     title: '',
     description: '',
     category: '' as EventCategory | '',
     venueName: '',
     venueAddress: '',
-    venueLat: 4.7110,
-    venueLng: -74.0721,
+    venueLat: 0,
+    venueLng: 0,
     startDate: '',
     startTime: '',
     endDate: '',

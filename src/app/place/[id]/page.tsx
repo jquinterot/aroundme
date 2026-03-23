@@ -23,6 +23,8 @@ export default function PlaceDetailPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isClaiming, setIsClaiming] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: citiesData } = useQuery({
     queryKey: ['cities'],
@@ -76,6 +78,48 @@ export default function PlaceDetailPage() {
       }
     } finally {
       setIsClaiming(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const response = await fetch(`/api/user/places`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ placeId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setIsSaved(!isSaved);
+      }
+    } catch (error) {
+      console.error('Error saving place:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: place?.name || 'Check out this place',
+      text: `Look what I found: ${place?.name} on AroundMe!`,
+      url: window.location.href,
+    };
+    
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled or error
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
     }
   };
 
@@ -311,11 +355,22 @@ export default function PlaceDetailPage() {
               <ReviewForm placeId={place.id} placeName={place.name} />
               
               <div className="flex gap-4 mt-4">
-                <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
-                  <Heart className="w-5 h-5" />
-                  Save
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 border rounded-xl transition-colors disabled:opacity-50 ${
+                    isSaved
+                      ? 'border-pink-300 bg-pink-50 text-pink-600 hover:bg-pink-100'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <Heart className={`w-5 h-5 ${isSaved ? 'fill-pink-500' : ''}`} />
+                  {isSaved ? 'Saved' : 'Save'}
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                <button
+                  onClick={handleShare}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
+                >
                   <Share2 className="w-5 h-5" />
                   Share
                 </button>

@@ -356,7 +356,7 @@ export default function UserProfilePage() {
             {activeTab === 'activity' && (
               <div className="text-center py-12">
                 <Activity className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500">Actividad reciente</p>
+                <p className="text-gray-500">No hay actividad reciente</p>
               </div>
             )}
 

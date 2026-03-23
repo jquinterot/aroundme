@@ -216,6 +216,7 @@ export default function EventDetailPage() {
               isAuthenticated={!!user} 
               onSave={() => saveMutation.mutate()}
               event={{
+                id: event.id,
                 title: event.title,
                 description: event.description,
                 date: event.date,
