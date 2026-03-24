@@ -4,16 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { PlaceCardProps } from '@/types/components';
-import { CATEGORY_ICONS } from '@/lib/constants';
 import { PlaceCategoryBadge, PlaceVerifiedBadge, PlacePriceRange, PlaceRating } from './PlaceCardBadges';
+import { PlaceholderImage } from '@/components/ui/Placeholder';
 
 export function PlaceCard({ place }: PlaceCardProps) {
-  const CategoryIcon = CATEGORY_ICONS[place.category] || CATEGORY_ICONS.other;
-
   return (
     <Link href={`/place/${place.id}`} className="group">
       <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-200">
-        <div className="relative h-40 bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/50 dark:to-cyan-900/50">
+        <div className="relative h-40">
           {place.image ? (
             <Image
               src={place.image}
@@ -23,9 +21,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
               className="object-cover group-hover:scale-105 transition-transform duration-200"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <CategoryIcon className="w-14 h-14 text-teal-300 dark:text-teal-600" />
-            </div>
+            <PlaceholderImage type="place" category={place.category} size="lg" className="w-full h-full rounded-none" />
           )}
           <div className="absolute top-3 left-3 flex gap-2">
             <PlaceCategoryBadge place={place} />

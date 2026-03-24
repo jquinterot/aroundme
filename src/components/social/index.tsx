@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, Check, Loader2, MapPin, Calendar, Star } from 'lucide-react';
+import { AvatarPlaceholder } from '@/components/ui/Placeholder';
 
 interface UserCardProps {
   user: {
@@ -56,7 +57,7 @@ export function UserCard({ user, isFollowing = false, onFollow, onUnfollow, comp
         href={`/profile/${user.id}`}
         className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
       >
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 overflow-hidden">
+        <div className="w-10 h-10 rounded-full overflow-hidden">
           {user.avatarUrl ? (
             <Image
               src={user.avatarUrl}
@@ -66,9 +67,7 @@ export function UserCard({ user, isFollowing = false, onFollow, onUnfollow, comp
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white font-semibold">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            <AvatarPlaceholder name={user.name} size="md" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -87,7 +86,7 @@ export function UserCard({ user, isFollowing = false, onFollow, onUnfollow, comp
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-start justify-between mb-4">
         <Link href={`/profile/${user.id}`} className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 overflow-hidden">
+          <div className="w-16 h-16 rounded-full overflow-hidden">
             {user.avatarUrl ? (
               <Image
                 src={user.avatarUrl}
@@ -97,9 +96,7 @@ export function UserCard({ user, isFollowing = false, onFollow, onUnfollow, comp
                 className="object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-white text-2xl font-semibold">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
+              <AvatarPlaceholder name={user.name} size="lg" />
             )}
           </div>
           <div>
@@ -212,7 +209,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
       <div className="flex gap-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 overflow-hidden flex-shrink-0">
+        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
           {activity.user.avatarUrl ? (
             <Image
               src={activity.user.avatarUrl}
@@ -222,9 +219,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white font-semibold">
-              {activity.user.name.charAt(0).toUpperCase()}
-            </div>
+            <AvatarPlaceholder name={activity.user.name} size="md" />
           )}
         </div>
 

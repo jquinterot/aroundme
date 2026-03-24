@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,12 +22,89 @@ import {
   Target,
   Database,
   Mail,
-  Shield
+  Shield,
+  Loader2
 } from 'lucide-react';
+
+interface ExportData {
+  attendees: Array<{ email: string; name: string; rsvpStatus: string; checkedIn: boolean; eventTitle: string }>;
+  revenue: Array<{ eventTitle: string; ticketsSold: number; revenue: number; date: string }>;
+  engagement: Array<{ eventTitle: string; views: number; saves: number; shares: number; comments: number }>;
+}
 
 export default function PremiumAnalyticsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [exporting, setExporting] = useState<'csv' | 'json' | null>(null);
+
+  const generateExportData = (): ExportData => {
+    return {
+      attendees: [
+        { email: ' attendee1@example.com', name: 'Ana García', rsvpStatus: 'confirmed', checkedIn: true, eventTitle: 'Concierto de Rock' },
+        { email: ' attendee2@example.com', name: 'Carlos López', rsvpStatus: 'confirmed', checkedIn: true, eventTitle: 'Concierto de Rock' },
+        { email: ' attendee3@example.com', name: 'María Rodríguez', rsvpStatus: 'interested', checkedIn: false, eventTitle: 'Concierto de Rock' },
+        { email: ' attendee4@example.com', name: 'Juan Martínez', rsvpStatus: 'confirmed', checkedIn: false, eventTitle: 'Feria Gastronómica' },
+        { email: ' attendee5@example.com', name: 'Laura Sánchez', rsvpStatus: 'confirmed', checkedIn: true, eventTitle: 'Feria Gastronómica' },
+      ],
+      revenue: [
+        { eventTitle: 'Concierto de Rock', ticketsSold: 245, revenue: 12250000, date: '2024-03-15' },
+        { eventTitle: 'Feria Gastronómica', ticketsSold: 180, revenue: 9000000, date: '2024-03-20' },
+        { eventTitle: 'Workshop de Tecnología', ticketsSold: 45, revenue: 4500000, date: '2024-03-22' },
+      ],
+      engagement: [
+        { eventTitle: 'Concierto de Rock', views: 45200, saves: 5620, shares: 1230, comments: 456 },
+        { eventTitle: 'Feria Gastronómica', views: 32100, saves: 3980, shares: 890, comments: 234 },
+        { eventTitle: 'Workshop de Tecnología', views: 18900, saves: 2100, shares: 420, comments: 123 },
+      ],
+    };
+  };
+
+  const exportToCSV = () => {
+    setExporting('csv');
+    setTimeout(() => {
+      const data = generateExportData();
+      
+      const headers = ['Type', 'Event', 'Data'];
+      const rows: string[][] = [];
+      
+      data.attendees.forEach((a) => {
+        rows.push(['Attendee', a.eventTitle, `${a.name}, ${a.email}, ${a.rsvpStatus}, ${a.checkedIn ? 'Yes' : 'No'}`]);
+      });
+      
+      data.revenue.forEach((r) => {
+        rows.push(['Revenue', r.eventTitle, `${r.date}, ${r.ticketsSold} tickets, $${r.revenue.toLocaleString()}`]);
+      });
+      
+      data.engagement.forEach((e) => {
+        rows.push(['Engagement', e.eventTitle, `Views: ${e.views}, Saves: ${e.saves}, Shares: ${e.shares}, Comments: ${e.comments}`]);
+      });
+
+      const csvContent = [headers.join(','), ...rows.map((r) => r.map((cell) => `"${cell}"`).join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analytics-export-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setExporting(null);
+    }, 500);
+  };
+
+  const exportToJSON = () => {
+    setExporting('json');
+    setTimeout(() => {
+      const data = generateExportData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analytics-export-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setExporting(null);
+    }, 500);
+  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -316,12 +393,28 @@ export default function PremiumAnalyticsPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                  <Download className="w-4 h-4" />
+                <button
+                  onClick={exportToCSV}
+                  disabled={exporting !== null}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                >
+                  {exporting === 'csv' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
                   Export CSV
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <Zap className="w-4 h-4" />
+                <button
+                  onClick={exportToJSON}
+                  disabled={exporting !== null}
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                >
+                  {exporting === 'json' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Zap className="w-4 h-4" />
+                  )}
                   Export JSON
                 </button>
               </div>

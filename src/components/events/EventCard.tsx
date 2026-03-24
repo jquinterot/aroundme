@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 import { EventCardProps } from '@/types/components';
-import { CATEGORY_ICONS } from '@/lib/constants';
 import { FeaturedBadge, CategoryBadge, FreeBadge, PriceDisplay, VerifiedBadge } from './EventCardBadges';
 import { formatEventDate, formatEventTime } from './eventUtils';
+import { PlaceholderImage } from '@/components/ui/Placeholder';
 
 function getTimeUntilEvent(dateStart: string): { days: number; hours: number; minutes: number; total: number } | null {
   const diff = new Date(dateStart).getTime() - Date.now();
@@ -38,7 +38,6 @@ export function EventCard({ event }: EventCardProps) {
     return () => clearInterval(timer);
   }, [event.date.start]);
 
-  const CategoryIcon = CATEGORY_ICONS[event.category] || CATEGORY_ICONS.other;
   const hasValidImage = event.image && !imageError;
   const isUpcoming = timeUntil && timeUntil.total > 0 && timeUntil.total <= 7 * 24 * 60 * 60 * 1000;
 
@@ -49,7 +48,7 @@ export function EventCard({ event }: EventCardProps) {
           ? 'border-yellow-300 hover:border-yellow-400 ring-2 ring-yellow-100 dark:ring-yellow-900/50' 
           : 'border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-800'
       }`}>
-        <div className="relative h-40 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50">
+        <div className="relative h-40">
           <FeaturedBadge event={event} />
           {hasValidImage ? (
             <>
@@ -69,9 +68,7 @@ export function EventCard({ event }: EventCardProps) {
               />
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <CategoryIcon className="w-16 h-16 text-indigo-300 dark:text-indigo-600" />
-            </div>
+            <PlaceholderImage type="event" category={event.category} size="lg" className="w-full h-full rounded-none" />
           )}
           {!event.isFeatured && (
             <div className="absolute top-3 left-3 flex gap-2">

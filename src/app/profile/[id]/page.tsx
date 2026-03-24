@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { User } from '@/types';
 import { ActivityCard } from '@/components/social';
+import { AvatarPlaceholder } from '@/components/ui/Placeholder';
 
 interface UserProfile extends User {
   city?: { name: string };
@@ -209,9 +210,7 @@ export default function UserProfilePage() {
                     className="rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-3xl font-semibold">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
+                  <AvatarPlaceholder name={user.name} size="lg" className="w-full h-full rounded-full" />
                 )}
               </div>
 
@@ -415,11 +414,11 @@ export default function UserProfilePage() {
                         href={`/profile/${follower.id}`}
                         className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+                        <div className="w-10 h-10 rounded-full overflow-hidden">
                           {follower.avatarUrl ? (
                             <Image src={follower.avatarUrl} alt={follower.name} width={40} height={40} className="object-cover" />
                           ) : (
-                            follower.name.charAt(0).toUpperCase()
+                            <AvatarPlaceholder name={follower.name} size="md" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -453,11 +452,11 @@ export default function UserProfilePage() {
                         href={`/profile/${user.id}`}
                         className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+                        <div className="w-10 h-10 rounded-full overflow-hidden">
                           {user.avatarUrl ? (
                             <Image src={user.avatarUrl} alt={user.name} width={40} height={40} className="object-cover" />
                           ) : (
-                            user.name.charAt(0).toUpperCase()
+                            <AvatarPlaceholder name={user.name} size="md" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
