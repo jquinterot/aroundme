@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getStripe, calculateFees, PLATFORM_FEE_PERCENT } from '@/lib/stripe';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
@@ -9,27 +10,23 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to purchase tickets' },
-        { status: 401 }
-      );
+      return errorResponse('Please log in to purchase tickets.', 401, 'UNAUTHORIZED');
     }
 
     const body = await request.json();
     const { items, email, name } = body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'No items in cart' },
-        { status: 400 }
-      );
+      return errorResponse('Your cart is empty. Please add tickets before checkout.', 400, 'EMPTY_CART');
     }
 
     if (!email || !name) {
-      return NextResponse.json(
-        { success: false, error: 'Email and name are required' },
-        { status: 400 }
-      );
+      return errorResponse('Please provide your email and name for the ticket purchase.', 400, 'MISSING_INFO');
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return errorResponse('Please provide a valid email address.', 400, 'INVALID_EMAIL');
     }
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
@@ -40,50 +37,49 @@ export async function POST(request: NextRequest) {
     let organizerPlatformFee = PLATFORM_FEE_PERCENT;
 
     for (const item of items) {
+      if (!item.ticketTypeId || !item.quantity || item.quantity < 1) {
+        return errorResponse('Invalid cart item. Please review your ticket selection.', 400, 'INVALID_ITEM');
+      }
+
       const ticketType = await prisma.ticketType.findUnique({
         where: { id: item.ticketTypeId },
         include: { event: { include: { user: true } } },
       });
 
       if (!ticketType) {
-        return NextResponse.json(
-          { success: false, error: `Ticket type not found: ${item.ticketTypeId}` },
-          { status: 404 }
-        );
+        return errorResponse(`This ticket type no longer exists. Please select a different ticket.`, 404, 'TICKET_NOT_FOUND');
       }
 
       if (!ticketType.isActive) {
-        return NextResponse.json(
-          { success: false, error: `Ticket type "${ticketType.name}" is no longer available` },
-          { status: 400 }
-        );
+        return errorResponse(`"${ticketType.name}" tickets are no longer available. Please choose another ticket type.`, 400, 'TICKET_UNAVAILABLE');
       }
 
       if (ticketType.quantity - ticketType.sold < item.quantity) {
-        return NextResponse.json(
-          { success: false, error: `Not enough tickets for "${ticketType.name}". Only ${ticketType.quantity - ticketType.sold} left.` },
-          { status: 400 }
+        const available = ticketType.quantity - ticketType.sold;
+        return errorResponse(
+          `Only ${available} "${ticketType.name}" tickets available. You requested ${item.quantity}.`,
+          400,
+          'INSUFFICIENT_TICKETS'
         );
       }
 
       if (ticketType.saleStart && new Date() < ticketType.saleStart) {
-        return NextResponse.json(
-          { success: false, error: `Sales for "${ticketType.name}" have not started yet` },
-          { status: 400 }
+        return errorResponse(
+          `Sales for "${ticketType.name}" start on ${ticketType.saleStart.toLocaleDateString()}. Please check back later.`,
+          400,
+          'SALE_NOT_STARTED'
         );
       }
 
       if (ticketType.saleEnd && new Date() > ticketType.saleEnd) {
-        return NextResponse.json(
-          { success: false, error: `Sales for "${ticketType.name}" have ended` },
-          { status: 400 }
-        );
+        return errorResponse(`Sales for "${ticketType.name}" have ended. This event is no longer selling tickets.`, 400, 'SALE_ENDED');
       }
 
       if (item.quantity > ticketType.maxPerUser) {
-        return NextResponse.json(
-          { success: false, error: `Maximum ${ticketType.maxPerUser} tickets per person for "${ticketType.name}"` },
-          { status: 400 }
+        return errorResponse(
+          `Maximum ${ticketType.maxPerUser} "${ticketType.name}" tickets per order. Please adjust your quantity.`,
+          400,
+          'MAX_TICKETS_EXCEEDED'
         );
       }
 
@@ -120,6 +116,10 @@ export async function POST(request: NextRequest) {
         quantity: item.quantity,
         priceAtTime: ticketType.price,
       });
+    }
+
+    if (totalAmount <= 0) {
+      return errorResponse('Invalid order total. Please review your ticket selection.', 400, 'INVALID_TOTAL');
     }
 
     const { platformFee, payoutAmount } = calculateFees(totalAmount);
@@ -185,12 +185,9 @@ export async function POST(request: NextRequest) {
           platformFeePercent: organizerPlatformFee * 100,
         },
       },
+      message: 'Redirecting to secure payment...',
     });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/stripe/checkout');
   }
 }

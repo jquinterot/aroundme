@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,10 +26,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!citySlug || !title || !description || !category || !venueName || !venueAddress || !startDate || !startTime) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return errorResponse('Please fill in all required fields: city, title, description, category, venue name, venue address, start date, and start time.', 400, 'VALIDATION_ERROR');
     }
 
     const city = await prisma.city.findUnique({
@@ -36,25 +34,36 @@ export async function POST(request: NextRequest) {
     });
 
     if (!city) {
-      return NextResponse.json(
-        { success: false, error: 'City not found' },
-        { status: 404 }
-      );
+      return errorResponse(`City "${citySlug}" not found. Please select a valid city.`, 404, 'CITY_NOT_FOUND');
     }
 
     const dateStart = new Date(`${startDate}T${startTime}`);
+    if (isNaN(dateStart.getTime())) {
+      return errorResponse('Invalid start date or time format.', 400, 'INVALID_DATE');
+    }
+
     const dateEnd = endDate && endTime ? new Date(`${endDate}T${endTime}`) : null;
+    if (dateEnd && isNaN(dateEnd.getTime())) {
+      return errorResponse('Invalid end date or time format.', 400, 'INVALID_DATE');
+    }
+
+    if (dateEnd && dateEnd <= dateStart) {
+      return errorResponse('End date must be after start date.', 400, 'INVALID_DATE_RANGE');
+    }
 
     const priceValue = isFree ? 0 : (price ? parseFloat(price) : 0);
+    if (!isFree && isNaN(priceValue)) {
+      return errorResponse('Invalid price value.', 400, 'INVALID_PRICE');
+    }
 
     const event = await prisma.event.create({
       data: {
-        title,
-        description,
+        title: title.trim(),
+        description: description.trim(),
         category,
         cityId: city.id,
-        venueName,
-        venueAddress,
+        venueName: venueName.trim(),
+        venueAddress: venueAddress.trim(),
         venueLat: venueLat || city.lat,
         venueLng: venueLng || city.lng,
         dateStart,
@@ -75,13 +84,9 @@ export async function POST(request: NextRequest) {
         title: event.title,
         status: event.status,
       },
-      message: 'Event submitted successfully and is pending review',
+      message: 'Event submitted successfully! It will be reviewed before publishing.',
     });
   } catch (error) {
-    console.error('Error creating event:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create event' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/events');
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +21,15 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!citySlug || !name || !description || !category || !address) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return errorResponse('Please fill in all required fields: city, name, description, category, and address.', 400, 'VALIDATION_ERROR');
+    }
+
+    if (name.trim().length < 2) {
+      return errorResponse('Place name must be at least 2 characters.', 400, 'INVALID_NAME');
+    }
+
+    if (description.trim().length < 10) {
+      return errorResponse('Description must be at least 10 characters.', 400, 'INVALID_DESCRIPTION');
     }
 
     const city = await prisma.city.findUnique({
@@ -31,19 +37,24 @@ export async function POST(request: NextRequest) {
     });
 
     if (!city) {
-      return NextResponse.json(
-        { success: false, error: 'City not found' },
-        { status: 404 }
-      );
+      return errorResponse(`City "${citySlug}" not found. Please select a valid city.`, 404, 'CITY_NOT_FOUND');
+    }
+
+    if (website && !website.match(/^https?:\/\/.+/)) {
+      return errorResponse('Website must be a valid URL starting with http:// or https://', 400, 'INVALID_WEBSITE');
+    }
+
+    if (instagram && !instagram.match(/^@?[\w]{1,30}$/)) {
+      return errorResponse('Instagram handle must be valid (e.g., @username)', 400, 'INVALID_INSTAGRAM');
     }
 
     const place = await prisma.place.create({
       data: {
-        name,
-        description,
+        name: name.trim(),
+        description: description.trim(),
         category,
         cityId: city.id,
-        address,
+        address: address.trim(),
         lat: lat || city.lat,
         lng: lng || city.lng,
         contactWebsite: website || null,
@@ -62,13 +73,9 @@ export async function POST(request: NextRequest) {
         name: place.name,
         isVerified: place.isVerified,
       },
-      message: 'Place submitted successfully and is pending review',
+      message: 'Place submitted! It will be reviewed before appearing in search results.',
     });
   } catch (error) {
-    console.error('Error creating place:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create place' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/places');
   }
 }

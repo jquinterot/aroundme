@@ -36,23 +36,55 @@ export interface CreatePlacePayload {
 }
 
 class ApiService {
-  private async fetch<T>(url: string): Promise<ApiResponse<T>> {
+  private async fetch<T>(url: string, method: string = 'GET', body?: unknown): Promise<ApiResponse<T>> {
     try {
       const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorMessage = data?.error || this.getHttpErrorMessage(response.status);
+        console.error('API Error:', { status: response.status, error: errorMessage, url });
+        return {
+          success: false,
+          error: errorMessage,
+        };
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('API Error:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Network error. Please check your connection.',
       };
+    }
+  }
+
+  private getHttpErrorMessage(status: number): string {
+    switch (status) {
+      case 400:
+        return 'Invalid request. Please check your input and try again.';
+      case 401:
+        return 'Please log in to continue.';
+      case 403:
+        return 'You do not have permission to perform this action.';
+      case 404:
+        return 'The requested resource was not found.';
+      case 409:
+        return 'A conflict occurred. The resource may already exist.';
+      case 422:
+        return 'Validation error. Please check your input.';
+      case 429:
+        return 'Too many requests. Please wait a moment and try again.';
+      case 500:
+        return 'Server error. Our team has been notified. Please try again later.';
+      default:
+        return `Request failed (${status}). Please try again.`;
     }
   }
 
@@ -135,25 +167,7 @@ class ApiService {
   }
 
   private async post<T>(url: string, data: unknown): Promise<ApiResponse<T>> {
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('API Error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+    return this.fetch<T>(url, 'POST', data);
   }
 
   async createEvent(payload: CreateEventPayload): Promise<ApiResponse<{ id: string; title: string; status: string }>> {
