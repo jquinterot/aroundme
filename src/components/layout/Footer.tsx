@@ -6,6 +6,7 @@ import { FooterLink, FooterProps } from '@/types/components';
 const defaultLinks: FooterLink[] = [
   { label: 'About', href: '#' },
   { label: 'Pricing', href: '/pricing' },
+  { label: 'Help', href: '/docs' },
   { label: 'Contact', href: '#' },
 ];
 
