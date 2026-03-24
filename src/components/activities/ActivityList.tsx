@@ -23,7 +23,7 @@ interface ActivityListProps {
 }
 
 export function ActivityList({ activities, viewMode, city }: ActivityListProps) {
-  const [selectedActivity, setSelectedActivity] = useState<{ id: string; coordinates: { lat: number; lng: number } | null } | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<{ id: string; coordinates: { lat: number | null; lng: number | null } | null } | null>(null);
 
   if (activities.length === 0) {
     return (

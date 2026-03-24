@@ -27,17 +27,21 @@ model City {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  name          String
-  password      String
-  role          String   @default("user")
-  cityId        String?
-  isVerified    Boolean  @default(false)
-  avatarUrl     String?
-  bio           String?
-  website       String?
-  instagram     String?
+  id                     String   @id @default(cuid())
+  email                  String   @unique
+  name                   String
+  password               String
+  role                   String   @default("user")
+  cityId                 String?
+  isVerified             Boolean  @default(false)
+  avatarUrl              String?
+  bio                    String?
+  website                String?
+  instagram              String?
+  stripeAccountId        String?
+  stripeOnboardingComplete Boolean @default(false)
+  platformFeePercent     Float    @default(0.10)
+  stripeAccountBalance   Float    @default(0)
   followerCount Int      @default(0)
   followingCount Int     @default(0)
   eventCount    Int      @default(0)
@@ -298,6 +302,12 @@ model Order {
   name            String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
+  // Stripe Connect payout fields
+  stripeTransferId String?
+  platformFee     Float    @default(0)
+  payoutAmount    Float    @default(0)
+  payoutStatus    String   @default("pending") // pending, transferred, paid_out
   
   user            User        @relation(fields: [userId], references: [id])
   items           OrderItem[]

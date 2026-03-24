@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
+import { getStripe, calculateFees, PLATFORM_FEE_PERCENT } from '@/lib/stripe';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
@@ -35,11 +35,14 @@ export async function POST(request: NextRequest) {
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     let totalAmount = 0;
     const orderItems: { ticketTypeId: string; quantity: number; priceAtTime: number }[] = [];
+    let organizerUserId: string | null = null;
+    let organizerStripeAccountId: string | null = null;
+    let organizerPlatformFee = PLATFORM_FEE_PERCENT;
 
     for (const item of items) {
       const ticketType = await prisma.ticketType.findUnique({
         where: { id: item.ticketTypeId },
-        include: { event: true },
+        include: { event: { include: { user: true } } },
       });
 
       if (!ticketType) {
@@ -84,6 +87,20 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      if (!organizerUserId && ticketType.event.userId) {
+        organizerUserId = ticketType.event.userId;
+        
+        const organizer = await prisma.user.findUnique({
+          where: { id: organizerUserId },
+          select: { stripeAccountId: true, stripeOnboardingComplete: true, platformFeePercent: true },
+        });
+        
+        if (organizer?.stripeAccountId && organizer?.stripeOnboardingComplete) {
+          organizerStripeAccountId = organizer.stripeAccountId;
+          organizerPlatformFee = organizer.platformFeePercent || PLATFORM_FEE_PERCENT;
+        }
+      }
+
       const priceInCents = Math.round(ticketType.price * 100);
       lineItems.push({
         price_data: {
@@ -105,6 +122,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const { platformFee, payoutAmount } = calculateFees(totalAmount);
+
     const order = await prisma.order.create({
       data: {
         userId: session.id,
@@ -113,6 +132,9 @@ export async function POST(request: NextRequest) {
         currency: 'COP',
         email,
         name,
+        platformFee,
+        payoutAmount,
+        payoutStatus: organizerStripeAccountId ? 'pending' : 'no_account',
         items: {
           create: orderItems,
         },
@@ -120,8 +142,9 @@ export async function POST(request: NextRequest) {
     });
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const stripeInstance = getStripe();
     
-    const stripeSession = await stripe.checkout.sessions.create({
+    const checkoutParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
@@ -130,8 +153,20 @@ export async function POST(request: NextRequest) {
       customer_email: email,
       metadata: {
         orderId: order.id,
+        organizerUserId: organizerUserId || '',
+        organizerStripeAccountId: organizerStripeAccountId || '',
+        payoutAmount: Math.round(payoutAmount * 100).toString(),
+        platformFee: Math.round(platformFee * 100).toString(),
       },
-    });
+      payment_intent_data: {
+        application_fee_amount: Math.round(platformFee * 100),
+        transfer_data: organizerStripeAccountId ? {
+          destination: organizerStripeAccountId,
+        } : undefined,
+      },
+    };
+
+    const stripeSession = await stripeInstance.checkout.sessions.create(checkoutParams);
 
     await prisma.order.update({
       where: { id: order.id },
@@ -143,6 +178,12 @@ export async function POST(request: NextRequest) {
       data: {
         sessionId: stripeSession.id,
         url: stripeSession.url,
+        breakdown: {
+          total: totalAmount,
+          platformFee,
+          payoutAmount,
+          platformFeePercent: organizerPlatformFee * 100,
+        },
       },
     });
   } catch (error) {
