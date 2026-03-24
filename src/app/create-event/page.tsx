@@ -44,10 +44,6 @@ export default function CreateEventPage() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    if (formData.recurring) {
-      console.log('Recurring event data:', JSON.parse(formData.recurring));
-    }
-
     try {
       const response = await apiService.createEvent({
         citySlug: formData.cityId,
