@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized - please log in to view orders', 401, 'AUTH_REQUIRED');
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -62,10 +60,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch orders' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/orders');
   }
 }

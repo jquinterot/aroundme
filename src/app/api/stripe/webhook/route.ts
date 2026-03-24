@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
+import { handleApiError } from '@/lib/api-utils';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
@@ -99,10 +100,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, received: true });
   } catch (error) {
-    console.error('Webhook handler error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Webhook handler failed' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'webhook handler');
   }
 }

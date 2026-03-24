@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,7 +84,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Search error:', error);
-    return NextResponse.json({ success: false, error: 'Search failed' }, { status: 500 });
+    return handleApiError(error, 'GET /api/search');
   }
 }

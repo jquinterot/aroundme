@@ -2,16 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import type { Notification } from '@prisma/client';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized - please log in to view notifications', 401, 'AUTH_REQUIRED');
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -51,11 +49,7 @@ export async function GET(request: NextRequest) {
       unreadCount,
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch notifications' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/notifications');
   }
 }
 
@@ -64,10 +58,7 @@ export async function PATCH(request: NextRequest) {
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized - please log in to update notifications', 401, 'AUTH_REQUIRED');
     }
 
     const { notificationId, markAllRead } = await request.json();
@@ -83,10 +74,7 @@ export async function PATCH(request: NextRequest) {
       });
 
       if (!notification || notification.userId !== user.id) {
-        return NextResponse.json(
-          { success: false, error: 'Notification not found' },
-          { status: 404 }
-        );
+        return errorResponse('Notification not found or access denied', 404, 'NOTIFICATION_NOT_FOUND');
       }
 
       await prisma.notification.update({
@@ -97,10 +85,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating notification:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update notification' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'PATCH /api/notifications');
   }
 }

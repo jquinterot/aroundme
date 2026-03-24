@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 import type { RSVP, Save } from '@prisma/client';
 
 export async function POST(
@@ -15,10 +16,7 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     await prisma.event.update({
@@ -28,11 +26,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('View tracking error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to track view' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST track view');
   }
 }
 
@@ -63,10 +57,7 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const isOwner = user?.id === event.userId;
@@ -166,10 +157,6 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: analytics });
   } catch (error) {
-    console.error('Analytics error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to get analytics' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET event analytics');
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(
   request: NextRequest,
@@ -10,7 +11,7 @@ export async function POST(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to duplicate event', 401, 'UNAUTHORIZED');
   }
 
   try {
@@ -19,11 +20,11 @@ export async function POST(
     });
 
     if (!existingEvent) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (existingEvent.userId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('You can only duplicate your own events', 403, 'FORBIDDEN');
     }
 
     const newEvent = await prisma.event.create({
@@ -54,7 +55,6 @@ export async function POST(
       data: { id: newEvent.id },
     });
   } catch (error) {
-    console.error('Error duplicating event:', error);
-    return NextResponse.json({ success: false, error: 'Failed to duplicate event' }, { status: 500 });
+    return handleApiError(error, 'POST duplicate event');
   }
 }

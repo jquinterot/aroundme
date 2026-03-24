@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { notifyEventOwner } from '@/lib/notifications';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(
   request: NextRequest,
@@ -11,20 +12,19 @@ export async function POST(
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to RSVP' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to RSVP', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
     const { status } = await request.json();
     
-    if (!['going', 'interested', 'maybe'].includes(status)) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid RSVP status' },
-        { status: 400 }
-      );
+    if (!status) {
+      return errorResponse('RSVP status is required', 400, 'VALIDATION_ERROR');
+    }
+
+    const validStatuses = ['going', 'interested', 'maybe'];
+    if (!validStatuses.includes(status)) {
+      return errorResponse(`Invalid RSVP status. Must be one of: ${validStatuses.join(', ')}`, 400, 'VALIDATION_ERROR');
     }
     
     const event = await prisma.event.findUnique({
@@ -32,10 +32,7 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const existingRsvp = await prisma.rSVP.findUnique({
@@ -75,11 +72,7 @@ export async function POST(
       return NextResponse.json({ success: true, data: { rsvp: created } });
     }
   } catch (error) {
-    console.error('RSVP error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to RSVP' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST RSVP');
   }
 }
 
@@ -91,10 +84,7 @@ export async function DELETE(
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to cancel RSVP' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to cancel RSVP', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
@@ -108,10 +98,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('RSVP delete error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to cancel RSVP' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'DELETE RSVP');
   }
 }

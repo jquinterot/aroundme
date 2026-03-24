@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -6,24 +7,15 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null;
 
     if (!file) {
-      return NextResponse.json(
-        { success: false, error: 'No file provided' },
-        { status: 400 }
-      );
+      return errorResponse('No file provided', 400, 'MISSING_FILE');
     }
 
     if (!file.type.startsWith('image/')) {
-      return NextResponse.json(
-        { success: false, error: 'File must be an image' },
-        { status: 400 }
-      );
+      return errorResponse('File must be an image (image/* type required)', 400, 'INVALID_FILE_TYPE');
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json(
-        { success: false, error: 'File must be less than 10MB' },
-        { status: 400 }
-      );
+      return errorResponse('File must be less than 10MB', 400, 'FILE_TOO_LARGE');
     }
 
     const bytes = await file.arrayBuffer();
@@ -41,10 +33,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Upload failed' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/upload');
   }
 }

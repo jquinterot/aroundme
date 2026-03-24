@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getActivityFeed } from '@/lib/social';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,10 +16,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
 
     if (followingOnly && !sessionUserId) {
-      return NextResponse.json(
-        { success: false, error: 'Inicia sesión para ver actividad de personas que sigues' },
-        { status: 401 }
-      );
+      return errorResponse('Inicia sesión para ver actividad de personas que sigues', 401, 'AUTH_REQUIRED');
     }
 
     const data = await getActivityFeed(
@@ -34,10 +32,6 @@ export async function GET(request: NextRequest) {
       ...data,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/activity');
   }
 }

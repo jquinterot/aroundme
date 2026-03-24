@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
   try {
@@ -13,11 +14,7 @@ export async function GET() {
       data: cities,
     });
   } catch (error) {
-    console.error('Error fetching cities:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch cities' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/cities');
   }
 }
 
@@ -26,11 +23,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { name, country, slug, lat, lng } = body;
 
-    if (!name || !country || !slug || lat === undefined || lng === undefined) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (!name) {
+      return errorResponse('name is required', 400, 'MISSING_NAME');
+    }
+    if (!country) {
+      return errorResponse('country is required', 400, 'MISSING_COUNTRY');
+    }
+    if (!slug) {
+      return errorResponse('slug is required', 400, 'MISSING_SLUG');
+    }
+    if (lat === undefined) {
+      return errorResponse('lat is required', 400, 'MISSING_LAT');
+    }
+    if (lng === undefined) {
+      return errorResponse('lng is required', 400, 'MISSING_LNG');
     }
 
     const existing = await prisma.city.findUnique({
@@ -38,10 +44,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { success: false, error: 'City with this slug already exists' },
-        { status: 400 }
-      );
+      return errorResponse(`City with slug '${slug}' already exists`, 400, 'CITY_EXISTS');
     }
 
     const city = await prisma.city.create({
@@ -60,10 +63,6 @@ export async function POST(request: NextRequest) {
       data: city,
     });
   } catch (error) {
-    console.error('Error creating city:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create city' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/cities');
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -12,7 +13,7 @@ export async function GET(
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 });
+      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
     }
 
     const formattedPlace = {
@@ -43,8 +44,7 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: formattedPlace });
   } catch (error) {
-    console.error('Error fetching place:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch place' }, { status: 500 });
+    return handleApiError(error, 'GET /api/places/[id]');
   }
 }
 
@@ -56,18 +56,18 @@ export async function PATCH(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Unauthorized - you must be logged in to update a place', 401, 'UNAUTHORIZED');
   }
 
   try {
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 });
+      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
     }
 
     if (place.ownerId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Forbidden - you do not own this place', 403, 'FORBIDDEN');
     }
 
     const body = await request.json();
@@ -108,8 +108,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, data: updatedPlace });
   } catch (error) {
-    console.error('Error updating place:', error);
-    return NextResponse.json({ success: false, error: 'Failed to update place' }, { status: 500 });
+    return handleApiError(error, 'PATCH /api/places/[id]');
   }
 }
 
@@ -121,25 +120,24 @@ export async function DELETE(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Unauthorized - you must be logged in to delete a place', 401, 'UNAUTHORIZED');
   }
 
   try {
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 });
+      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
     }
 
     if (place.ownerId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Forbidden - you do not own this place', 403, 'FORBIDDEN');
     }
 
     await prisma.place.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting place:', error);
-    return NextResponse.json({ success: false, error: 'Failed to delete place' }, { status: 500 });
+    return handleApiError(error, 'DELETE /api/places/[id]');
   }
 }

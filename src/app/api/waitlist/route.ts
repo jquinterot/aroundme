@@ -1,25 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { joinWaitlist, leaveWaitlist, getWaitlistPosition, getEventWaitlist } from '@/lib/waitlist';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Por favor inicia sesión' },
-        { status: 401 }
-      );
+      return errorResponse('Por favor inicia sesión', 401, 'AUTH_REQUIRED');
     }
 
     const { eventId, notifyAt } = await request.json();
 
     if (!eventId) {
-      return NextResponse.json(
-        { success: false, error: 'ID de evento requerido' },
-        { status: 400 }
-      );
+      return errorResponse('eventId es requerido para unirse a la lista de espera', 400, 'MISSING_EVENT_ID');
     }
 
     const result = await joinWaitlist(session.id, eventId, notifyAt);
@@ -30,11 +25,7 @@ export async function POST(request: NextRequest) {
       message: `Te has agregado a la lista de espera en posición ${result.position}`,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
-    );
+    return handleApiError(error, 'POST /api/waitlist');
   }
 }
 
@@ -43,20 +34,14 @@ export async function DELETE(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Por favor inicia sesión' },
-        { status: 401 }
-      );
+      return errorResponse('Por favor inicia sesión', 401, 'AUTH_REQUIRED');
     }
 
     const { searchParams } = new URL(request.url);
     const eventId = searchParams.get('eventId');
 
     if (!eventId) {
-      return NextResponse.json(
-        { success: false, error: 'ID de evento requerido' },
-        { status: 400 }
-      );
+      return errorResponse('eventId es requerido para salir de la lista de espera', 400, 'MISSING_EVENT_ID');
     }
 
     await leaveWaitlist(session.id, eventId);
@@ -66,11 +51,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Has salido de la lista de espera',
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
-    );
+    return handleApiError(error, 'DELETE /api/waitlist');
   }
 }
 
@@ -97,15 +78,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Parámetros inválidos' },
-      { status: 400 }
-    );
+    return errorResponse('Parámetros inválidos - se requiere eventId o userId', 400, 'INVALID_PARAMS');
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/waitlist');
   }
 }

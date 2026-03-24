@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -16,10 +17,7 @@ export async function GET(
     });
 
     if (!activity) {
-      return NextResponse.json(
-        { success: false, error: 'Activity not found' },
-        { status: 404 }
-      );
+      return errorResponse('Activity not found', 404, 'ACTIVITY_NOT_FOUND');
     }
 
     await prisma.activity.update({
@@ -59,11 +57,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Error fetching activity:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch activity' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/activities/[id]');
   }
 }
 
@@ -90,11 +84,20 @@ export async function POST(request: NextRequest) {
       skillLevel,
     } = body;
 
-    if (!citySlug || !title || !description || !category || !providerName) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (!citySlug) {
+      return errorResponse('citySlug is required', 400, 'MISSING_CITY_SLUG');
+    }
+    if (!title) {
+      return errorResponse('title is required', 400, 'MISSING_TITLE');
+    }
+    if (!description) {
+      return errorResponse('description is required', 400, 'MISSING_DESCRIPTION');
+    }
+    if (!category) {
+      return errorResponse('category is required', 400, 'MISSING_CATEGORY');
+    }
+    if (!providerName) {
+      return errorResponse('providerName is required', 400, 'MISSING_PROVIDER_NAME');
     }
 
     const city = await prisma.city.findUnique({
@@ -102,10 +105,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!city) {
-      return NextResponse.json(
-        { success: false, error: 'City not found' },
-        { status: 404 }
-      );
+      return errorResponse(`City with slug '${citySlug}' not found`, 404, 'CITY_NOT_FOUND');
     }
 
     const activity = await prisma.activity.create({
@@ -137,10 +137,6 @@ export async function POST(request: NextRequest) {
       data: activity,
     });
   } catch (error) {
-    console.error('Error creating activity:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create activity' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/activities/[id]');
   }
 }

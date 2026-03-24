@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateICS, generateGoogleCalendarUrl, generateOutlookUrl, generateYahooUrl } from '@/lib/calendar-export';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -19,10 +20,12 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
+    }
+
+    const validFormats = ['ics', 'google', 'outlook', 'yahoo'];
+    if (!validFormats.includes(format)) {
+      return errorResponse(`Invalid format. Must be one of: ${validFormats.join(', ')}`, 400, 'VALIDATION_ERROR');
     }
 
     const eventData = {
@@ -85,10 +88,6 @@ export async function GET(
         });
     }
   } catch (error) {
-    console.error('Calendar export error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to generate calendar' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET calendar export');
   }
 }

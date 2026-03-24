@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(
   request: NextRequest,
@@ -10,18 +11,18 @@ export async function POST(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'You must be logged in to claim a place' }, { status: 401 });
+    return errorResponse('You must be logged in to claim a place', 401, 'UNAUTHORIZED');
   }
 
   try {
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 });
+      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
     }
 
     if (place.ownerId) {
-      return NextResponse.json({ success: false, error: 'This place is already claimed' }, { status: 400 });
+      return errorResponse('This place is already claimed by another user', 400, 'PLACE_ALREADY_CLAIMED');
     }
 
     const updatedPlace = await prisma.place.update({
@@ -41,8 +42,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('Error claiming place:', error);
-    return NextResponse.json({ success: false, error: 'Failed to claim place' }, { status: 500 });
+    return handleApiError(error, 'POST /api/places/[id]/claim');
   }
 }
 
@@ -54,18 +54,18 @@ export async function DELETE(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'You must be logged in' }, { status: 401 });
+    return errorResponse('You must be logged in to unclaim a place', 401, 'UNAUTHORIZED');
   }
 
   try {
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 });
+      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
     }
 
     if (place.ownerId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Forbidden - you do not own this place', 403, 'FORBIDDEN');
     }
 
     const updatedPlace = await prisma.place.update({
@@ -84,7 +84,6 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    console.error('Error unclaiming place:', error);
-    return NextResponse.json({ success: false, error: 'Failed to unclaim place' }, { status: 500 });
+    return handleApiError(error, 'DELETE /api/places/[id]/claim');
   }
 }

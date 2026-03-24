@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
   try {
     const session = await getSession();
     
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!session) {
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
+    }
+    
+    if (session.role !== 'admin') {
+      return errorResponse('Admin access required', 403, 'FORBIDDEN');
     }
 
     const now = new Date();
@@ -85,10 +87,6 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error fetching admin stats:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch stats' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin stats');
   }
 }

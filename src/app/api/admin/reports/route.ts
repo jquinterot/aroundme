@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
     
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!session) {
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
+    }
+    
+    if (session.role !== 'admin') {
+      return errorResponse('Admin access required', 403, 'FORBIDDEN');
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -69,11 +71,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch reports' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin reports list');
   }
 }
 
@@ -82,20 +80,23 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
     }
 
     const body = await request.json();
     const { type, itemId, reason, description } = body;
 
-    if (!type || !itemId || !reason) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (!type) {
+      return errorResponse('Report type is required', 400, 'MISSING_TYPE');
+    }
+    if (!itemId) {
+      return errorResponse('Item ID is required', 400, 'MISSING_ITEM_ID');
+    }
+    if (!reason) {
+      return errorResponse('Reason is required', 400, 'MISSING_REASON');
+    }
+    if (type !== 'event' && type !== 'place' && type !== 'review' && type !== 'user') {
+      return errorResponse('Type must be one of: event, place, review, user', 400, 'INVALID_TYPE');
     }
 
     const existingReport = await prisma.adminReport.findFirst({
@@ -108,10 +109,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingReport) {
-      return NextResponse.json(
-        { success: false, error: 'You have already reported this item' },
-        { status: 400 }
-      );
+      return errorResponse('You have already reported this item', 400, 'DUPLICATE_REPORT');
     }
 
     const report = await prisma.adminReport.create({
@@ -131,10 +129,6 @@ export async function POST(request: NextRequest) {
       data: report,
     });
   } catch (error) {
-    console.error('Error creating report:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to submit report' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin report create');
   }
 }

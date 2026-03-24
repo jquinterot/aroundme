@@ -44,11 +44,21 @@ class ApiService {
         body: body ? JSON.stringify(body) : undefined,
       });
       
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        const errorText = await response.text().catch(() => 'Unable to read response');
+        console.error('API Error: Failed to parse response', { status: response.status, url, responseText: errorText });
+        return {
+          success: false,
+          error: `Server returned invalid response (${response.status}). Please try again.`,
+        };
+      }
       
       if (!response.ok) {
         const errorMessage = data?.error || this.getHttpErrorMessage(response.status);
-        console.error('API Error:', { status: response.status, error: errorMessage, url });
+        console.error('API Error:', { status: response.status, error: errorMessage, url, response: data });
         return {
           success: false,
           error: errorMessage,
@@ -57,7 +67,7 @@ class ApiService {
       
       return data;
     } catch (error) {
-      console.error('API Error:', error);
+      console.error('API Error: Network/fetch failed', { url, error });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error. Please check your connection.',

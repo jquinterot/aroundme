@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -10,10 +11,7 @@ export async function GET(
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized - please log in to view this order', 401, 'AUTH_REQUIRED');
     }
 
     const { id } = await params;
@@ -42,17 +40,11 @@ export async function GET(
     });
 
     if (!order) {
-      return NextResponse.json(
-        { success: false, error: 'Order not found' },
-        { status: 404 }
-      );
+      return errorResponse('Order not found', 404, 'ORDER_NOT_FOUND');
     }
 
     if (order.userId !== session.id && session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Access denied' },
-        { status: 403 }
-      );
+      return errorResponse('Access denied - you do not have permission to view this order', 403, 'ACCESS_DENIED');
     }
 
     return NextResponse.json({
@@ -83,10 +75,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Error fetching order:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch order' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/orders/[id]');
   }
 }

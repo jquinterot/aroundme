@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 import type { Event } from '@prisma/client';
 
 export async function GET(
@@ -22,10 +23,7 @@ export async function GET(
     });
 
     if (!cityRecord) {
-      return NextResponse.json(
-        { success: false, error: 'City not found' },
-        { status: 404 }
-      );
+      return errorResponse(`City '${slug}' not found`, 404, 'CITY_NOT_FOUND');
     }
 
     const where: Record<string, unknown> = {
@@ -119,7 +117,6 @@ export async function GET(
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error('Error fetching events:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch events' }, { status: 500 });
+    return handleApiError(error, 'GET /api/cities/[slug]/events');
   }
 }

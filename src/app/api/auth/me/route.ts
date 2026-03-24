@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET() {
   try {
@@ -17,10 +18,6 @@ export async function GET() {
       data: user,
     });
   } catch (error) {
-    console.error('Session error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to get session' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'getSession');
   }
 }

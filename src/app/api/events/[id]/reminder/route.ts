@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to set reminder', 401, 'UNAUTHORIZED');
   }
 
   try {
     const { eventId } = await request.json();
 
     if (!eventId) {
-      return NextResponse.json({ success: false, error: 'Event ID is required' }, { status: 400 });
+      return errorResponse('Event ID is required', 400, 'VALIDATION_ERROR');
     }
 
     const event = await prisma.event.findUnique({
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!event) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const existingReminder = await prisma.notification.findFirst({
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingReminder) {
-      return NextResponse.json({ success: false, error: 'Reminder already set' }, { status: 400 });
+      return errorResponse('Reminder already set for this event', 400, 'REMINDER_EXISTS');
     }
 
     const eventDate = new Date(event.dateStart);
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     reminderDate.setDate(reminderDate.getDate() - 1);
 
     if (reminderDate <= new Date()) {
-      return NextResponse.json({ success: false, error: 'Event is too soon for reminder' }, { status: 400 });
+      return errorResponse('Event is too soon to set a reminder', 400, 'INVALID_REMINDER_TIME');
     }
 
     await prisma.notification.create({
@@ -60,8 +61,7 @@ export async function POST(request: NextRequest) {
       message: 'Reminder set for tomorrow',
     });
   } catch (error) {
-    console.error('Error setting reminder:', error);
-    return NextResponse.json({ success: false, error: 'Failed to set reminder' }, { status: 500 });
+    return handleApiError(error, 'POST set reminder');
   }
 }
 
@@ -69,7 +69,7 @@ export async function GET() {
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to fetch reminders', 401, 'UNAUTHORIZED');
   }
 
   try {
@@ -83,8 +83,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: reminders });
   } catch (error) {
-    console.error('Error fetching reminders:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch reminders' }, { status: 500 });
+    return handleApiError(error, 'GET reminders');
   }
 }
 
@@ -92,7 +91,7 @@ export async function DELETE(request: NextRequest) {
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to delete reminder', 401, 'UNAUTHORIZED');
   }
 
   try {
@@ -100,7 +99,7 @@ export async function DELETE(request: NextRequest) {
     const eventId = searchParams.get('eventId');
 
     if (!eventId) {
-      return NextResponse.json({ success: false, error: 'Event ID is required' }, { status: 400 });
+      return errorResponse('Event ID is required', 400, 'VALIDATION_ERROR');
     }
 
     await prisma.notification.deleteMany({
@@ -113,7 +112,6 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting reminder:', error);
-    return NextResponse.json({ success: false, error: 'Failed to delete reminder' }, { status: 500 });
+    return handleApiError(error, 'DELETE reminder');
   }
 }

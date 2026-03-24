@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession, hashPassword } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'You must be logged in' },
-        { status: 401 }
-      );
+      return errorResponse('Debes iniciar sesión para cambiar tu contraseña', 401, 'UNAUTHORIZED');
     }
 
     const { currentPassword, newPassword } = await request.json();
 
-    if (!currentPassword || !newPassword) {
-      return NextResponse.json(
-        { success: false, error: 'Current password and new password are required' },
-        { status: 400 }
-      );
+    if (!currentPassword) {
+      return errorResponse('La contraseña actual es requerida', 400, 'CURRENT_PASSWORD_REQUIRED');
     }
 
-    if (newPassword.length < 6) {
-      return NextResponse.json(
-        { success: false, error: 'New password must be at least 6 characters' },
-        { status: 400 }
-      );
+    if (!newPassword) {
+      return errorResponse('La nueva contraseña es requerida', 400, 'NEW_PASSWORD_REQUIRED');
+    }
+
+    if (typeof newPassword !== 'string' || newPassword.length < 6) {
+      return errorResponse('La nueva contraseña debe tener al menos 6 caracteres', 400, 'PASSWORD_TOO_SHORT');
+    }
+
+    if (newPassword.length > 100) {
+      return errorResponse('La nueva contraseña no puede exceder 100 caracteres', 400, 'PASSWORD_TOO_LONG');
     }
 
     const user = await prisma.user.findUnique({
@@ -34,20 +34,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return errorResponse('Usuario no encontrado', 404, 'USER_NOT_FOUND');
     }
 
     const bcrypt = await import('bcrypt');
     const isValidPassword = await bcrypt.compare(currentPassword, user.password);
 
     if (!isValidPassword) {
-      return NextResponse.json(
-        { success: false, error: 'Current password is incorrect' },
-        { status: 400 }
-      );
+      return errorResponse('La contraseña actual es incorrecta', 400, 'INVALID_PASSWORD');
     }
 
     const hashedPassword = await hashPassword(newPassword);
@@ -61,13 +55,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Password changed successfully',
+      message: 'Contraseña cambiada exitosamente',
     });
   } catch (error) {
-    console.error('Change password error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to change password' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/profile/change-password');
   }
 }

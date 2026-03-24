@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
   try {
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Debes iniciar sesión para ver tus eventos guardados', 401, 'UNAUTHORIZED');
     }
 
     const saves = await prisma.save.findMany({
@@ -42,10 +40,6 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error('Error fetching saved events:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch saved events' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/user/saved-events');
   }
 }

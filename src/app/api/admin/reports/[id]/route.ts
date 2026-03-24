@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function PATCH(
   request: NextRequest,
@@ -10,26 +11,31 @@ export async function PATCH(
   try {
     const session = await getSession();
     
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!session) {
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
+    }
+    
+    if (session.role !== 'admin') {
+      return errorResponse('Admin access required', 403, 'FORBIDDEN');
     }
 
     const { id } = await params;
     const body = await request.json();
     const { action, adminNote } = body;
 
+    if (!action) {
+      return errorResponse('Action is required', 400, 'MISSING_ACTION');
+    }
+    if (action !== 'resolve' && action !== 'dismiss' && action !== 'review') {
+      return errorResponse('Action must be one of: resolve, dismiss, review', 400, 'INVALID_ACTION');
+    }
+
     const report = await prisma.adminReport.findUnique({
       where: { id },
     });
 
     if (!report) {
-      return NextResponse.json(
-        { success: false, error: 'Report not found' },
-        { status: 404 }
-      );
+      return errorResponse('Report not found', 404, 'REPORT_NOT_FOUND');
     }
 
     let updatedReport;
@@ -81,10 +87,6 @@ export async function PATCH(
       data: updatedReport,
     });
   } catch (error) {
-    console.error('Error updating report:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update report' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin report update');
   }
 }

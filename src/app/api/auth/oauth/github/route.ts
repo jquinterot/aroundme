@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/api-utils';
 
 export async function GET(_request: NextRequest) {
   const clientId = process.env.GITHUB_CLIENT_ID;
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/oauth/callback/github`;
   
   if (!clientId) {
-    return NextResponse.json(
-      { success: false, error: 'GitHub OAuth not configured' },
-      { status: 500 }
-    );
+    return errorResponse('GitHub OAuth client ID is not configured', 500, 'OAUTH_NOT_CONFIGURED');
   }
 
   const state = Math.random().toString(36).substring(7);

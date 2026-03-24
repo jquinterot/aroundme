@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,7 +8,7 @@ export async function POST(request: NextRequest) {
     const cronSecret = process.env.CRON_SECRET;
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+      return errorResponse('Unauthorized - invalid or missing cron secret', 401, 'UNAUTHORIZED');
     }
 
     const thirtyDaysAgo = new Date();
@@ -60,7 +61,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error cleaning up events:', error);
-    return NextResponse.json({ success: false, error: 'Failed to clean up events' }, { status: 500 });
+    return handleApiError(error, 'POST /api/cron/cleanup');
   }
 }

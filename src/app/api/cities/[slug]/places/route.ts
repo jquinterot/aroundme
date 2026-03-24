@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import type { Place } from '@prisma/client';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -11,8 +12,27 @@ export async function GET(
   
   const category = searchParams.get('category');
   const search = searchParams.get('search');
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = parseInt(searchParams.get('limit') || '20');
+  const pageStr = searchParams.get('page');
+  const limitStr = searchParams.get('limit');
+
+  const page = pageStr ? parseInt(pageStr, 10) : 1;
+  const limit = limitStr ? parseInt(limitStr, 10) : 20;
+
+  if (isNaN(page) || page < 1) {
+    return errorResponse('Page must be a positive number', 400, 'INVALID_PAGE');
+  }
+
+  if (isNaN(limit) || limit < 1 || limit > 100) {
+    return errorResponse('Limit must be a number between 1 and 100', 400, 'INVALID_LIMIT');
+  }
+
+  if (category && typeof category !== 'string') {
+    return errorResponse('Category must be a string', 400, 'INVALID_CATEGORY');
+  }
+
+  if (search && typeof search !== 'string') {
+    return errorResponse('Search must be a string', 400, 'INVALID_SEARCH');
+  }
 
   try {
     const cityRecord = await prisma.city.findUnique({
@@ -20,7 +40,7 @@ export async function GET(
     });
 
     if (!cityRecord) {
-      return NextResponse.json({ success: false, error: 'City not found' }, { status: 404 });
+      return errorResponse(`City with slug '${slug}' not found`, 404, 'CITY_NOT_FOUND');
     }
 
     const where: Record<string, unknown> = { cityId: cityRecord.id };
@@ -78,7 +98,6 @@ export async function GET(
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error('Error fetching places:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch places' }, { status: 500 });
+    return handleApiError(error, 'GET /api/cities/[slug]/places');
   }
 }

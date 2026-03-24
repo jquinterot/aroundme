@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getStripe, PLATFORM_FEE_PERCENT } from '@/lib/stripe';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(_request: NextRequest) {
   try {
@@ -80,11 +81,7 @@ export async function POST(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error creating Stripe Connect account:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create Stripe account' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'Stripe Connect account creation');
   }
 }
 
@@ -144,10 +141,6 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching Stripe Connect status:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch Stripe status' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'Stripe Connect status fetch');
   }
 }

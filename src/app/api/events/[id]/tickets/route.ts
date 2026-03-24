@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -10,10 +11,7 @@ export async function GET(
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to fetch tickets', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
@@ -30,10 +28,7 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const isOwner = session.id === event.userId || session.role === 'admin';
@@ -50,11 +45,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Error fetching event:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch event' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET event tickets');
   }
 }
 
@@ -66,15 +57,16 @@ export async function POST(
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to create ticket type', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
     const body = await request.json();
     const { name, description, price, quantity, maxPerUser, saleStart, saleEnd } = body;
+
+    if (!name) {
+      return errorResponse('Ticket type name is required', 400, 'VALIDATION_ERROR');
+    }
 
     const event = await prisma.event.findUnique({
       where: { id },
@@ -82,19 +74,13 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const isOwner = session.id === event.userId || session.role === 'admin';
 
     if (!isOwner) {
-      return NextResponse.json(
-        { success: false, error: 'Only event owner can add ticket types' },
-        { status: 403 }
-      );
+      return errorResponse('Only the event organizer can add ticket types', 403, 'FORBIDDEN');
     }
 
     const ticketType = await prisma.ticketType.create({
@@ -116,10 +102,6 @@ export async function POST(
       message: 'Ticket type created successfully',
     });
   } catch (error) {
-    console.error('Error creating ticket type:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create ticket type' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST create ticket type');
   }
 }

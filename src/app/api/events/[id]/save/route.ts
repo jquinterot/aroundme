@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(
   request: NextRequest,
@@ -10,10 +11,7 @@ export async function POST(
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to save events' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to save events', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
@@ -23,10 +21,7 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const existingSave = await prisma.save.findUnique({
@@ -61,10 +56,6 @@ export async function POST(
       return NextResponse.json({ success: true, data: { saved: true } });
     }
   } catch (error) {
-    console.error('Save error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to save event' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST save event');
   }
 }

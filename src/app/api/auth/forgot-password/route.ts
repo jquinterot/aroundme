@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,10 +46,6 @@ export async function POST(request: NextRequest) {
       resetUrl,
     });
   } catch (error) {
-    console.error('Password reset error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to process password reset request' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'forgotPassword');
   }
 }

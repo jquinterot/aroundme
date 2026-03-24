@@ -1,26 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401, 'AUTH_REQUIRED');
     }
 
     const body = await request.json();
     const { endpoint, keys } = body;
 
-    if (!endpoint || !keys?.p256dh || !keys?.auth) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid subscription data' },
-        { status: 400 }
-      );
+    if (!endpoint) {
+      return errorResponse('endpoint es requerido', 400, 'MISSING_ENDPOINT');
+    }
+    if (!keys?.p256dh) {
+      return errorResponse('keys.p256dh es requerido', 400, 'MISSING_P256DH');
+    }
+    if (!keys?.auth) {
+      return errorResponse('keys.auth es requerido', 400, 'MISSING_AUTH');
     }
 
     await prisma.pushSubscription.upsert({
@@ -41,11 +42,7 @@ export async function POST(request: NextRequest) {
       message: 'Push subscription saved',
     });
   } catch (error) {
-    console.error('Error saving push subscription:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to save subscription' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/push-subscription');
   }
 }
 
@@ -54,20 +51,14 @@ export async function DELETE(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401, 'AUTH_REQUIRED');
     }
 
     const body = await request.json();
     const { endpoint } = body;
 
     if (!endpoint) {
-      return NextResponse.json(
-        { success: false, error: 'Endpoint required' },
-        { status: 400 }
-      );
+      return errorResponse('endpoint es requerido para eliminar la suscripción', 400, 'MISSING_ENDPOINT');
     }
 
     await prisma.pushSubscription.deleteMany({
@@ -79,11 +70,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Push subscription removed',
     });
   } catch (error) {
-    console.error('Error removing push subscription:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to remove subscription' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'DELETE /api/push-subscription');
   }
 }
 
@@ -92,10 +79,7 @@ export async function GET() {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401, 'AUTH_REQUIRED');
     }
 
     const subscriptions = await prisma.pushSubscription.findMany({
@@ -111,10 +95,6 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error('Error fetching subscriptions:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch subscriptions' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/push-subscription');
   }
 }

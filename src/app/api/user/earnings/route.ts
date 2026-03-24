@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(_request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to continue' },
-        { status: 401 }
-      );
+      return errorResponse('Debes iniciar sesión para ver tus ganancias', 401, 'UNAUTHORIZED');
     }
 
     const orders = await prisma.order.findMany({
@@ -83,10 +81,6 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching earnings:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch earnings' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/user/earnings');
   }
 }

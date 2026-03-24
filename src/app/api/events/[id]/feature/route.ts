@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 const FEATURED_TIERS = {
   basic: {
@@ -27,20 +28,19 @@ export async function POST(
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Please login to feature events' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to feature events', 401, 'UNAUTHORIZED');
     }
 
     const body = await request.json();
     const { tier } = body;
 
-    if (!tier || !['basic', 'premium'].includes(tier)) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid tier. Must be "basic" or "premium"' },
-        { status: 400 }
-      );
+    if (!tier) {
+      return errorResponse('Tier is required (basic or premium)', 400, 'VALIDATION_ERROR');
+    }
+
+    const validTiers = ['basic', 'premium'];
+    if (!validTiers.includes(tier)) {
+      return errorResponse(`Invalid tier. Must be one of: ${validTiers.join(', ')}`, 400, 'VALIDATION_ERROR');
     }
 
     const event = await prisma.event.findUnique({
@@ -48,17 +48,11 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (event.userId !== user.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - you can only feature your own events' },
-        { status: 403 }
-      );
+      return errorResponse('You can only feature your own events', 403, 'FORBIDDEN');
     }
 
     const tierConfig = FEATURED_TIERS[tier as keyof typeof FEATURED_TIERS];
@@ -85,11 +79,7 @@ export async function POST(
       message: `Event featured as ${tierConfig.label} for ${tierConfig.durationDays} days`,
     });
   } catch (error) {
-    console.error('Error featuring event:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to feature event' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST feature event');
   }
 }
 
@@ -103,10 +93,7 @@ export async function DELETE(
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Please login' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to remove event feature', 401, 'UNAUTHORIZED');
     }
 
     const event = await prisma.event.findUnique({
@@ -114,17 +101,11 @@ export async function DELETE(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { success: false, error: 'Event not found' },
-        { status: 404 }
-      );
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (event.userId !== user.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
-      );
+      return errorResponse('You can only remove features from your own events', 403, 'FORBIDDEN');
     }
 
     const updatedEvent = await prisma.event.update({
@@ -146,11 +127,7 @@ export async function DELETE(
       message: 'Feature removed from event',
     });
   } catch (error) {
-    console.error('Error removing feature:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to remove feature' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'DELETE feature event');
   }
 }
 

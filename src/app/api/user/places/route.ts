@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return errorResponse('Debes iniciar sesión para ver tus lugares', 401, 'UNAUTHORIZED');
+    }
+
     const places = await prisma.place.findMany({
       where: { ownerId: session.id },
       include: {
@@ -38,7 +39,6 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: formattedPlaces });
   } catch (error) {
-    console.error('Error fetching user places:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch places' }, { status: 500 });
+    return handleApiError(error, 'GET /api/user/places');
   }
 }

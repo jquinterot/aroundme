@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function PATCH(
   request: NextRequest,
@@ -9,16 +10,21 @@ export async function PATCH(
   try {
     const session = await getSession();
     
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!session) {
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
+    }
+    
+    if (session.role !== 'admin') {
+      return errorResponse('Admin access required', 403, 'FORBIDDEN');
     }
 
     const { id } = await params;
     const body = await request.json();
     const { action, ...data } = body;
+
+    if (!action) {
+      return errorResponse('Action is required', 400, 'MISSING_ACTION');
+    }
 
     if (action === 'verify') {
       const place = await prisma.place.update({
@@ -71,16 +77,9 @@ export async function PATCH(
       });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Invalid action' },
-      { status: 400 }
-    );
+    return errorResponse('Invalid action. Must be one of: verify, unverify, update', 400, 'INVALID_ACTION');
   } catch (error) {
-    console.error('Error updating place:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update place' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin place update');
   }
 }
 
@@ -91,11 +90,12 @@ export async function DELETE(
   try {
     const session = await getSession();
     
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!session) {
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
+    }
+    
+    if (session.role !== 'admin') {
+      return errorResponse('Admin access required', 403, 'FORBIDDEN');
     }
 
     const { id } = await params;
@@ -109,10 +109,6 @@ export async function DELETE(
       message: 'Place deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting place:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to delete place' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'admin place delete');
   }
 }

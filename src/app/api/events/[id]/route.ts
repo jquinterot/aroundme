@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(
   request: NextRequest,
@@ -53,8 +54,7 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: formattedEvent });
   } catch (error) {
-    console.error('Error fetching event:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch event' }, { status: 500 });
+    return handleApiError(error, 'GET event');
   }
 }
 
@@ -66,7 +66,7 @@ export async function PATCH(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to update event', 401, 'UNAUTHORIZED');
   }
 
   try {
@@ -92,11 +92,11 @@ export async function PATCH(
 
     const existingEvent = await prisma.event.findUnique({ where: { id } });
     if (!existingEvent) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (existingEvent.userId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Only the event organizer can update this event', 403, 'FORBIDDEN');
     }
 
     const updatedEvent = await prisma.event.update({
@@ -123,8 +123,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, data: updatedEvent });
   } catch (error) {
-    console.error('Error updating event:', error);
-    return NextResponse.json({ success: false, error: 'Failed to update event' }, { status: 500 });
+    return handleApiError(error, 'PATCH event');
   }
 }
 
@@ -136,25 +135,24 @@ export async function DELETE(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to delete event', 401, 'UNAUTHORIZED');
   }
 
   try {
     const existingEvent = await prisma.event.findUnique({ where: { id } });
     if (!existingEvent) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (existingEvent.userId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Only the event organizer can delete this event', 403, 'FORBIDDEN');
     }
 
     await prisma.event.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting event:', error);
-    return NextResponse.json({ success: false, error: 'Failed to delete event' }, { status: 500 });
+    return handleApiError(error, 'DELETE event');
   }
 }
 
@@ -166,23 +164,28 @@ export async function PUT(
   const session = await getSession();
 
   if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return errorResponse('Authentication required to update event status', 401, 'UNAUTHORIZED');
   }
 
   try {
     const { status } = await request.json();
 
-    if (!status || !['pending', 'approved', 'cancelled', 'rejected'].includes(status)) {
-      return NextResponse.json({ success: false, error: 'Invalid status' }, { status: 400 });
+    if (!status) {
+      return errorResponse('Status is required', 400, 'VALIDATION_ERROR');
+    }
+
+    const validStatuses = ['pending', 'approved', 'cancelled', 'rejected'];
+    if (!validStatuses.includes(status)) {
+      return errorResponse(`Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400, 'VALIDATION_ERROR');
     }
 
     const existingEvent = await prisma.event.findUnique({ where: { id } });
     if (!existingEvent) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     if (existingEvent.userId !== session.id) {
-      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      return errorResponse('Only the event organizer can update event status', 403, 'FORBIDDEN');
     }
 
     const updatedEvent = await prisma.event.update({
@@ -192,7 +195,6 @@ export async function PUT(
 
     return NextResponse.json({ success: true, data: { status: updatedEvent.status } });
   } catch (error) {
-    console.error('Error updating event status:', error);
-    return NextResponse.json({ success: false, error: 'Failed to update event status' }, { status: 500 });
+    return handleApiError(error, 'PUT event status');
   }
 }

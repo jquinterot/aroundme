@@ -1,18 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return errorResponse('Debes iniciar sesión para ver tu historial', 401, 'UNAUTHORIZED');
+    }
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'all';
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limitParam = searchParams.get('limit');
+    const limit = limitParam ? parseInt(limitParam) : 10;
+
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return errorResponse('El límite debe ser un número entre 1 y 100', 400, 'INVALID_LIMIT');
+    }
+
+    if (type !== 'all' && !['event', 'place'].includes(type)) {
+      return errorResponse('El tipo debe ser "event", "place" o "all"', 400, 'INVALID_TYPE');
+    }
 
     const where: Record<string, unknown> = { userId: session.id };
     if (type !== 'all') {
@@ -82,27 +92,34 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: formattedHistory });
   } catch (error) {
-    console.error('Error fetching view history:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch history' }, { status: 500 });
+    return handleApiError(error, 'GET /api/user/history');
   }
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return errorResponse('Debes iniciar sesión para registrar vistas', 401, 'UNAUTHORIZED');
+    }
+
     const { type, itemId } = await request.json();
 
-    if (!type || !itemId) {
-      return NextResponse.json({ success: false, error: 'Type and itemId are required' }, { status: 400 });
+    if (!type) {
+      return errorResponse('El tipo es requerido', 400, 'TYPE_REQUIRED');
+    }
+
+    if (!itemId) {
+      return errorResponse('El ID del elemento es requerido', 400, 'ITEM_ID_REQUIRED');
     }
 
     if (!['event', 'place'].includes(type)) {
-      return NextResponse.json({ success: false, error: 'Invalid type' }, { status: 400 });
+      return errorResponse('El tipo debe ser "event" o "place"', 400, 'INVALID_TYPE');
+    }
+
+    if (typeof itemId !== 'string' || itemId.length < 1) {
+      return errorResponse('ID de elemento inválido', 400, 'INVALID_ITEM_ID');
     }
 
     await prisma.viewHistory.create({
@@ -125,7 +142,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error recording view:', error);
-    return NextResponse.json({ success: false, error: 'Failed to record view' }, { status: 500 });
+    return handleApiError(error, 'POST /api/user/history');
   }
 }

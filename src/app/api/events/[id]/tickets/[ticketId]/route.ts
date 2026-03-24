@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function PATCH(
   request: NextRequest,
@@ -10,10 +11,7 @@ export async function PATCH(
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to update ticket type', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
@@ -25,19 +23,13 @@ export async function PATCH(
     });
 
     if (!ticketType) {
-      return NextResponse.json(
-        { success: false, error: 'Ticket type not found' },
-        { status: 404 }
-      );
+      return errorResponse('Ticket type not found', 404, 'NOT_FOUND');
     }
 
     const isOwner = session.id === ticketType.event.userId || session.role === 'admin';
 
     if (!isOwner) {
-      return NextResponse.json(
-        { success: false, error: 'Only event owner can update ticket types' },
-        { status: 403 }
-      );
+      return errorResponse('Only the event organizer can update ticket types', 403, 'FORBIDDEN');
     }
 
     const updated = await prisma.ticketType.update({
@@ -60,11 +52,7 @@ export async function PATCH(
       message: 'Ticket type updated',
     });
   } catch (error) {
-    console.error('Error updating ticket type:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update ticket type' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'PATCH ticket type');
   }
 }
 
@@ -76,10 +64,7 @@ export async function DELETE(
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Authentication required to delete ticket type', 401, 'UNAUTHORIZED');
     }
 
     const { id } = await params;
@@ -93,19 +78,13 @@ export async function DELETE(
     });
 
     if (!ticketType) {
-      return NextResponse.json(
-        { success: false, error: 'Ticket type not found' },
-        { status: 404 }
-      );
+      return errorResponse('Ticket type not found', 404, 'NOT_FOUND');
     }
 
     const isOwner = session.id === ticketType.event.userId || session.role === 'admin';
 
     if (!isOwner) {
-      return NextResponse.json(
-        { success: false, error: 'Only event owner can delete ticket types' },
-        { status: 403 }
-      );
+      return errorResponse('Only the event organizer can delete ticket types', 403, 'FORBIDDEN');
     }
 
     if (ticketType.orderItems.length > 0) {
@@ -128,10 +107,6 @@ export async function DELETE(
       message: 'Ticket type deleted',
     });
   } catch (error) {
-    console.error('Error deleting ticket type:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to delete ticket type' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'DELETE ticket type');
   }
 }

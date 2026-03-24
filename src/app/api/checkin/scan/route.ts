@@ -1,34 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { validateQRToken, performCheckIn } from '@/lib/checkin';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Por favor inicia sesión' },
-        { status: 401 }
-      );
+      return errorResponse('Por favor inicia sesión', 401, 'AUTH_REQUIRED');
     }
 
     const { qrToken, eventId: organizerEventId } = await request.json();
 
     if (!qrToken) {
-      return NextResponse.json(
-        { success: false, error: 'QR token requerido' },
-        { status: 400 }
-      );
+      return errorResponse('qrToken es requerido para escanear', 400, 'MISSING_QR_TOKEN');
     }
 
     const qrData = validateQRToken(qrToken);
 
     if (!qrData) {
-      return NextResponse.json(
-        { success: false, error: 'Código QR inválido o expirado' },
-        { status: 400 }
-      );
+      return errorResponse('Código QR inválido o expirado', 400, 'INVALID_QR_CODE');
     }
 
     const eventId = organizerEventId || qrData.eventId;
@@ -49,10 +41,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
-    );
+    return handleApiError(error, 'POST /api/checkin/scan');
   }
 }

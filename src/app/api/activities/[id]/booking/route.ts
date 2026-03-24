@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function POST(
   request: NextRequest,
@@ -13,11 +14,14 @@ export async function POST(
     const body = await request.json();
     const { guestName, guestEmail, guestPhone, tickets, notes } = body;
 
-    if (!guestName || !guestEmail || !tickets) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (!guestName) {
+      return errorResponse('guestName is required', 400, 'MISSING_GUEST_NAME');
+    }
+    if (!guestEmail) {
+      return errorResponse('guestEmail is required', 400, 'MISSING_GUEST_EMAIL');
+    }
+    if (!tickets) {
+      return errorResponse('tickets is required', 400, 'MISSING_TICKETS');
     }
 
     const activity = await prisma.activity.findUnique({
@@ -25,24 +29,15 @@ export async function POST(
     });
 
     if (!activity) {
-      return NextResponse.json(
-        { success: false, error: 'Activity not found' },
-        { status: 404 }
-      );
+      return errorResponse('Activity not found', 404, 'ACTIVITY_NOT_FOUND');
     }
 
     if (activity.status !== 'active') {
-      return NextResponse.json(
-        { success: false, error: 'Activity is not available for booking' },
-        { status: 400 }
-      );
+      return errorResponse('Activity is not available for booking', 400, 'ACTIVITY_NOT_AVAILABLE');
     }
 
     if (activity.capacity && activity.bookingCount + tickets > activity.capacity) {
-      return NextResponse.json(
-        { success: false, error: 'Not enough spots available' },
-        { status: 400 }
-      );
+      return errorResponse('Not enough spots available', 400, 'CAPACITY_EXCEEDED');
     }
 
     const total = activity.isFree ? 0 : activity.price * tickets;
@@ -75,11 +70,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('Error creating booking:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create booking' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/activities/[id]/booking');
   }
 }
 
@@ -100,10 +91,6 @@ export async function GET(
       data: bookings,
     });
   } catch (error) {
-    console.error('Error fetching bookings:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch bookings' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/activities/[id]/booking');
   }
 }

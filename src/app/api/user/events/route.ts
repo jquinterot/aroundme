@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return errorResponse('Debes iniciar sesión para ver tus eventos', 401, 'UNAUTHORIZED');
+    }
+
     const events = await prisma.event.findMany({
       where: { userId: session.id },
       include: {
@@ -43,7 +44,6 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: formattedEvents });
   } catch (error) {
-    console.error('Error fetching user events:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch events' }, { status: 500 });
+    return handleApiError(error, 'GET /api/user/events');
   }
 }

@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return errorResponse('Debes iniciar sesión para ver tus estadísticas', 401, 'UNAUTHORIZED');
+    }
+
     const userId = session.id;
 
     const now = new Date();
@@ -24,7 +25,7 @@ export async function GET() {
       totalFollowers,
       totalFollowing,
       eventsAttended,
-placesVisited,
+      placesVisited,
       recentRsvps,
       rsvpStats,
     ] = await Promise.all([
@@ -136,7 +137,6 @@ placesVisited,
       },
     });
   } catch (error) {
-    console.error('Error fetching user stats:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch stats' }, { status: 500 });
+    return handleApiError(error, 'GET /api/user/stats');
   }
 }

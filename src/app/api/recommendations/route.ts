@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getRecommendations, recordRecommendationInteraction } from '@/lib/recommendations';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,10 +14,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: 'Inicia sesión para ver recomendaciones personalizadas' },
-        { status: 401 }
-      );
+      return errorResponse('Inicia sesión para ver recomendaciones personalizadas', 401, 'AUTH_REQUIRED');
     }
 
     const city = citySlug
@@ -34,11 +32,7 @@ export async function GET(request: NextRequest) {
       data: recommendations,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/recommendations');
   }
 }
 
@@ -47,29 +41,22 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return errorResponse('Unauthorized', 401, 'AUTH_REQUIRED');
     }
 
     const { eventId, action } = await request.json();
 
-    if (!eventId || !action) {
-      return NextResponse.json(
-        { success: false, error: 'eventId and action required' },
-        { status: 400 }
-      );
+    if (!eventId) {
+      return errorResponse('eventId es requerido', 400, 'MISSING_EVENT_ID');
+    }
+    if (!action) {
+      return errorResponse('action es requerido', 400, 'MISSING_ACTION');
     }
 
     await recordRecommendationInteraction(session.id, eventId, action);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'POST /api/recommendations');
   }
 }

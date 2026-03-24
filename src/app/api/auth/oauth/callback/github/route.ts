@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createSession, hashPassword } from '@/lib/auth';
 import { randomBytes } from 'crypto';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -20,7 +21,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect('/login?error=oauth_not_configured');
     }
 
-    // Exchange code for tokens
     const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: { 
@@ -36,17 +36,16 @@ export async function GET(request: NextRequest) {
     });
 
     if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange code for tokens');
+      throw new Error('GitHub token exchange failed');
     }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
     if (!accessToken) {
-      throw new Error('No access token received');
+      throw new Error('No access token received from GitHub');
     }
 
-    // Get user info
     const userResponse = await fetch('https://api.github.com/user', {
       headers: { 
         Authorization: `Bearer ${accessToken}`,
@@ -55,12 +54,11 @@ export async function GET(request: NextRequest) {
     });
 
     if (!userResponse.ok) {
-      throw new Error('Failed to get user info');
+      throw new Error('Failed to fetch GitHub user info');
     }
 
     const githubUser = await userResponse.json();
 
-    // Get email if not public
     let email = githubUser.email;
     if (!email) {
       const emailsResponse = await fetch('https://api.github.com/user/emails', {
@@ -80,13 +78,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect('/login?error=oauth_no_email');
     }
 
-    // Find or create user
     let user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      // Generate a random password for OAuth users (they can't login with password)
       const randomPassword = randomBytes(32).toString('hex');
       const passwordHash = await hashPassword(randomPassword);
       
@@ -97,11 +93,10 @@ export async function GET(request: NextRequest) {
           password: passwordHash,
           avatarUrl: githubUser.avatar_url || null,
           role: 'user',
-          isVerified: true, // GitHub users are pre-verified by email
+          isVerified: true,
         },
       });
     } else if (!user.avatarUrl && githubUser.avatar_url) {
-      // Update avatar if not set
       user = await prisma.user.update({
         where: { id: user.id },
         data: { avatarUrl: githubUser.avatar_url },
@@ -113,6 +108,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect('/dashboard');
   } catch (error) {
     console.error('GitHub OAuth error:', error);
-    return NextResponse.redirect('/login?error=oauth_failed');
+    return handleApiError(error, 'githubOAuth');
   }
 }

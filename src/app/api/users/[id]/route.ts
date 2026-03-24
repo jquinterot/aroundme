@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getUserProfile, updateUserProfile } from '@/lib/social';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,10 +19,7 @@ export async function GET(request: NextRequest) {
     const profile = await getUserProfile(userId, session?.id);
 
     if (!profile) {
-      return NextResponse.json(
-        { success: false, error: 'Usuario no encontrado' },
-        { status: 404 }
-      );
+      return errorResponse('Usuario no encontrado', 404, 'USER_NOT_FOUND');
     }
 
     return NextResponse.json({
@@ -29,11 +27,7 @@ export async function GET(request: NextRequest) {
       data: profile,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'GET /api/users/[id]');
   }
 }
 
@@ -42,14 +36,19 @@ export async function PATCH(request: NextRequest) {
     const session = await getSession();
     
     if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Por favor inicia sesión' },
-        { status: 401 }
-      );
+      return errorResponse('Por favor inicia sesión', 401, 'UNAUTHORIZED');
     }
 
     const body = await request.json();
     const { name, bio, avatarUrl, website, instagram, cityId } = body;
+
+    if (name !== undefined && (name.length < 1 || name.length > 200)) {
+      return errorResponse('El nombre debe tener entre 1 y 200 caracteres', 400, 'INVALID_NAME');
+    }
+
+    if (bio !== undefined && bio.length > 1000) {
+      return errorResponse('La biografía no puede exceder 1000 caracteres', 400, 'INVALID_BIO');
+    }
 
     const profile = await updateUserProfile(session.id, {
       name,
@@ -66,10 +65,6 @@ export async function PATCH(request: NextRequest) {
       message: 'Perfil actualizado',
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
-    );
+    return handleApiError(error, 'PATCH /api/users/[id]');
   }
 }
