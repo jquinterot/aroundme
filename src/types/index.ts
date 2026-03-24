@@ -14,6 +14,90 @@ export type EventStatus = 'draft' | 'pending' | 'published' | 'cancelled';
 
 export type FeaturedTier = 'none' | 'basic' | 'premium';
 
+export type UserTier = 'free' | 'basic' | 'premium';
+
+export interface PremiumFeatures {
+  advancedAnalytics: boolean;
+  exportData: boolean;
+  competitorInsights: boolean;
+  emailAutomation: boolean;
+  prioritySupport: boolean;
+  customBranding: boolean;
+  apiAccess: boolean;
+  multiLocation: boolean;
+  teamAccess: boolean;
+}
+
+export const TIER_FEATURES: Record<UserTier, PremiumFeatures> = {
+  free: {
+    advancedAnalytics: false,
+    exportData: false,
+    competitorInsights: false,
+    emailAutomation: false,
+    prioritySupport: false,
+    customBranding: false,
+    apiAccess: false,
+    multiLocation: false,
+    teamAccess: false,
+  },
+  basic: {
+    advancedAnalytics: true,
+    exportData: false,
+    competitorInsights: false,
+    emailAutomation: false,
+    prioritySupport: false,
+    customBranding: false,
+    apiAccess: false,
+    multiLocation: false,
+    teamAccess: false,
+  },
+  premium: {
+    advancedAnalytics: true,
+    exportData: true,
+    competitorInsights: true,
+    emailAutomation: true,
+    prioritySupport: true,
+    customBranding: true,
+    apiAccess: true,
+    multiLocation: true,
+    teamAccess: true,
+  },
+};
+
+export const TIER_LIMITS: Record<UserTier, {
+  maxEventsPerMonth: number;
+  maxPlacesPerMonth: number;
+  maxSavedEvents: number;
+  analyticsRetentionDays: number;
+  emailTemplatesPerMonth: number;
+  teamMembers: number;
+}> = {
+  free: {
+    maxEventsPerMonth: 3,
+    maxPlacesPerMonth: 2,
+    maxSavedEvents: 20,
+    analyticsRetentionDays: 7,
+    emailTemplatesPerMonth: 0,
+    teamMembers: 1,
+  },
+  basic: {
+    maxEventsPerMonth: 20,
+    maxPlacesPerMonth: 10,
+    maxSavedEvents: 100,
+    analyticsRetentionDays: 30,
+    emailTemplatesPerMonth: 5,
+    teamMembers: 2,
+  },
+  premium: {
+    maxEventsPerMonth: -1, // unlimited
+    maxPlacesPerMonth: -1,
+    maxSavedEvents: -1,
+    analyticsRetentionDays: 365,
+    emailTemplatesPerMonth: -1,
+    teamMembers: 10,
+  },
+};
+
 export type PlaceCategory = 
   | 'restaurant'
   | 'cafe'
