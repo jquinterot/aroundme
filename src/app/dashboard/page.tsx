@@ -6,37 +6,25 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { Header } from '@/components/layout';
-import { Ticket, Heart, Calendar, MapPin, User, Plus } from 'lucide-react';
+import { Ticket, Heart, Calendar, MapPin, User, Plus, Eye, Users, Star, TrendingUp } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
-  const { data: savedData } = useQuery({
-    queryKey: ['saved-events'],
-    queryFn: () => fetch('/api/user/saved-events').then(res => res.json()),
-    enabled: !!user,
-  });
-
-  const { data: rsvpData } = useQuery({
-    queryKey: ['my-rsvps'],
-    queryFn: () => fetch('/api/user/rsvps').then(res => res.json()),
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    queryKey: ['user-stats'],
+    queryFn: () => fetch('/api/user/stats').then(res => res.json()),
     enabled: !!user,
   });
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, authLoading, router]);
 
-  const stats = [
-    { label: 'My Events', value: '-', href: '/dashboard/events', icon: Ticket, color: 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400' },
-    { label: 'Saved Events', value: savedData?.data?.length || 0, href: '/dashboard/saved-events', icon: Heart, color: 'bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-400' },
-    { label: 'My RSVPs', value: rsvpData?.data?.length || 0, href: '/dashboard/my-rsvps', icon: Calendar, color: 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400' }, { label: 'My Places', value: '-', href: '/dashboard/places', icon: MapPin, color: 'bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400' },
-  ];
-
-  if (loading || !user) {
+  if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
@@ -46,6 +34,38 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  const stats = statsData?.data?.overview || {};
+  const engagement = statsData?.data?.engagement || {};
+  const trends = statsData?.data?.trends || {};
+  const insights = statsData?.data?.insights || {};
+
+  const statCards = [
+    { label: 'Events Attended', value: stats.eventsAttended || 0, href: '/dashboard/my-rsvps', icon: Ticket, color: 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400' },
+    { label: 'Check-ins', value: stats.totalCheckIns || 0, href: '/dashboard/tickets', icon: Calendar, color: 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400' },
+    { label: 'Places Visited', value: stats.placesVisited || 0, href: '/dashboard/places', icon: MapPin, color: 'bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400' },
+    { label: 'Content Views', value: stats.totalViews || 0, href: '/dashboard/history', icon: Eye, color: 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' },
+  ];
+
+  const socialStats = [
+    { label: 'Saved Events', value: stats.totalSavedEvents || 0, icon: Heart, color: 'text-pink-600' },
+    { label: 'Reviews Written', value: stats.totalReviews || 0, icon: Star, color: 'text-yellow-600' },
+    { label: 'Followers', value: stats.totalFollowers || 0, icon: Users, color: 'text-blue-600' },
+    { label: 'Following', value: stats.totalFollowing || 0, icon: Users, color: 'text-indigo-600' },
+  ];
+
+  const categoryIcons: Record<string, string> = {
+    music: '🎵',
+    food: '🍽️',
+    sports: '⚽',
+    art: '🎨',
+    tech: '💻',
+    community: '👥',
+    nightlife: '🌙',
+    outdoor: '🌳',
+    education: '📚',
+    other: '🎯',
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -57,24 +77,99 @@ export default function DashboardPage() {
           <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <Link
-                key={stat.label}
-                href={stat.href}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
-              >
-                <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center mb-4`}>
-                  <Icon className="w-6 h-6" />
+        {statsLoading ? (
+          <div className="animate-pulse space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {statCards.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <Link
+                    key={stat.label}
+                    href={stat.href}
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
+                  >
+                    <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center mb-4`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-gray-500 dark:text-gray-400">{stat.label}</p>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {socialStats.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={stat.label}
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700 flex items-center gap-3"
+                  >
+                    <Icon className={`w-5 h-5 ${stat.color}`} />
+                    <div>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {engagement.categoryBreakdown && Object.keys(engagement.categoryBreakdown).length > 0 && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  Your Interests
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {Object.entries(engagement.categoryBreakdown as Record<string, number> || {})
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([category, count]) => (
+                      <div key={category} className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p className="text-2xl mb-1">{categoryIcons[category] || '🎯'}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{category}</p>
+                        <p className="text-xs text-gray-500">{count} events</p>
+                      </div>
+                    ))}
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-                <p className="text-gray-500 dark:text-gray-400">{stat.label}</p>
-              </Link>
-            );
-          })}
-        </div>
+                {insights.favoriteCategory && (
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                    Your favorite category is <span className="font-medium text-indigo-600 dark:text-indigo-400 capitalize">{insights.favoriteCategory}</span>!
+                  </p>
+                )}
+              </div>
+            )}
+
+            {trends.eventsThisMonth > 0 && (
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-6 text-white mb-8">
+                <h2 className="text-lg font-semibold mb-2">This Month&apos;s Activity</h2>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-3xl font-bold">{trends.eventsThisMonth}</p>
+                    <p className="text-sm text-indigo-100">Events RSVP&apos;d</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold">{trends.viewsThisMonth}</p>
+                    <p className="text-sm text-indigo-100">Content Viewed</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold">{trends.reviewsThisMonth}</p>
+                    <p className="text-sm text-indigo-100">Reviews Written</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
@@ -105,6 +200,18 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <Link
+                href="/create-activity"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">Create Activity</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Offer classes, tours, or experiences</p>
+                </div>
+              </Link>
+              <Link
                 href="/submit-place"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -126,6 +233,8 @@ export default function DashboardPage() {
               <p>2. Create events to share with the community</p>
               <p>3. Save events you&apos;re interested in</p>
               <p>4. RSVP to events you plan to attend</p>
+              <p>5. Check-in at events you attend</p>
+              <p>6. Write reviews for places you visit</p>
             </div>
           </div>
         </div>

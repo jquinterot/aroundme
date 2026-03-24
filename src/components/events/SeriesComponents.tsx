@@ -248,20 +248,15 @@ interface SeriesCardProps {
   series: {
     id: string;
     name: string;
-    description?: string;
+    description?: string | null;
     frequency: string;
-    stats?: {
-      total: number;
-      upcoming: number;
-      past: number;
-    };
+    stats?: { total: number; upcoming: number };
   };
   onView?: () => void;
   onEdit?: () => void;
-  onDelete?: () => void;
 }
 
-export function SeriesCard({ series, onView, onEdit, onDelete: _ }: SeriesCardProps) {
+export function SeriesCard({ series, onView, onEdit }: SeriesCardProps) {
   const getFrequencyLabel = () => {
     switch (series.frequency) {
       case 'daily': return 'Diario';

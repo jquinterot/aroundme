@@ -47,8 +47,18 @@ export async function GET(
     const event = await prisma.event.findUnique({
       where: { id },
       include: {
-        rsvps: true,
+        rsvps: {
+          include: {
+            user: {
+              select: { id: true, name: true, avatarUrl: true }
+            }
+          }
+        },
         saves: true,
+        checkIns: true,
+        city: {
+          select: { id: true, name: true, slug: true }
+        },
       },
     });
 
@@ -63,15 +73,92 @@ export async function GET(
     const isSaved = user ? event.saves.some((s: Save) => s.userId === user.id) : false;
     const userRsvp = user ? event.rsvps.find((r: RSVP) => r.userId === user.id) : null;
 
+    const rsvpGoing = event.rsvps.filter((r: RSVP) => r.status === 'going');
+    const rsvpInterested = event.rsvps.filter((r: RSVP) => r.status === 'interested');
+    const rsvpMaybe = event.rsvps.filter((r: RSVP) => r.status === 'maybe');
+    
+    const checkInCount = event.checkIns.length;
+    const rsvpGoingCount = rsvpGoing.length;
+    
+    const attendanceRate = rsvpGoingCount > 0 
+      ? Math.round((checkInCount / rsvpGoingCount) * 100) 
+      : 0;
+    
+    const viewsToRsvpRate = event.viewCount > 0 
+      ? Math.round((event.rsvps.length / event.viewCount) * 100) 
+      : 0;
+
+    const now = new Date();
+    const eventDate = new Date(event.dateStart);
+    const isUpcoming = eventDate > now;
+    const isPast = eventDate < now;
+
+    const similarEvents = isUpcoming 
+      ? await prisma.event.count({
+          where: {
+            cityId: event.cityId,
+            category: event.category,
+            status: 'approved',
+            dateStart: { gt: now },
+          },
+        })
+      : await prisma.event.count({
+          where: {
+            cityId: event.cityId,
+            category: event.category,
+            status: 'approved',
+            dateStart: {
+              gte: new Date(eventDate.getTime() - 30 * 24 * 60 * 60 * 1000),
+              lte: new Date(eventDate.getTime() + 30 * 24 * 60 * 60 * 1000),
+            },
+          },
+        });
+
+    const recentRsvpUsers = rsvpGoing
+      .slice(0, 5)
+      .map((r: RSVP & { user: { id: string; name: string; avatarUrl: string | null } }) => ({
+        id: r.user.id,
+        name: r.user.name,
+        avatarUrl: r.user.avatarUrl,
+      }));
+
+    const waitlistCount = await prisma.waitlist.count({
+      where: { eventId: id },
+    });
+
     const analytics = {
-      viewCount: event.viewCount,
-      saveCount: event.saveCount,
+      overview: {
+        viewCount: event.viewCount,
+        saveCount: event.saveCount,
+        checkInCount,
+        waitlistCount,
+      },
       rsvpCount: {
-        going: event.rsvps.filter((r: RSVP) => r.status === 'going').length,
-        interested: event.rsvps.filter((r: RSVP) => r.status === 'interested').length,
-        maybe: event.rsvps.filter((r: RSVP) => r.status === 'maybe').length,
+        going: rsvpGoingCount,
+        interested: rsvpInterested.length,
+        maybe: rsvpMaybe.length,
         total: event.rsvps.length,
       },
+      performance: {
+        attendanceRate,
+        viewsToRsvpRate,
+        conversionRate: viewsToRsvpRate,
+        avgViewsPerRsvp: event.rsvps.length > 0 
+          ? Math.round(event.viewCount / event.rsvps.length) 
+          : 0,
+      },
+      comparison: {
+        similarEventsInCity: similarEvents,
+        percentile: event.viewCount > 0 
+          ? Math.min(99, Math.round((event.viewCount / Math.max(event.viewCount, 100)) * 100))
+          : 0,
+      },
+      status: {
+        isUpcoming,
+        isPast,
+        daysUntilEvent: Math.ceil((eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
+      },
+      recentAttendees: recentRsvpUsers,
       isOwner,
       isSaved,
       userRsvp: userRsvp ? { status: userRsvp.status } : null,

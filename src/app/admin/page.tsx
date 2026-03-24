@@ -837,6 +837,7 @@ function CitiesTab() {
   const queryClient = useQueryClient();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCity, setNewCity] = useState({ name: '', country: '', slug: '', lat: '', lng: '' });
+  const [isAdding, setIsAdding] = useState(false);
 
   const { data: citiesData, isLoading } = useQuery({
     queryKey: ['admin-cities'],
@@ -850,6 +851,7 @@ function CitiesTab() {
 
   const handleAddCity = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsAdding(true);
     try {
       const res = await fetch('/api/cities', {
         method: 'POST',
@@ -870,6 +872,8 @@ function CitiesTab() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -952,9 +956,10 @@ function CitiesTab() {
               <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  disabled={isAdding}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add City
+                  {isAdding ? 'Adding...' : 'Add City'}
                 </button>
                 <button
                   type="button"
