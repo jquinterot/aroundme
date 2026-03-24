@@ -3,6 +3,7 @@ import { createNotification } from './notifications';
 
 export interface CheckInQRData {
   eventId: string;
+  userId: string;
   ticketTypeId?: string;
   timestamp: number;
 }
@@ -10,6 +11,7 @@ export interface CheckInQRData {
 export function generateQRToken(eventId: string, userId: string, ticketTypeId?: string): string {
   const data: CheckInQRData = {
     eventId,
+    userId,
     ticketTypeId,
     timestamp: Date.now(),
   };

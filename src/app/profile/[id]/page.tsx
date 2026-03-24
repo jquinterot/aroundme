@@ -10,6 +10,7 @@ import { Calendar, MapPin, Check, Loader2, Settings, Activity, UserPlus, UserMin
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { User } from '@/types';
+import { ActivityCard } from '@/components/social';
 
 interface UserProfile extends User {
   city?: { name: string };
@@ -45,6 +46,15 @@ export default function UserProfilePage() {
   const [following, setFollowing] = useState<FollowUser[]>([]);
   const [followersLoading, setFollowersLoading] = useState(false);
   const [followingLoading, setFollowingLoading] = useState(false);
+  const [activities, setActivities] = useState<Array<{
+    id: string;
+    type: string;
+    createdAt: string;
+    user: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean };
+    event?: { id: string; title: string; imageUrl?: string | null; dateStart: string; venueName: string; city?: { name: string } };
+    metadata?: Record<string, unknown>;
+  }>>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -129,13 +139,30 @@ export default function UserProfilePage() {
     }
   }, [userId]);
 
+  const fetchUserActivities = useCallback(async () => {
+    setActivitiesLoading(true);
+    try {
+      const res = await fetch(`/api/activity?userId=${userId}`);
+      const data = await res.json();
+      if (data.success) {
+        setActivities(data.activities || []);
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    } finally {
+      setActivitiesLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (activeTab === 'followers') {
       fetchFollowers();
     } else if (activeTab === 'following') {
       fetchFollowing();
+    } else if (activeTab === 'activity') {
+      fetchUserActivities();
     }
-  }, [activeTab, fetchFollowers, fetchFollowing]);
+  }, [activeTab, fetchFollowers, fetchFollowing, fetchUserActivities]);
 
   if (loading) {
     return (
@@ -354,9 +381,23 @@ export default function UserProfilePage() {
             )}
 
             {activeTab === 'activity' && (
-              <div className="text-center py-12">
-                <Activity className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500">No hay actividad reciente</p>
+              <div>
+                {activitiesLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                  </div>
+                ) : activities.length > 0 ? (
+                  <div className="space-y-4">
+                    {activities.map((activity) => (
+                      <ActivityCard key={activity.id} activity={activity} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Activity className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">No hay actividad reciente</p>
+                  </div>
+                )}
               </div>
             )}
 

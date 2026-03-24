@@ -7,20 +7,27 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     const { searchParams } = new URL(request.url);
     
-    const userId = session?.id;
+    const sessionUserId = session?.id;
+    const filterUserId = searchParams.get('userId');
     const followingOnly = searchParams.get('following') === 'true';
     const citySlug = searchParams.get('city');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    if (followingOnly && !userId) {
+    if (followingOnly && !sessionUserId) {
       return NextResponse.json(
         { success: false, error: 'Inicia sesión para ver actividad de personas que sigues' },
         { status: 401 }
       );
     }
 
-    const data = await getActivityFeed(userId || undefined, followingOnly, citySlug || undefined, page, limit);
+    const data = await getActivityFeed(
+      filterUserId || sessionUserId || undefined,
+      followingOnly,
+      citySlug || undefined,
+      page,
+      limit
+    );
 
     return NextResponse.json({
       success: true,

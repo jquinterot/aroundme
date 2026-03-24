@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const result = await performCheckIn(
       eventId,
-      qrData.eventId === eventId ? 'scan_placeholder' : qrData.eventId,
+      qrData.userId,
       qrData.ticketTypeId,
       'qr_code'
     );

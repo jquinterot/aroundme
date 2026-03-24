@@ -5,7 +5,7 @@ import { PLACE_CATEGORY_OPTIONS } from '@/lib/constants';
 import { PlaceStepBasicInfoProps } from '@/types/components';
 
 export function StepBasicInfo({ formData, cities, onUpdate, onNext }: PlaceStepBasicInfoProps) {
-  const isValid = formData.name && formData.category && formData.description;
+  const isValid = formData.name && formData.cityId && formData.category && formData.description;
 
   return (
     <div className="space-y-6">

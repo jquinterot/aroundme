@@ -43,7 +43,11 @@ export function useMapInitialization<T extends MapItem>({
   }, []);
 
   const initMap = useCallback(async () => {
-    if (!isClient || !mapRef.current || mapInstanceRef.current) return;
+    console.log('[MapInit] initMap called, isClient:', isClient, 'mapRef.current:', !!mapRef.current, 'hasInstance:', !!mapInstanceRef.current);
+    if (!isClient || !mapRef.current || mapInstanceRef.current) {
+      console.log('[MapInit] Early return - isClient:', isClient, 'mapRef:', !!mapRef.current, 'instance:', !!mapInstanceRef.current);
+      return;
+    }
 
     const L = (await import('leaflet')).default;
 
@@ -93,6 +97,7 @@ export function useMapInitialization<T extends MapItem>({
     });
 
     mapInstanceRef.current = map;
+    console.log('[MapInit] Map created successfully with', items.length, 'items');
   }, [isClient, city, items, colorScheme, categoryIcons, onItemSelect, getItemById]);
 
   useEffect(() => {

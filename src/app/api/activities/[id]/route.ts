@@ -11,7 +11,7 @@ export async function GET(
     const activity = await prisma.activity.findUnique({
       where: { id },
       include: {
-        city: { select: { name: true, slug: true } },
+        city: { select: { name: true, slug: true, lat: true, lng: true, zoom: true } },
       },
     });
 
@@ -38,6 +38,9 @@ export async function GET(
         city: activity.city,
         providerName: activity.providerName,
         providerContact: activity.providerContact,
+        address: activity.address,
+        lat: activity.lat,
+        lng: activity.lng,
         schedule: activity.schedule,
         scheduleDays: activity.scheduleDays ? JSON.parse(activity.scheduleDays) : null,
         scheduleTime: activity.scheduleTime,

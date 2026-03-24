@@ -10,6 +10,9 @@ import {
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { Header, Footer } from '@/components/layout';
+import { ActivityMap } from '@/components/map';
+import { apiService } from '@/services';
+import { City } from '@/types';
 
 interface Activity {
   id: string;
@@ -17,7 +20,7 @@ interface Activity {
   description: string;
   category: string;
   subcategory: string | null;
-  city: { name: string; slug: string };
+  city: { name: string; slug: string; lat: number; lng: number; zoom: number };
   providerName: string;
   providerContact: string | null;
   schedule: string;
@@ -74,6 +77,35 @@ export default function ActivityDetailPage() {
     total: number;
     status: string;
   } | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSave = async () => {
+    if (!activity) return;
+    try {
+      await fetch(`/api/activities/${activityId}/save`, { method: 'POST' });
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error('Error saving activity:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!activity) return;
+    const url = `${window.location.origin}/activity/${activityId}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: activity.title, url });
+      } catch {
+      }
+    } else {
+      await navigator.clipboard.writeText(url);
+    }
+  };
+
+  const { data: citiesData } = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => apiService.getCities(),
+  });
 
   const { data: activityData, isLoading, error } = useQuery({
     queryKey: ['activity', activityId],
@@ -104,6 +136,14 @@ export default function ActivityDetailPage() {
   });
 
   const activity: Activity | null = activityData?.data || null;
+  const cities: City[] = citiesData?.data || [];
+  const mapCity: City | null = cities.find((c: City) => c.slug === activity?.city?.slug) || (activity?.city ? {
+    ...activity.city,
+    id: '',
+    country: '',
+    timezone: '',
+    isActive: true,
+  } as City : null);
   const spotsLeft = activity?.capacity ? activity.capacity - activity.bookingCount : null;
   const subtotal = activity && !activity.isFree ? activity.price * bookingData.tickets : 0;
   const commissionAmount = subtotal * (activity?.commission || 0.08);
@@ -130,7 +170,7 @@ export default function ActivityDetailPage() {
           <AlertCircle className="w-16 h-16 mx-auto text-red-500 mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Activity not found</h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6">This activity may have been removed or is unavailable.</p>
-          <Link href="/bogota/activities" className="text-amber-600 hover:underline">
+          <Link href={`/${activityData?.data?.city?.slug || 'bogota'}/activities`} className="text-amber-600 hover:underline">
             Browse activities
           </Link>
         </div>
@@ -233,10 +273,18 @@ export default function ActivityDetailPage() {
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400">
-                        <Heart className="w-5 h-5" />
+                      <button
+                        onClick={handleSave}
+                        className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                          isSaved ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
+                        <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                       </button>
-                      <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400">
+                      <button
+                        onClick={handleShare}
+                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                      >
                         <Share2 className="w-5 h-5" />
                       </button>
                     </div>
@@ -311,6 +359,50 @@ export default function ActivityDetailPage() {
                       )}
                     </div>
                   </div>
+
+                  {activity.lat && activity.lng && mapCity && (
+                    <div className="mt-6">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Location</h3>
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        {activity.address && (
+                          <p className="text-gray-600 dark:text-gray-400">{activity.address}</p>
+                        )}
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${activity.lat},${activity.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          <MapPin className="w-4 h-4" />
+                          Open in Google Maps
+                        </a>
+                      </div>
+                      <div className="h-64 rounded-xl overflow-hidden">
+                        <ActivityMap
+                          activities={[{
+                            id: activity.id,
+                            title: activity.title,
+                            description: activity.description,
+                            category: activity.category,
+                            subcategory: activity.subcategory,
+                            image: activity.image,
+                            address: activity.address,
+                            coordinates: { lat: activity.lat, lng: activity.lng },
+                            schedule: activity.schedule,
+                            duration: activity.duration,
+                            price: activity.price,
+                            currency: activity.currency,
+                            isFree: activity.isFree,
+                            providerName: activity.providerName,
+                            bookingCount: activity.bookingCount,
+                          }]}
+                          city={mapCity}
+                          selectedActivity={{ id: activity.id, coordinates: { lat: activity.lat, lng: activity.lng } }}
+                          className="w-full h-full"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

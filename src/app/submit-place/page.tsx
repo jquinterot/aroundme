@@ -18,7 +18,7 @@ export default function SubmitPlacePage() {
   const { cities } = useCities();
 
   const [formData, setFormData] = useState({
-    cityId: 'bogota',
+    cityId: '',
     name: '',
     description: '',
     category: '' as PlaceCategory | '',
