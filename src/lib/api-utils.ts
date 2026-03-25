@@ -18,8 +18,6 @@ function isDatabaseError(error: Error): boolean {
     message.includes('database') ||
     message.includes('sqlite') ||
     message.includes('better-sqlite3') ||
-    message.includes('cannot find module') ||
-    message.includes('failed to parse') ||
     message.includes('unable to open static sorted file')
   );
 }
@@ -55,7 +53,6 @@ export function handleApiError(error: unknown, context?: string): NextResponse {
 
   if (error instanceof Error) {
     if (isDatabaseError(error)) {
-      console.error('Database error details:', error.message);
       return NextResponse.json(
         {
           success: false,
