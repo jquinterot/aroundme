@@ -107,10 +107,44 @@ npm run test
 npm run test:ui
 
 # Database commands
-npm run db:seed      # Seed database
+npm run db:seed      # Seed database with sample data
 npm run db:studio    # Open Prisma Studio
-npm run db:generate   # Generate Prisma client
+npm run db:generate  # Generate Prisma client
+npm run db:setup     # Sync schema (generate + db push)
+npm run db:reset      # Force reset DB and re-seed (LOSES ALL DATA)
 ```
+
+## Database / Prisma Workflow (IMPORTANT)
+
+### Prisma 7 Configuration
+This project uses Prisma 7 with SQLite. Key files:
+- `prisma/schema.prisma` - Schema definition (NO url in datasource - Prisma 7 requirement)
+- `prisma.config.ts` - Database URL configuration
+- `.env` - Contains DATABASE_URL
+
+### When Schema Changes Occur
+After pulling changes that modify `prisma/schema.prisma`:
+
+```bash
+npm run db:setup   # Safe: syncs schema without losing existing data
+npm run db:seed    # Re-add sample data
+```
+
+### If Database Gets Out of Sync (errors like "table not found", " DATABASE_ERROR")
+```bash
+npm run db:reset   # Force reset + re-seed (LOSES ALL DATA)
+```
+
+### Common Issues
+- **"Unable to open static sorted file"** - Clear Next.js cache: `rm -rf .next node_modules/.cache`
+- **"Database configuration issue"** - Run `npm run db:setup`
+- **Migration conflicts** - Don't use `prisma migrate dev` in development; use `db:setup` instead
+
+### Why This Happens
+Prisma 7 changed how database URLs work:
+- The `url` property in schema.prisma datasource is no longer supported
+- URL must be in `prisma.config.ts`
+- The `db push` command is preferred over `migrate dev` for development
 
 ## Code Conventions
 
@@ -191,6 +225,44 @@ All API routes are under `/api/`:
 - Dashboard cards - Missing dark mode
 - Event/Place detail pages - Missing dark mode backgrounds
 - Note info boxes - Missing dark mode
+
+## API Error Handling
+
+### Error Response Format
+All API routes return consistent error format:
+```typescript
+{
+  success: false,
+  error: "Human-readable error message",
+  code: "ERROR_CODE"  // Optional error code
+}
+```
+
+### Error Utility Functions (`src/lib/api-utils.ts`)
+- `handleApiError(error, context)` - For catch blocks, returns proper JSON response
+- `errorResponse(message, status, code)` - For validation errors
+- `successResponse(data, message)` - For success responses
+
+### Usage in API Routes
+```typescript
+// In catch blocks
+catch (error) {
+  return handleApiError(error, 'context-string');
+}
+
+// For validation errors
+return errorResponse('Specific error message', 400, 'ERROR_CODE');
+
+// For successful responses
+return successResponse(data, 'Success message');
+```
+
+### Error Codes Used
+- `VALIDATION_ERROR`, `CITY_NOT_FOUND`, `INVALID_DATE`, `INVALID_PRICE`
+- `TICKET_NOT_FOUND`, `TICKET_UNAVAILABLE`, `INSUFFICIENT_TICKETS`
+- `SALE_NOT_STARTED`, `SALE_ENDED`, `MAX_TICKETS_EXCEEDED`
+- `EMAIL_EXISTS`, `INVALID_EMAIL`, `WEAK_PASSWORD`
+- `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`
 
 ## Categories
 
