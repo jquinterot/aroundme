@@ -10,9 +10,11 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "db:setup": "npx prisma generate && npx prisma db push --accept-data-loss",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
     "db:generate": "npx prisma generate",
+    "db:reset": "npx prisma db push --force-reset --accept-data-loss && npx tsx prisma/seed.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "next": "16.1.7",
     "prisma": "^7.5.0",
     "react": "19.2.3",
+    "react-datepicker": "^9.1.0",
     "react-dom": "19.2.3",
     "react-leaflet": "^5.0.0",
     "stripe": "^20.4.1",

@@ -1,6 +1,13 @@
 import { FilterParams, PlaceFilterParams, ApiResponse, City, Event, Place, Review } from '@/types';
 
-const API_BASE = '/api';
+function getBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    return '';
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
+
+const API_BASE = getBaseUrl() + '/api';
 
 export interface CreateEventPayload {
   citySlug: string;
@@ -38,7 +45,7 @@ export interface CreatePlacePayload {
 class ApiService {
   private async fetch<T>(url: string, method: string = 'GET', body?: unknown): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(url, {
+      const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: body ? JSON.stringify(body) : undefined,
@@ -46,31 +53,35 @@ class ApiService {
       
       let data;
       try {
-        data = await response.json();
-      } catch {
-        const errorText = await response.text().catch(() => 'Unable to read response');
-        console.error('API Error: Failed to parse response', { status: response.status, url, responseText: errorText });
+        data = await res.json();
+      } catch (parseError) {
+        const errorText = await res.text().catch(() => 'Unable to read response');
+        const parseMsg = parseError instanceof Error ? parseError.message : 'JSON parse failed';
+        console.error('API Error: Failed to parse response. Status: ' + res.status + ', URL: ' + url + ', ParseError: ' + parseMsg + ', ResponseText: ' + errorText);
         return {
           success: false,
-          error: `Server returned invalid response (${response.status}). Please try again.`,
+          error: `Server returned invalid response (${res.status}). Please try again.`,
         };
       }
       
-      if (!response.ok) {
-        const errorMessage = data?.error || this.getHttpErrorMessage(response.status);
-        console.error('API Error:', { status: response.status, error: errorMessage, url, response: data });
+      if (!res.ok) {
+        const errorMsg = data?.error || this.getHttpErrorMessage(res.status);
+        const errorCode = data?.code || 'UNKNOWN_ERROR';
+        const responseStr = JSON.stringify(data);
+        console.error('API Error: Status=' + res.status + ', URL=' + url + ', Error=' + errorMsg + ', Code=' + errorCode + ', Response=' + responseStr);
         return {
           success: false,
-          error: errorMessage,
+          error: errorMsg,
         };
       }
       
       return data;
-    } catch (error) {
-      console.error('API Error: Network/fetch failed', { url, error });
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error('API Error: Network/fetch failed. URL=' + url + ', Error=' + errMsg);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error. Please check your connection.',
+        error: err instanceof Error ? err.message : 'Network error. Please check your connection.',
       };
     }
   }

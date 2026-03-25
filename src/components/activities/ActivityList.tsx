@@ -18,7 +18,7 @@ const categoryColors: Record<string, string> = {
 
 interface ActivityListProps {
   activities: ListingActivity[];
-  viewMode: 'grid' | 'list' | 'map';
+  viewMode: 'grid' | 'list' | 'map' | 'split';
   city?: City;
 }
 
@@ -49,6 +49,37 @@ export function ActivityList({ activities, viewMode, city }: ActivityListProps) 
           onActivitySelect={setSelectedActivity}
           className="w-full h-full"
         />
+      </div>
+    );
+  }
+
+  if (viewMode === 'split') {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[600px]">
+        <div className="overflow-y-auto pr-2 space-y-4">
+          {activities.map((activity) => (
+            <div
+              key={activity.id}
+              onClick={() => setSelectedActivity({ id: activity.id, coordinates: activity.coordinates })}
+              className={`cursor-pointer transition-all ${
+                selectedActivity?.id === activity.id
+                  ? 'ring-2 ring-amber-500 rounded-xl'
+                  : ''
+              }`}
+            >
+              <ActivityCard activity={activity} />
+            </div>
+          ))}
+        </div>
+        <div className="rounded-xl overflow-hidden shadow-inner bg-white dark:bg-gray-800">
+          <ActivityMap
+            activities={activities}
+            city={city!}
+            selectedActivity={selectedActivity}
+            onActivitySelect={setSelectedActivity}
+            className="w-full h-full"
+          />
+        </div>
       </div>
     );
   }

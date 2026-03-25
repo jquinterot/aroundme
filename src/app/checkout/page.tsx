@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useEffect, useState, useCallback, startTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -31,11 +33,16 @@ function CheckoutContent() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
   const fetchEvent = useCallback(async () => {
-    if (!eventId) return;
+    if (!eventId) {
+      setError('No event ID provided');
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch(`/api/events/${eventId}/tickets`);
       const data = await res.json();
@@ -48,9 +55,16 @@ function CheckoutContent() {
         startTransition(() => {
           setCart(initialCart);
         });
+      } else if (data.code === 'UNAUTHORIZED') {
+        setError('Please log in to purchase tickets');
+      } else if (data.code === 'NOT_FOUND') {
+        setError('Event not found');
+      } else {
+        setError(data.error || 'Failed to load event');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load event. Please try again.');
     }
     setLoading(false);
   }, [eventId]);
@@ -125,7 +139,17 @@ function CheckoutContent() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Event not found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error || 'Event not found'}
+          </h1>
+          {error?.includes('log in') && (
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              Log In to Continue
+            </Link>
+          )}
         </div>
       </div>
     );

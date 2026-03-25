@@ -185,6 +185,8 @@ export interface EventStepDateTimeProps {
 export interface EventStepLocationFormData {
   venueName: string;
   venueAddress: string;
+  venueLat?: number;
+  venueLng?: number;
   isFree: boolean;
   price: string;
   imageUrl: string;
@@ -193,7 +195,7 @@ export interface EventStepLocationFormData {
 
 export interface EventStepLocationProps {
   formData: EventStepLocationFormData;
-  onUpdate: (field: string, value: string | boolean) => void;
+  onUpdate: (field: string, value: string | number | boolean) => void;
   onSubmit: () => void;
   onBack: () => void;
   isLoading: boolean;

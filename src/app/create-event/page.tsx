@@ -17,8 +17,12 @@ export default function CreateEventPage() {
   const [success, setSuccess] = useState(false);
   const { cities } = useCities();
 
+  const getDefaultCityId = () => {
+    return cities.length > 0 ? cities[0].slug : '';
+  };
+
   const [formData, setFormData] = useState({
-    cityId: '',
+    cityId: getDefaultCityId(),
     title: '',
     description: '',
     category: '' as EventCategory | '',

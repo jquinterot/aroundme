@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Ticket, MapPin, Star } from 'lucide-react';
+import { Plus, Ticket, MapPin, Star, AlertCircle, RefreshCw } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Header, HeroSection } from '@/components/layout';
 import { EventList, EventFilters } from '@/components/events';
@@ -17,6 +17,27 @@ const viewModeOptions = [
   { value: 'map', label: 'Map' },
 ];
 
+function ErrorState({ message, onRetry }: { message?: string; onRetry: () => void }) {
+  return (
+    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+      <AlertCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
+      <h3 className="text-lg font-medium text-red-800 dark:text-red-200 mb-2">
+        Something went wrong
+      </h3>
+      <p className="text-red-600 dark:text-red-400 text-sm mb-4">
+        {message || 'Failed to load data. Please try again.'}
+      </p>
+      <button
+        onClick={onRetry}
+        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+      >
+        <RefreshCw className="w-4 h-4" />
+        Try Again
+      </button>
+    </div>
+  );
+}
+
 export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
   const [filters, setFilters] = useState<EventFilterState>({
     category: 'all',
@@ -26,12 +47,12 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
   });
   const [viewMode, setViewMode] = useState<'list' | 'map' | 'split'>('split');
 
-  const { data: citiesData } = useQuery({
+  const { data: citiesData, error: citiesError, refetch: refetchCities } = useQuery({
     queryKey: ['cities'],
     queryFn: () => apiService.getCities(),
   });
 
-  const { data: eventsData, isLoading } = useQuery({
+  const { data: eventsData, error: eventsError, isLoading, refetch: refetchEvents } = useQuery({
     queryKey: ['events', citySlug, filters],
     queryFn: () => apiService.getEvents(citySlug, {
       category: filters.category === 'all' ? undefined : filters.category,
@@ -50,6 +71,11 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
     { label: 'Places', href: `/${citySlug}/places`, icon: MapPin },
     { label: 'Activities', href: `/${citySlug}/activities`, icon: Star },
   ];
+
+  const handleRetry = () => {
+    if (citiesError) refetchCities();
+    if (eventsError) refetchEvents();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -92,6 +118,11 @@ export default function CityEventsClient({ citySlug }: CityEventsClientProps) {
 
           {isLoading ? (
             <CardSkeleton />
+          ) : citiesError || eventsError ? (
+            <ErrorState
+              message={(citiesError as Error)?.message || (eventsError as Error)?.message}
+              onRetry={handleRetry}
+            />
           ) : (
             <EventList events={events} viewMode={viewMode} city={currentCity} />
           )}

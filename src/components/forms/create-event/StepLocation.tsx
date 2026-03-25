@@ -1,10 +1,16 @@
 'use client';
 
 import { FormInput, ToggleOption, FormSection, FormNavigation } from '@/components/ui/FormComponents';
+import { LocationPicker } from '@/components/map';
 import { EventStepLocationProps } from '@/types/components';
 
 export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }: EventStepLocationProps) {
   const isValid = formData.venueName && formData.venueAddress;
+
+  const handleLocationChange = (lat: number, lng: number) => {
+    onUpdate('venueLat', lat);
+    onUpdate('venueLng', lng);
+  };
 
   return (
     <div className="space-y-6">
@@ -23,6 +29,17 @@ export function StepLocation({ formData, onUpdate, onSubmit, onBack, isLoading }
           placeholder="Full address"
           required
         />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Pin Location (optional)
+          </label>
+          <LocationPicker
+            lat={formData.venueLat || 0}
+            lng={formData.venueLng || 0}
+            onLocationChange={handleLocationChange}
+          />
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ticket Price</label>
