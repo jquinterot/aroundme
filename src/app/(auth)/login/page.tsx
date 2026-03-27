@@ -49,24 +49,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="login-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 border border-gray-200 dark:border-gray-700">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
+              <h1 data-testid="login-title" className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
               <p className="text-gray-500 dark:text-gray-400 mt-2">Sign in to your account</p>
             </div>
 
             {(error || oauthError) && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+              <div data-testid="login-error" className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
                 {error || oauthError}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form data-testid="login-form" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email
@@ -74,6 +74,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   id="email"
+                  data-testid="login-email-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -89,6 +90,7 @@ export default function LoginPage() {
                 <input
                   type="password"
                   id="password"
+                  data-testid="login-password-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -99,6 +101,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
+                data-testid="login-submit-button"
                 disabled={isLoading}
                 className="w-full bg-indigo-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -118,6 +121,7 @@ export default function LoginPage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
+                data-testid="google-oauth-button"
                 onClick={() => window.location.href = '/api/auth/oauth/google'}
                 className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -131,6 +135,7 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
+                data-testid="github-oauth-button"
                 onClick={() => window.location.href = '/api/auth/oauth/github'}
                 className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -143,6 +148,7 @@ export default function LoginPage() {
 
             <div className="mt-4 text-center">
               <Link
+                data-testid="forgot-password-link"
                 href="/forgot-password"
                 className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
               >
@@ -153,7 +159,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Don&apos;t have an account?{' '}
-                <Link href="/signup" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+                <Link data-testid="signup-link" href="/signup" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
                   Sign up
                 </Link>
               </p>

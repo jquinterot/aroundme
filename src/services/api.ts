@@ -42,8 +42,26 @@ export interface CreatePlacePayload {
   imageUrl?: string;
 }
 
+interface RetryConfig {
+  maxRetries: number;
+  retryDelay: number;
+  retryableStatuses: number[];
+}
+
+const DEFAULT_RETRY_CONFIG: RetryConfig = {
+  maxRetries: 3,
+  retryDelay: 1000,
+  retryableStatuses: [408, 429, 500, 502, 503, 504],
+};
+
 class ApiService {
-  private async fetch<T>(url: string, method: string = 'GET', body?: unknown): Promise<ApiResponse<T>> {
+  private async fetchWithRetry<T>(
+    url: string,
+    method: string = 'GET',
+    body?: unknown,
+    retryConfig: RetryConfig = DEFAULT_RETRY_CONFIG,
+    attempt: number = 1
+  ): Promise<ApiResponse<T>> {
     try {
       const res = await fetch(url, {
         method,
@@ -65,6 +83,15 @@ class ApiService {
       }
       
       if (!res.ok) {
+        const shouldRetry = attempt < retryConfig.maxRetries && 
+                          retryConfig.retryableStatuses.includes(res.status);
+        
+        if (shouldRetry) {
+          console.warn(`API request failed with status ${res.status}, retrying... (${attempt}/${retryConfig.maxRetries})`);
+          await this.delay(retryConfig.retryDelay * attempt);
+          return this.fetchWithRetry(url, method, body, retryConfig, attempt + 1);
+        }
+        
         const errorMsg = data?.error || this.getHttpErrorMessage(res.status);
         const errorCode = data?.code || 'UNKNOWN_ERROR';
         const responseStr = JSON.stringify(data);
@@ -77,6 +104,15 @@ class ApiService {
       
       return data;
     } catch (err) {
+      const isNetworkError = err instanceof TypeError || 
+                            (err instanceof Error && err.message.includes('fetch'));
+      
+      if (isNetworkError && attempt < retryConfig.maxRetries) {
+        console.warn(`Network error, retrying... (${attempt}/${retryConfig.maxRetries})`);
+        await this.delay(retryConfig.retryDelay * attempt);
+        return this.fetchWithRetry(url, method, body, retryConfig, attempt + 1);
+      }
+      
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error('API Error: Network/fetch failed. URL=' + url + ', Error=' + errMsg);
       return {
@@ -84,6 +120,14 @@ class ApiService {
         error: err instanceof Error ? err.message : 'Network error. Please check your connection.',
       };
     }
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async fetch<T>(url: string, method: string = 'GET', body?: unknown): Promise<ApiResponse<T>> {
+    return this.fetchWithRetry(url, method, body);
   }
 
   private getHttpErrorMessage(status: number): string {

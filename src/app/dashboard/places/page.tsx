@@ -64,10 +64,10 @@ export default function DashboardPlacesPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="dashboard-places-page-container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mis Lugares</h1>
+            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-places-title">Mis Lugares</h1>
             <p className="text-gray-500">Gestiona tus venues reclamados</p>
           </div>
           <Link

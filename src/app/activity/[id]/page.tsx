@@ -156,7 +156,7 @@ export default function ActivityDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div data-testid="activity-loading" className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
       </div>
     );
@@ -164,13 +164,13 @@ export default function ActivityDetailPage() {
 
   if (error || !activity) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="activity-not-found" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <AlertCircle className="w-16 h-16 mx-auto text-red-500 mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Activity not found</h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6">This activity may have been removed or is unavailable.</p>
-          <Link href={`/${activityData?.data?.city?.slug || 'bogota'}/activities`} className="text-amber-600 hover:underline">
+          <Link data-testid="browse-activities-link" href={`/${activityData?.data?.city?.slug || 'bogota'}/activities`} className="text-amber-600 hover:underline">
             Browse activities
           </Link>
         </div>
@@ -181,7 +181,7 @@ export default function ActivityDetailPage() {
 
   if (bookingSuccess && bookingResult) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="booking-success" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -192,7 +192,7 @@ export default function ActivityDetailPage() {
             Your spot for {activity.title} has been reserved.
           </p>
           
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 text-left mb-8">
+          <div data-testid="booking-summary" className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 text-left mb-8">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Booking Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -237,12 +237,12 @@ export default function ActivityDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="activity-detail-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link href={`/${activity.city.slug}/activities`} className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6">
+          <Link data-testid="back-to-activities" href={`/${activity.city.slug}/activities`} className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6">
             <ArrowLeft className="w-4 h-4" />
             Back to activities
           </Link>
@@ -251,7 +251,7 @@ export default function ActivityDetailPage() {
             <div className="lg:col-span-2">
               <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
                 {activity.image ? (
-                  <div className="relative h-64 md:h-80 bg-gray-200">
+                  <div data-testid="activity-image" className="relative h-64 md:h-80 bg-gray-200">
                     <Image src={activity.image} alt={activity.title} fill className="object-cover" unoptimized />
                   </div>
                 ) : (
@@ -274,6 +274,7 @@ export default function ActivityDetailPage() {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        data-testid="save-activity-button"
                         onClick={handleSave}
                         className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 ${
                           isSaved ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
@@ -282,6 +283,7 @@ export default function ActivityDetailPage() {
                         <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                       </button>
                       <button
+                        data-testid="share-activity-button"
                         onClick={handleShare}
                         className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
                       >
@@ -290,11 +292,11 @@ export default function ActivityDetailPage() {
                     </div>
                   </div>
 
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h1 data-testid="activity-title" className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     {activity.title}
                   </h1>
 
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  <p data-testid="activity-provider" className="text-gray-500 dark:text-gray-400 mb-6">
                     by {activity.providerName}
                   </p>
 
@@ -377,7 +379,7 @@ export default function ActivityDetailPage() {
                           Open in Google Maps
                         </a>
                       </div>
-                      <div className="h-64 rounded-xl overflow-hidden">
+                      <div className="h-96 rounded-xl overflow-hidden">
                         <ActivityMap
                           activities={[{
                             id: activity.id,

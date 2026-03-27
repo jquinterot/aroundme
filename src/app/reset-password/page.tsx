@@ -105,7 +105,7 @@ function ResetPasswordForm() {
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-indigo-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Reset your password</h1>
+          <h1 className="text-2xl font-bold text-gray-900" data-testid="reset-password-title">Reset your password</h1>
           <p className="text-gray-500 mt-2">
             Enter your new password below
           </p>
@@ -181,7 +181,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="flex items-center justify-center py-12 px-4">
+      <main className="flex items-center justify-center py-12 px-4" data-testid="reset-password-page-container">
         <Suspense fallback={<LoadingFallback />}>
           <ResetPasswordForm />
         </Suspense>

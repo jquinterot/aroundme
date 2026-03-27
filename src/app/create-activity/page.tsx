@@ -117,10 +117,11 @@ export default function CreateActivityPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8" data-testid="create-activity-page-container">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-6"
+          data-testid="back-link"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al dashboard
@@ -132,7 +133,7 @@ export default function CreateActivityPage() {
               <Calendar className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="create-activity-title">
                 Crear Actividad
               </h1>
               <p className="text-gray-500 dark:text-gray-400">

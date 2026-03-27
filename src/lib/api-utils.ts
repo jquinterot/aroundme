@@ -38,7 +38,21 @@ function isAuthError(error: Error): boolean {
 }
 
 export function handleApiError(error: unknown, context?: string): NextResponse {
-  console.error(`API Error${context ? ` in ${context}` : ''}:`, error);
+  const errorId = generateErrorId();
+  const timestamp = new Date().toISOString();
+  
+  // Log detailed error information
+  const errorDetails = {
+    errorId,
+    timestamp,
+    context: context || 'Unknown',
+    type: error instanceof Error ? error.constructor.name : typeof error,
+    message: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : undefined,
+    ...(error instanceof Error && 'code' in error ? { code: (error as Error & { code: string }).code } : {}),
+  };
+
+  console.error(`[${timestamp}] [ERROR ${errorId}] API Error${context ? ` in ${context}` : ''}:`, errorDetails);
 
   if (error instanceof ApiError) {
     return NextResponse.json(
@@ -46,6 +60,8 @@ export function handleApiError(error: unknown, context?: string): NextResponse {
         success: false,
         error: error.message,
         code: error.code,
+        errorId,
+        timestamp,
       },
       { status: error.status }
     );
@@ -53,55 +69,99 @@ export function handleApiError(error: unknown, context?: string): NextResponse {
 
   if (error instanceof Error) {
     if (isDatabaseError(error)) {
+      console.error(`[${timestamp}] [ERROR ${errorId}] Database error detected:`, {
+        message: error.message,
+        context,
+      });
+      
       return NextResponse.json(
         {
           success: false,
           error: 'Database error. Please try again later.',
           code: 'DATABASE_ERROR',
+          errorId,
+          timestamp,
         },
         { status: 500 }
       );
     }
 
     if (isPaymentError(error)) {
+      console.error(`[${timestamp}] [ERROR ${errorId}] Payment error detected:`, {
+        message: error.message,
+        context,
+      });
+      
       return NextResponse.json(
         {
           success: false,
           error: 'Payment processing error. Please try again or contact support.',
           code: 'PAYMENT_ERROR',
+          errorId,
+          timestamp,
         },
         { status: 500 }
       );
     }
 
     if (isAuthError(error)) {
+      console.error(`[${timestamp}] [ERROR ${errorId}] Authentication error detected:`, {
+        message: error.message,
+        context,
+      });
+      
       return NextResponse.json(
         {
           success: false,
           error: 'Authentication error. Please log in again.',
           code: 'AUTH_ERROR',
+          errorId,
+          timestamp,
         },
         { status: 401 }
       );
     }
 
+    // Log unexpected errors with full stack trace
+    console.error(`[${timestamp}] [ERROR ${errorId}] Unexpected error:`, {
+      message: error.message,
+      stack: error.stack,
+      context,
+    });
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'An unexpected error occurred',
+        error: 'An unexpected error occurred. Please try again later.',
+        code: 'INTERNAL_ERROR',
+        errorId,
+        timestamp,
       },
       { status: 500 }
     );
   }
+
+  // Handle non-Error objects
+  console.error(`[${timestamp}] [ERROR ${errorId}] Non-Error object thrown:`, {
+    value: error,
+    type: typeof error,
+    context,
+  });
 
   return NextResponse.json(
     {
       success: false,
       error: 'An unexpected error occurred. Please try again later.',
       code: 'UNKNOWN_ERROR',
+      errorId,
+      timestamp,
     },
     { status: 500 }
   );
+}
+
+function generateErrorId(): string {
+  return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export function errorResponse(message: string, status: number = 400, code?: string) {

@@ -194,8 +194,8 @@ export default function UserProfilePage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
+      <main className="max-w-4xl mx-auto px-4 py-8" data-testid="user-profile-page-container">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6" data-testid="user-profile-header">
           <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600" />
           
           <div className="px-6 pb-6">
@@ -251,6 +251,7 @@ export default function UserProfilePage() {
                         ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         : 'bg-indigo-600 text-white hover:bg-indigo-700'
                     }`}
+                    data-testid="follow-user-button"
                   >
                     {followLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

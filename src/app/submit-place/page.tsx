@@ -82,18 +82,19 @@ export default function SubmitPlacePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8" data-testid="submit-place-page-container">
         <div className="mb-8">
           <Link
             href={`/${formData.cityId}/places`}
             className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 mb-4"
+            data-testid="back-link"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Submit a Place</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="submit-place-title">Submit a Place</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Recommend a cool place in your city</p>
         </div>
 

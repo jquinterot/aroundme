@@ -34,12 +34,12 @@ export function HeroSection({
   showCitySelector = true 
 }: HeroSectionProps) {
   return (
-    <section className={`bg-gradient-to-r ${gradientClasses[gradient]} text-white py-12`}>
+    <section data-testid="hero-section" className={`bg-gradient-to-r ${gradientClasses[gradient]} text-white py-12`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-4">{title}</h1>
-            <p className={`mb-6 ${textColor[gradient]}`}>{subtitle}</p>
+            <h1 data-testid="hero-title" className="text-3xl font-bold mb-4">{title}</h1>
+            <p data-testid="hero-subtitle" className={`mb-6 ${textColor[gradient]}`}>{subtitle}</p>
           </div>
           
           {showCitySelector && cities.length > 0 && (
@@ -49,12 +49,13 @@ export function HeroSection({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div data-testid="hero-tabs" className="flex flex-wrap gap-4">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.label;
             const Icon = tab.icon as LucideIcon;
             return (
               <Link
+                data-testid={`tab-${tab.label.toLowerCase()}`}
                 key={tab.href}
                 href={tab.href}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${

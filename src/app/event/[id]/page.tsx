@@ -108,7 +108,7 @@ export default function EventDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="event-loading" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
@@ -123,11 +123,11 @@ export default function EventDetailPage() {
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="event-not-found" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Event not found</h1>
-          <Link href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+          <Link data-testid="back-to-events-link" href={`/${city?.slug || 'bogota'}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
             ← Back to events
           </Link>
         </div>
@@ -136,11 +136,12 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="event-detail-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <Link
+          data-testid="back-to-events"
           href={`/${city?.slug || 'bogota'}`}
           className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-6"
         >
@@ -189,8 +190,9 @@ export default function EventDetailPage() {
           <div className="mt-8 px-6 md:px-8 pb-6">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Location</h3>
             <div className="flex flex-wrap items-center gap-3 mb-3">
-              <p className="text-gray-600 dark:text-gray-400">{event.venue.address}</p>
+              <p data-testid="event-venue-address" className="text-gray-600 dark:text-gray-400">{event.venue.address}</p>
               <a
+                data-testid="google-maps-link"
                 href={`https://www.google.com/maps/dir/?api=1&destination=${event.venue.coordinates.lat},${event.venue.coordinates.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -200,7 +202,7 @@ export default function EventDetailPage() {
                 Open in Google Maps
               </a>
             </div>
-            <div className="h-64 rounded-xl overflow-hidden">
+            <div className="h-96 rounded-xl overflow-hidden">
               <EventMap
                 events={[event]}
                 city={city}

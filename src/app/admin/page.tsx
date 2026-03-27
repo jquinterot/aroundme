@@ -102,14 +102,14 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="admin-page-container">
         <div className="mb-8">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Link href="/dashboard" className="hover:text-indigo-600">Dashboard</Link>
+            <Link href="/dashboard" className="hover:text-indigo-600" data-testid="admin-breadcrumb-dashboard">Dashboard</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 dark:text-white">Admin</span>
+            <span className="text-gray-900 dark:text-white" data-testid="admin-breadcrumb-current">Admin</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2" data-testid="admin-title">
             <Shield className="w-8 h-8 text-indigo-600" />
             Admin Dashboard
           </h1>
@@ -118,7 +118,7 @@ export default function AdminDashboardPage() {
 
         <div className="flex gap-8">
           <div className="w-64 flex-shrink-0">
-            <nav className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+            <nav className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4" data-testid="admin-nav">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (

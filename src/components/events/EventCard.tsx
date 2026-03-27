@@ -42,7 +42,7 @@ export function EventCard({ event }: EventCardProps) {
   const isUpcoming = timeUntil && timeUntil.total > 0 && timeUntil.total <= 7 * 24 * 60 * 60 * 1000;
 
   return (
-    <Link href={`/event/${event.id}`} className="group">
+    <Link href={`/event/${event.id}`} className="group" data-testid={`event-card-${event.id}`}>
       <article className={`bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border transition-all duration-200 hover:shadow-lg ${
         event.isFeatured 
           ? 'border-yellow-300 hover:border-yellow-400 ring-2 ring-yellow-100 dark:ring-yellow-900/50' 

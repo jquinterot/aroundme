@@ -227,11 +227,11 @@ export default function DocsPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8" data-testid="docs-page-container">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <HelpCircle className="w-8 h-8 text-indigo-600" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Help Center</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="docs-title">Help Center</h1>
           </div>
           <p className="text-gray-500 dark:text-gray-400">
             Everything you need to know about AroundMe

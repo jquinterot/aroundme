@@ -38,10 +38,10 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <header data-testid="header" className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
+          <Link data-testid="header-logo" href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AM</span>
             </div>
@@ -57,6 +57,7 @@ export function Header() {
                     <NotificationBell />
                     <div className="relative">
                       <button
+                        data-testid="user-menu-button"
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
@@ -80,12 +81,13 @@ export function Header() {
                       </button>
 
                       {isUserMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                        <div data-testid="user-menu-dropdown" className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
                           <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-                            <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                            <p data-testid="user-menu-name" className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+                            <p data-testid="user-menu-email" className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                             {user.role === 'admin' && (
                               <Link
+                                data-testid="admin-dashboard-link"
                                 href="/admin"
                                 onClick={() => setIsUserMenuOpen(false)}
                                 className="mt-2 flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
@@ -98,6 +100,7 @@ export function Header() {
                           
                           {isSupported && (
                             <button
+                              data-testid="push-notifications-toggle"
                               onClick={handlePushToggle}
                               disabled={pushLoading}
                               className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -117,6 +120,7 @@ export function Header() {
                           )}
                           
                           <Link
+                            data-testid="dashboard-link"
                             href="/dashboard"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -124,6 +128,7 @@ export function Header() {
                             <LayoutDashboard className="w-4 h-4" /> Dashboard
                           </Link>
                           <Link
+                            data-testid="notifications-link"
                             href="/dashboard/notifications"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -131,6 +136,7 @@ export function Header() {
                             <Bell className="w-4 h-4" /> Notifications
                           </Link>
                           <Link
+                            data-testid="profile-link"
                             href="/profile"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -139,6 +145,7 @@ export function Header() {
                           </Link>
                           <hr className="my-1 border-gray-100 dark:border-gray-700" />
                           <Link
+                            data-testid="my-events-link"
                             href="/dashboard/events"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -146,6 +153,7 @@ export function Header() {
                             <Ticket className="w-4 h-4" /> My Events
                           </Link>
                           <Link
+                            data-testid="my-places-link"
                             href="/dashboard/places"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -153,6 +161,7 @@ export function Header() {
                             <MapPin className="w-4 h-4" /> My Places
                           </Link>
                           <Link
+                            data-testid="my-tickets-link"
                             href="/dashboard/tickets"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -160,6 +169,7 @@ export function Header() {
                             <Bookmark className="w-4 h-4" /> My Tickets
                           </Link>
                           <Link
+                            data-testid="saved-events-link"
                             href="/dashboard/saved-events"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -167,6 +177,7 @@ export function Header() {
                             <Bookmark className="w-4 h-4" /> Saved Events
                           </Link>
                           <Link
+                            data-testid="my-rsvps-link"
                             href="/dashboard/my-rsvps"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -175,6 +186,7 @@ export function Header() {
                           </Link>
                           <hr className="my-1 border-gray-100 dark:border-gray-700" />
                           <button
+                            data-testid="logout-button"
                             onClick={handleLogout}
                             className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400"
                           >
@@ -187,12 +199,14 @@ export function Header() {
                 ) : (
                   <>
                     <Link
+                      data-testid="login-link"
                       href="/login"
                       className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                     >
                       Login
                     </Link>
                     <Link
+                      data-testid="signup-link"
                       href="/signup"
                       className="px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
                     >

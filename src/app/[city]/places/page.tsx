@@ -50,7 +50,7 @@ export default function PlacesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="city-places-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main>
@@ -64,9 +64,10 @@ export default function PlacesPage() {
           currentCity={currentCity}
         />
 
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <section data-testid="places-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <Link
+              data-testid="add-place-button"
               href="/submit-place"
               className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
             >
@@ -78,7 +79,7 @@ export default function PlacesPage() {
           <PlaceFilters onFilterChange={setFilters} />
 
           <div className="flex items-center justify-between mt-6 mb-4">
-            <p className="text-gray-600 dark:text-gray-400">
+            <p data-testid="places-count" className="text-gray-600 dark:text-gray-400">
               {isLoading ? 'Loading...' : `${places.length} places found`}
             </p>
             <ViewModeToggle

@@ -156,12 +156,12 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div data-testid="checkout-page" className="min-h-screen bg-gray-50">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Get Tickets</h1>
-        <p className="text-gray-500 mb-8">{event.title}</p>
+        <h1 data-testid="checkout-title" className="text-2xl font-bold text-gray-900 mb-2">Get Tickets</h1>
+        <p data-testid="checkout-event-title" className="text-gray-500 mb-8">{event.title}</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
@@ -178,7 +178,7 @@ function CheckoutContent() {
                                (!ticketType.saleEnd || new Date() <= new Date(ticketType.saleEnd));
                 
                 return (
-                  <div key={ticketType.id} className="bg-white rounded-xl shadow-sm p-6">
+                  <div data-testid={`ticket-type-${ticketType.id}`} key={ticketType.id} className="bg-white rounded-xl shadow-sm p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{ticketType.name}</h3>
@@ -200,16 +200,18 @@ function CheckoutContent() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <button
+                            data-testid={`decrease-ticket-${ticketType.id}`}
                             onClick={() => updateQuantity(ticketType.id, -1)}
                             disabled={!cart[ticketType.id]}
                             className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
-                          <span className="text-xl font-semibold w-8 text-center">
+                          <span data-testid={`ticket-quantity-${ticketType.id}`} className="text-xl font-semibold w-8 text-center">
                             {cart[ticketType.id] || 0}
                           </span>
                           <button
+                            data-testid={`increase-ticket-${ticketType.id}`}
                             onClick={() => updateQuantity(ticketType.id, 1)}
                             disabled={cart[ticketType.id] >= Math.min(available, ticketType.maxPerUser)}
                             className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
@@ -239,13 +241,13 @@ function CheckoutContent() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+            <div data-testid="order-summary" className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
               
               {totalItems > 0 ? (
                 <div className="space-y-3 mb-4">
                   {event.ticketTypes.filter((tt) => cart[tt.id] > 0).map((tt) => (
-                    <div key={tt.id} className="flex justify-between text-sm">
+                    <div data-testid={`order-item-${tt.id}`} key={tt.id} className="flex justify-between text-sm">
                       <span className="text-gray-600">{tt.name} x{cart[tt.id]}</span>
                       <span className="font-medium">${(tt.price * cart[tt.id]).toLocaleString('COP')}</span>
                     </div>
@@ -258,7 +260,7 @@ function CheckoutContent() {
               <div className="border-t border-gray-200 pt-4 mb-6">
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>${totalPrice.toLocaleString('COP')}</span>
+                  <span data-testid="checkout-total">${totalPrice.toLocaleString('COP')}</span>
                 </div>
               </div>
 
@@ -267,6 +269,7 @@ function CheckoutContent() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
                   <input
                     type="text"
+                    data-testid="checkout-name-input"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -277,6 +280,7 @@ function CheckoutContent() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                   <input
                     type="email"
+                    data-testid="checkout-email-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"

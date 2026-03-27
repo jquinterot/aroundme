@@ -68,18 +68,18 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="dashboard-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {user.name}!</h1>
-          <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
+        <div data-testid="dashboard-header" className="mb-8">
+          <h1 data-testid="dashboard-welcome" className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {user.name}!</h1>
+          <p data-testid="dashboard-email" className="text-gray-500 dark:text-gray-400">{user.email}</p>
         </div>
 
         {statsLoading ? (
           <div className="animate-pulse space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div data-testid="dashboard-stats-loading" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
               ))}
@@ -87,11 +87,12 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div data-testid="dashboard-stat-cards" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {statCards.map((stat) => {
                 const Icon = stat.icon;
                 return (
                   <Link
+                    data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
                     key={stat.label}
                     href={stat.href}
                     className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
@@ -106,11 +107,12 @@ export default function DashboardPage() {
               })}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div data-testid="dashboard-social-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {socialStats.map((stat) => {
                 const Icon = stat.icon;
                 return (
                   <div
+                    data-testid={`social-stat-${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
                     key={stat.label}
                     className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700 flex items-center gap-3"
                   >
@@ -125,7 +127,7 @@ export default function DashboardPage() {
             </div>
 
             {engagement.categoryBreakdown && Object.keys(engagement.categoryBreakdown).length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 mb-8">
+              <div data-testid="dashboard-interests" className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 mb-8">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                   Your Interests
@@ -134,7 +136,7 @@ export default function DashboardPage() {
                   {Object.entries(engagement.categoryBreakdown as Record<string, number> || {})
                     .sort((a, b) => b[1] - a[1])
                     .map(([category, count]) => (
-                      <div key={category} className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div data-testid={`interest-${category}`} key={category} className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <p className="text-2xl mb-1">{categoryIcons[category] || '🎯'}</p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{category}</p>
                         <p className="text-xs text-gray-500">{count} events</p>
@@ -143,14 +145,14 @@ export default function DashboardPage() {
                 </div>
                 {insights.favoriteCategory && (
                   <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                    Your favorite category is <span className="font-medium text-indigo-600 dark:text-indigo-400 capitalize">{insights.favoriteCategory}</span>!
+                    Your favorite category is <span data-testid="favorite-category" className="font-medium text-indigo-600 dark:text-indigo-400 capitalize">{insights.favoriteCategory}</span>!
                   </p>
                 )}
               </div>
             )}
 
             {trends.eventsThisMonth > 0 && (
-              <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-6 text-white mb-8">
+              <div data-testid="dashboard-monthly-activity" className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-6 text-white mb-8">
                 <h2 className="text-lg font-semibold mb-2">This Month&apos;s Activity</h2>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
@@ -171,11 +173,12 @@ export default function DashboardPage() {
           </>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div data-testid="dashboard-quick-actions" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
             <div className="space-y-3">
               <Link
+                data-testid="quick-action-edit-profile"
                 href="/profile"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -188,6 +191,7 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <Link
+                data-testid="quick-action-create-event"
                 href="/create-event"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -200,6 +204,7 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <Link
+                data-testid="quick-action-create-activity"
                 href="/create-activity"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -212,6 +217,7 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <Link
+                data-testid="quick-action-add-place"
                 href="/submit-place"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
@@ -228,7 +234,7 @@ export default function DashboardPage() {
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Getting Started</h2>
-            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+            <div data-testid="getting-started-list" className="space-y-4 text-gray-600 dark:text-gray-400">
               <p>1. Complete your profile to get verified</p>
               <p>2. Create events to share with the community</p>
               <p>3. Save events you&apos;re interested in</p>

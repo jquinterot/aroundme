@@ -124,10 +124,10 @@ export default function EarningsPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8" data-testid="earnings-page-container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Earnings & Payouts</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="earnings-title">Earnings & Payouts</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">Track your revenue and manage payouts</p>
           </div>
           <Link

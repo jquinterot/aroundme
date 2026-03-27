@@ -61,7 +61,7 @@ export default function ActivitiesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="city-activities-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main>
@@ -75,9 +75,10 @@ export default function ActivitiesPage() {
           currentCity={currentCity}
         />
 
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <section data-testid="activities-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <Link
+              data-testid="create-activity-button"
               href="/create-activity"
               className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
             >
@@ -86,9 +87,10 @@ export default function ActivitiesPage() {
             </Link>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div data-testid="activities-category-filters" className="flex flex-wrap gap-2 mb-6">
             {categories.map((cat) => (
               <button
+                data-testid={`category-${cat.value}`}
                 key={cat.value}
                 onClick={() => setCategory(cat.value)}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
@@ -104,7 +106,7 @@ export default function ActivitiesPage() {
           </div>
 
           <div className="flex items-center justify-between mt-6 mb-4">
-            <p className="text-gray-600 dark:text-gray-400">
+            <p data-testid="activities-count" className="text-gray-600 dark:text-gray-400">
               {isLoading ? 'Loading...' : `${activities.length} activities found`}
             </p>
             <ViewModeToggle
@@ -117,10 +119,11 @@ export default function ActivitiesPage() {
           {isLoading ? (
             <CardSkeleton />
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <div data-testid="activities-error" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
               <p className="text-red-600 font-medium mb-2">Error loading activities</p>
               <p className="text-red-500 text-sm">{error.message}</p>
               <button
+                data-testid="activities-retry-button"
                 onClick={() => window.location.reload()}
                 className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >

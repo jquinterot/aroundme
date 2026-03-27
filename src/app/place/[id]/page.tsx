@@ -125,7 +125,7 @@ export default function PlaceDetailPage() {
 
   if (placeLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="place-loading" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
@@ -140,11 +140,11 @@ export default function PlaceDetailPage() {
 
   if (!place) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div data-testid="place-not-found" className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Place not found</h1>
-          <Link href={`/${city?.slug || 'bogota'}/places`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+          <Link data-testid="back-to-places-link" href={`/${city?.slug || 'bogota'}/places`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
             ← Back to places
           </Link>
         </div>
@@ -153,11 +153,12 @@ export default function PlaceDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="place-detail-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <Link
+          data-testid="back-to-places"
           href={`/${city?.slug || 'bogota'}/places`}
           className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 mb-6"
         >
@@ -319,7 +320,7 @@ export default function PlaceDetailPage() {
 
             <div className="mt-8">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Location</h3>
-              <div className="h-64 rounded-xl overflow-hidden">
+              <div className="h-96 rounded-xl overflow-hidden">
                 <EventMap
                   events={[]}
                   city={city}

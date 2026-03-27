@@ -147,13 +147,13 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6">
+      <main className="max-w-2xl mx-auto px-4 py-8" data-testid="profile-page-container">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6" data-testid="back-to-dashboard-link">
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6" data-testid="profile-title">Edit Profile</h1>
 
         {message && (
           <div className={`mb-6 p-4 rounded-xl flex items-center gap-2 ${
@@ -181,6 +181,7 @@ export default function ProfilePage() {
                   value={name}
                   onChange={(e) => { setName(e.target.value); setIsSaved(false); }}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  data-testid="profile-name-input"
                 />
               </div>
 
@@ -306,6 +307,7 @@ export default function ProfilePage() {
               onClick={handleSave}
               disabled={!hasChanges || isSaved}
               className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="save-profile-button"
             >
               {isSaved ? 'Saved' : 'Save Changes'}
             </button>

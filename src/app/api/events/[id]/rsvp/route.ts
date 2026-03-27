@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { notifyEventOwner } from '@/lib/notifications';
+import { sendEmail } from '@/lib/email';
 import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export async function POST(
   request: NextRequest,
@@ -49,6 +52,21 @@ export async function POST(
         where: { id: existingRsvp.id },
         data: { status },
       });
+
+      sendEmail({
+        template: 'rsvp_confirmation',
+        userId: user.id,
+        data: {
+          eventTitle: event.title,
+          eventDate: format(new Date(event.dateStart), "EEEE, d 'de' MMMM", { locale: es }),
+          eventTime: format(new Date(event.dateStart), 'h:mm a'),
+          venueName: event.venueName,
+          venueAddress: event.venueAddress,
+          rsvpStatus: status === 'going' ? 'Asistiré' : status === 'interested' ? 'Me interesa' : 'Tal vez',
+          eventUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://aroundme.app'}/event/${event.id}`,
+        },
+      }).catch(console.error);
+
       return NextResponse.json({ success: true, data: { rsvp: updated } });
     } else {
       const created = await prisma.rSVP.create({
@@ -58,6 +76,20 @@ export async function POST(
           status,
         },
       });
+
+      sendEmail({
+        template: 'rsvp_confirmation',
+        userId: user.id,
+        data: {
+          eventTitle: event.title,
+          eventDate: format(new Date(event.dateStart), "EEEE, d 'de' MMMM", { locale: es }),
+          eventTime: format(new Date(event.dateStart), 'h:mm a'),
+          venueName: event.venueName,
+          venueAddress: event.venueAddress,
+          rsvpStatus: status === 'going' ? 'Asistiré' : status === 'interested' ? 'Me interesa' : 'Tal vez',
+          eventUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://aroundme.app'}/event/${event.id}`,
+        },
+      }).catch(console.error);
 
       if (event.userId) {
         await notifyEventOwner(

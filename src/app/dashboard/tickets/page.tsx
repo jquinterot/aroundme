@@ -88,10 +88,10 @@ export default function TicketsPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="dashboard-tickets-page-container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Tickets</h1>
+            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-tickets-title">My Tickets</h1>
             <p className="text-gray-500">View your purchased tickets</p>
           </div>
         </div>

@@ -65,24 +65,24 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div data-testid="signup-page" className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 border border-gray-200 dark:border-gray-700">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create your account</h1>
+              <h1 data-testid="signup-title" className="text-2xl font-bold text-gray-900 dark:text-white">Create your account</h1>
               <p className="text-gray-500 dark:text-gray-400 mt-2">Join AroundMe and discover events</p>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+              <div data-testid="signup-error" className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form data-testid="signup-form" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Full Name
@@ -90,6 +90,7 @@ export default function SignupPage() {
                 <input
                   type="text"
                   id="name"
+                  data-testid="signup-name-input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -105,6 +106,7 @@ export default function SignupPage() {
                 <input
                   type="email"
                   id="email"
+                  data-testid="signup-email-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -120,6 +122,7 @@ export default function SignupPage() {
                 <input
                   type="password"
                   id="password"
+                  data-testid="signup-password-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -128,7 +131,7 @@ export default function SignupPage() {
                 />
                 <div className="mt-2 space-y-1">
                   {passwordRequirements.map((req) => (
-                    <div key={req.id} className="flex items-center gap-2 text-xs">
+                    <div data-testid={`password-req-${req.id}`} key={req.id} className="flex items-center gap-2 text-xs">
                       <span className={`w-4 h-4 rounded-full flex items-center justify-center text-white text-xs ${req.test(password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
                         {req.test(password) ? '✓' : ''}
                       </span>
@@ -144,6 +147,7 @@ export default function SignupPage() {
                 <label className="flex items-start gap-2">
                   <input
                     type="checkbox"
+                    data-testid="signup-terms-checkbox"
                     checked={acceptTerms}
                     onChange={(e) => setAcceptTerms(e.target.checked)}
                     className="mt-1 rounded border-gray-300 dark:border-gray-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 bg-white dark:bg-gray-800"
@@ -159,6 +163,7 @@ export default function SignupPage() {
 
               <button
                 type="submit"
+                data-testid="signup-submit-button"
                 disabled={isLoading}
                 className="w-full bg-indigo-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -169,7 +174,7 @@ export default function SignupPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Already have an account?{' '}
-                <Link href="/login" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+                <Link data-testid="login-link" href="/login" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
                   Sign in
                 </Link>
               </p>

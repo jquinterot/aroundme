@@ -44,11 +44,12 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="flex items-center justify-center py-12 px-4">
+      <main className="flex items-center justify-center py-12 px-4" data-testid="forgot-password-page-container">
         <div className="w-full max-w-md">
           <Link
             href="/login"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6"
+            data-testid="back-to-login-link"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to login
@@ -59,7 +60,7 @@ export default function ForgotPasswordPage() {
               <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-8 h-8 text-indigo-600" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Forgot password?</h1>
+              <h1 className="text-2xl font-bold text-gray-900" data-testid="forgot-password-title">Forgot password?</h1>
               <p className="text-gray-500 mt-2">
                 No worries, we&apos;ll send you reset instructions
               </p>

@@ -9,7 +9,7 @@ import { PlaceholderImage } from '@/components/ui/Placeholder';
 
 export function PlaceCard({ place }: PlaceCardProps) {
   return (
-    <Link href={`/place/${place.id}`} className="group">
+    <Link href={`/place/${place.id}`} className="group" data-testid={`place-card-${place.id}`}>
       <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-200">
         <div className="relative h-40">
           {place.image ? (

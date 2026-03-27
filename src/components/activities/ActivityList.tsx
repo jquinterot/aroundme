@@ -105,7 +105,7 @@ export function ActivityList({ activities, viewMode, city }: ActivityListProps) 
 
 function ActivityCard({ activity }: { activity: ListingActivity }) {
   return (
-    <Link href={`/activity/${activity.id}`}>
+    <Link href={`/activity/${activity.id}`} data-testid={`activity-card-${activity.id}`}>
       <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
         {activity.image ? (
           <div className="relative h-40 bg-gray-200">

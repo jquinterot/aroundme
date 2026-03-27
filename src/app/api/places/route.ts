@@ -1,70 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { validateRequestBody, createPlaceValidationRules, formatValidationErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    
-    const {
-      citySlug,
-      name,
-      description,
-      category,
-      address,
-      lat,
-      lng,
-      website,
-      instagram,
-      features,
-      imageUrl,
-    } = body;
+    // Validate request body
+    const validation = await validateRequestBody(
+      request,
+      createPlaceValidationRules(),
+      'POST /api/places'
+    );
 
-    if (!citySlug || !name || !description || !category || !address) {
-      return errorResponse('Please fill in all required fields: city, name, description, category, and address.', 400, 'VALIDATION_ERROR');
+    if (!validation.success) {
+      return errorResponse(
+        formatValidationErrors(validation.errors),
+        400,
+        'VALIDATION_ERROR'
+      );
     }
 
-    if (name.trim().length < 2) {
-      return errorResponse('Place name must be at least 2 characters.', 400, 'INVALID_NAME');
-    }
+    const data = validation.data;
 
-    if (description.trim().length < 10) {
-      return errorResponse('Description must be at least 10 characters.', 400, 'INVALID_DESCRIPTION');
-    }
-
+    // Check if city exists
     const city = await prisma.city.findUnique({
-      where: { slug: citySlug },
+      where: { slug: data.citySlug as string },
     });
 
     if (!city) {
-      return errorResponse(`City "${citySlug}" not found. Please select a valid city.`, 404, 'CITY_NOT_FOUND');
+      console.error(`[POST /api/places] City not found: ${data.citySlug}`);
+      return errorResponse(
+        `City "${data.citySlug}" not found. Please select a valid city.`,
+        404,
+        'CITY_NOT_FOUND'
+      );
     }
 
-    if (website && !website.match(/^https?:\/\/.+/)) {
-      return errorResponse('Website must be a valid URL starting with http:// or https://', 400, 'INVALID_WEBSITE');
-    }
-
-    if (instagram && !instagram.match(/^@?[\w]{1,30}$/)) {
-      return errorResponse('Instagram handle must be valid (e.g., @username)', 400, 'INVALID_INSTAGRAM');
-    }
-
+    // Create place
     const place = await prisma.place.create({
       data: {
-        name: name.trim(),
-        description: description.trim(),
-        category,
+        name: (data.name as string).trim(),
+        description: (data.description as string).trim(),
+        category: data.category as string,
         cityId: city.id,
-        address: address.trim(),
-        lat: lat || city.lat,
-        lng: lng || city.lng,
-        contactWebsite: website || null,
-        contactInstagram: instagram || null,
-        features: features || '',
-        imageUrl: imageUrl || null,
+        address: (data.address as string).trim(),
+        lat: (data.lat as number) || city.lat,
+        lng: (data.lng as number) || city.lng,
+        contactWebsite: (data.website as string) || null,
+        contactInstagram: (data.instagram as string) || null,
+        features: (data.features as string) || '',
+        imageUrl: (data.imageUrl as string) || null,
         isVerified: false,
         isClaimed: false,
       },
     });
+
+    console.log(`[POST /api/places] Place created successfully: ${place.id}`);
 
     return NextResponse.json({
       success: true,

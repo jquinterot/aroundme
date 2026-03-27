@@ -138,14 +138,14 @@ export default function NotificationsPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8" data-testid="notifications-page-container">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
               <Bell className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notificaciones</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="notifications-title">Notificaciones</h1>
               <p className="text-gray-500 dark:text-gray-400">
                 {unreadCount > 0 ? `${unreadCount} sin leer` : 'Todas leídas'}
               </p>

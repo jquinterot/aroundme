@@ -2,7 +2,40 @@ import { prisma } from '@/lib/prisma';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function sanitizeEmailData(data: Record<string, string>): Record<string, string> {
+  const sanitized: Record<string, string> = {};
+  for (const [key, value] of Object.entries(data)) {
+    sanitized[key] = escapeHtml(value);
+  }
+  return sanitized;
+}
+
 const EMAIL_TEMPLATES = {
+  rsvp_confirmation: {
+    subject: 'Confirmación RSVP - {{eventTitle}}',
+    content: `
+      <h1>¡Tu asistencia está confirmada!</h1>
+      <p>Hola {{userName}},</p>
+      <p>Has confirmado tu asistencia a <strong>{{eventTitle}}</strong>.</p>
+      <p><strong>Fecha:</strong> {{eventDate}}</p>
+      <p><strong>Hora:</strong> {{eventTime}}</p>
+      <p><strong>Lugar:</strong> {{venueName}}, {{venueAddress}}</p>
+      <p><strong>Estado:</strong> {{rsvpStatus}}</p>
+      <p><a href="{{eventUrl}}" style="display:inline-block;background:#4F46E5;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;">Ver Detalles del Evento</a></p>
+      <p style="margin-top:24px;color:#6b7280;font-size:12px;">
+        ¿Ya no puedes asistir? Puedes cambiar tu estado de RSVP en cualquier momento desde la página del evento.
+      </p>
+    `,
+  },
   event_reminder: {
     subject: 'Recordatorio: {{eventTitle}} es mañana',
     content: `
@@ -106,13 +139,16 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
   let subject = templateData.subject;
   let content = templateData.content;
 
-  Object.entries(data).forEach(([key, value]) => {
-    subject = subject.replace(`{{${key}}}`, value);
+  const sanitizedData = sanitizeEmailData(data);
+  const sanitizedUserName = escapeHtml(user.name);
+
+  Object.entries(sanitizedData).forEach(([key, value]) => {
+    subject = subject.replace(new RegExp(`{{${key}}}`, 'g'), value);
     content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
   });
 
-  subject = subject.replace('{{userName}}', user.name);
-  content = content.replace('{{userName}}', user.name);
+  subject = subject.replace(/\{\{userName\}\}/g, sanitizedUserName);
+  content = content.replace(/\{\{userName\}\}/g, sanitizedUserName);
 
   await prisma.emailLog.create({
     data: {

@@ -49,11 +49,11 @@ export default function DiscoverPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
-      <main>
-        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
+      <main data-testid="discover-page-container">
+        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16" data-testid="discover-hero">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4">Descubre Eventos</h1>
+              <h1 className="text-4xl font-bold mb-4" data-testid="discover-title">Descubre Eventos</h1>
               <p className="text-xl text-indigo-100">Encuentra eventos personalizados basados en tus intereses</p>
             </div>
 
@@ -66,6 +66,7 @@ export default function DiscoverPage() {
                   value={filters.search}
                   onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   className="w-full pl-12 pr-4 py-4 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                  data-testid="discover-search-input"
                 />
               </div>
             </div>

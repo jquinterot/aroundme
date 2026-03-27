@@ -62,16 +62,17 @@ export default function MyRsvpsPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="my-rsvps-page-container">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6"
+          data-testid="back-link"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">My RSVPs</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6" data-testid="my-rsvps-title">My RSVPs</h1>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
