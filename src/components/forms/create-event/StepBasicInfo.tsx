@@ -1,6 +1,6 @@
 'use client';
 
-import { FormInput, FormSelect, CategorySelector, FormButton } from '@/components/ui/FormComponents';
+import { FormInput, FormSelect, CategorySelector, FormButton } from '@/components/ui';
 import { EVENT_CATEGORY_OPTIONS } from '@/lib/constants';
 import { EventStepBasicInfoProps } from '@/types/components';
 

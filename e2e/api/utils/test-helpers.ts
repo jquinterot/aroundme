@@ -61,8 +61,8 @@ export async function cleanupTestData(client: ApiClient, ids: { events?: string[
 /**
  * Verify standard error response
  */
-export function verifyErrorResponse(
-  response: ApiResponse,
+export function verifyErrorResponse<T = unknown>(
+  response: ApiResponse<T>,
   expectedStatus: number,
   expectedCode?: string
 ): void {
@@ -84,7 +84,7 @@ export function verifyErrorResponse(
 /**
  * Verify standard success response
  */
-export function verifySuccessResponse(response: ApiResponse): void {
+export function verifySuccessResponse<T = unknown>(response: ApiResponse<T>): void {
   expect(response.success).toBe(true);
   expect(response.status).toBe(200);
   expect(response.data).toBeDefined();

@@ -4,11 +4,22 @@ import { createAuthenticatedClient } from '../../utils/test-helpers';
 import { users } from '../../fixtures';
 import { verifySuccessResponse, verifyErrorResponse } from '../../utils/test-helpers';
 
+interface AdminStatsResponse {
+  overview: {
+    totalUsers: number;
+    totalEvents: number;
+    totalPlaces: number;
+    totalReviews: number;
+    pendingEvents: number;
+    pendingReports: number;
+  };
+}
+
 test.describe('GET /api/admin/stats', () => {
   test('should return admin stats for admin user', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.admin);
     
-    const response = await client.requestWithAuth('GET', '/admin/stats');
+    const response = await client.requestWithAuth<AdminStatsResponse>('GET', '/admin/stats');
     
     verifySuccessResponse(response);
     expect(response.data?.overview).toBeDefined();
@@ -38,7 +49,7 @@ test.describe('GET /api/admin/events', () => {
   test('should get all events for admin', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.admin);
     
-    const response = await client.requestWithAuth('GET', '/admin/events');
+    const response = await client.requestWithAuth<unknown[]>('GET', '/admin/events');
     
     verifySuccessResponse(response);
     expect(Array.isArray(response.data)).toBe(true);
@@ -49,7 +60,7 @@ test.describe('GET /api/admin/places', () => {
   test('should get all places for admin', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.admin);
     
-    const response = await client.requestWithAuth('GET', '/admin/places');
+    const response = await client.requestWithAuth<unknown[]>('GET', '/admin/places');
     
     verifySuccessResponse(response);
     expect(Array.isArray(response.data)).toBe(true);
@@ -60,7 +71,7 @@ test.describe('GET /api/admin/users', () => {
   test('should get all users for admin', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.admin);
     
-    const response = await client.requestWithAuth('GET', '/admin/users');
+    const response = await client.requestWithAuth<unknown[]>('GET', '/admin/users');
     
     verifySuccessResponse(response);
     expect(Array.isArray(response.data)).toBe(true);
@@ -71,7 +82,7 @@ test.describe('GET /api/admin/reports', () => {
   test('should get all reports for admin', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.admin);
     
-    const response = await client.requestWithAuth('GET', '/admin/reports');
+    const response = await client.requestWithAuth<unknown[]>('GET', '/admin/reports');
     
     verifySuccessResponse(response);
     expect(Array.isArray(response.data)).toBe(true);

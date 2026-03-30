@@ -174,7 +174,7 @@ export default function EventDetailPage() {
               onFeatureBasic={() => featureMutation.mutate('basic')}
               onFeaturePremium={() => featureMutation.mutate('premium')}
               onRemoveFeature={() => removeFeatureMutation.mutate()}
-              isPending={featureMutation.isPending || removeFeatureMutation.isPending}
+              isPending={featureMutation.isLoading || removeFeatureMutation.isLoading}
             />
           )}
 

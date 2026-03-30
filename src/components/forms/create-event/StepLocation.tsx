@@ -1,6 +1,6 @@
 'use client';
 
-import { FormInput, ToggleOption, FormSection, FormNavigation } from '@/components/ui/FormComponents';
+import { FormInput, ToggleOption, FormSection, FormNavigation } from '@/components/ui';
 import { LocationPicker } from '@/components/map';
 import { EventStepLocationProps } from '@/types/components';
 

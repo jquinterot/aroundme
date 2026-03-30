@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 import { EventCardProps } from '@/types/components';
 import { FeaturedBadge, CategoryBadge, FreeBadge, PriceDisplay, VerifiedBadge } from './EventCardBadges';
-import { formatEventDate, formatEventTime } from './eventUtils';
+import { formatEventDate, formatEventTime } from '@/lib/events/utils';
 import { PlaceholderImage } from '@/components/ui/Placeholder';
 
 function getTimeUntilEvent(dateStart: string): { days: number; hours: number; minutes: number; total: number } | null {

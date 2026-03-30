@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DateTimeInput, FormSection, FormNavigation } from '@/components/ui/FormComponents';
+import { DateTimeInput, FormSection, FormNavigation } from '@/components/ui';
 import { EventStepDateTimeProps } from '@/types/components';
 import { RefreshCw } from 'lucide-react';
 

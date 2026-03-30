@@ -13,6 +13,7 @@ import { Header, Footer } from '@/components/layout';
 import { ActivityMap } from '@/components/map';
 import { apiService } from '@/services';
 import { City } from '@/types';
+import { categoryColors, skillLevelLabels } from '@/lib/activities/categories';
 
 interface Activity {
   id: string;
@@ -42,20 +43,6 @@ interface Activity {
   lat: number | null;
   lng: number | null;
 }
-
-const categoryColors: Record<string, string> = {
-  class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-  tour: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  entertainment: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-  experience: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-  wellness: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-};
-
-const skillLevelLabels: Record<string, string> = {
-  beginner: 'Beginner',
-  intermediate: 'Intermediate',
-  all_levels: 'All Levels',
-};
 
 export default function ActivityDetailPage() {
   const params = useParams();
@@ -532,10 +519,10 @@ export default function ActivityDetailPage() {
 
                   <button
                     type="submit"
-                    disabled={bookingMutation.isPending || (spotsLeft !== null && spotsLeft < bookingData.tickets)}
+                    disabled={bookingMutation.isLoading || (spotsLeft !== null && spotsLeft < bookingData.tickets)}
                     className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
-                    {bookingMutation.isPending ? (
+                    {bookingMutation.isLoading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
                         Processing...

@@ -7,5 +7,16 @@ export { NotificationBell } from './NotificationBell';
 export { SearchBar } from './SearchBar';
 export { DarkModeToggle } from './DarkModeToggle';
 export { ShareButtons } from './ShareButtons';
-export { FormInput, FormSelect, CategorySelector, FormButton, DateTimeInput, ToggleOption, FormSection, FormNavigation } from './FormComponents';
 export { PlanCard, BillingToggle, FeatureHighlight, BusinessBundle } from './PricingComponents';
+
+// Form components
+export {
+  FormInput,
+  FormSelect,
+  FormButton,
+  CategorySelector,
+  DateTimeInput,
+  ToggleOption,
+  FormSection,
+  FormNavigation,
+} from './forms';

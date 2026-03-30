@@ -3,11 +3,15 @@ import { createAuthenticatedClient } from '../../utils/test-helpers';
 import { users } from '../../fixtures';
 import { verifySuccessResponse } from '../../utils/test-helpers';
 
+interface Notification {
+  id: string;
+}
+
 test.describe('GET /api/notifications', () => {
   test('should get user notifications', async ({ request }) => {
     const client = await createAuthenticatedClient(request, users.valid);
     
-    const response = await client.requestWithAuth('GET', '/notifications');
+    const response = await client.requestWithAuth<Notification[]>('GET', '/notifications');
     
     verifySuccessResponse(response);
     expect(Array.isArray(response.data)).toBe(true);
@@ -19,9 +23,9 @@ test.describe('PUT /api/notifications/:id/read', () => {
     const client = await createAuthenticatedClient(request, users.valid);
     
     // Get notifications first
-    const notifResponse = await client.requestWithAuth('GET', '/notifications');
+    const notifResponse = await client.requestWithAuth<Notification[]>('GET', '/notifications');
     
-    if (notifResponse.data?.length > 0) {
+    if (notifResponse.data && notifResponse.data.length > 0 && notifResponse.data[0].id) {
       const notificationId = notifResponse.data[0].id;
       
       const response = await client.requestWithAuth(
@@ -39,9 +43,9 @@ test.describe('DELETE /api/notifications/:id', () => {
     const client = await createAuthenticatedClient(request, users.valid);
     
     // Get notifications first
-    const notifResponse = await client.requestWithAuth('GET', '/notifications');
+    const notifResponse = await client.requestWithAuth<Notification[]>('GET', '/notifications');
     
-    if (notifResponse.data?.length > 0) {
+    if (notifResponse.data && notifResponse.data.length > 0 && notifResponse.data[0].id) {
       const notificationId = notifResponse.data[0].id;
       
       const response = await client.requestWithAuth(

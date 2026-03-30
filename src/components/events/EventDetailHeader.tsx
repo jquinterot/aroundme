@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Star, Calendar, Clock, MapPin, CheckCircle } from 'lucide-react';
 import { CATEGORY_ICONS } from '@/lib/constants';
-import { formatDetailDate, formatDetailTime } from './eventUtils';
+import { formatDetailDate, formatDetailTime } from '@/lib/events/utils';
 
 const CategoryIcon = (category: string) => CATEGORY_ICONS[category] || CATEGORY_ICONS.other;
 

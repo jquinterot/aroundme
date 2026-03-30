@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormInput, FormSection, FormNavigation } from '@/components/ui/FormComponents';
+import { FormInput, FormSection, FormNavigation } from '@/components/ui';
 import { PlaceStepLocationContactProps } from '@/types/components';
 
 export function StepLocationContact({ formData, onUpdate, onSubmit, onBack, isLoading }: PlaceStepLocationContactProps) {
