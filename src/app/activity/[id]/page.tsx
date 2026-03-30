@@ -13,36 +13,8 @@ import { Header, Footer } from '@/components/layout';
 import { ActivityMap } from '@/components/map';
 import { apiService } from '@/services';
 import { City } from '@/types';
+import { Activity } from '@/types';
 import { categoryColors, skillLevelLabels } from '@/lib/activities/categories';
-
-interface Activity {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  subcategory: string | null;
-  city: { name: string; slug: string; lat: number; lng: number; zoom: number };
-  providerName: string;
-  providerContact: string | null;
-  schedule: string;
-  scheduleDays: string[] | null;
-  scheduleTime: string | null;
-  duration: string | null;
-  capacity: number | null;
-  price: number;
-  currency: string;
-  isFree: boolean;
-  image: string | null;
-  includes: string[];
-  skillLevel: string | null;
-  status: string;
-  viewCount: number;
-  bookingCount: number;
-  commission: number;
-  address: string | null;
-  lat: number | null;
-  lng: number | null;
-}
 
 export default function ActivityDetailPage() {
   const params = useParams();
