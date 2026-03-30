@@ -25,7 +25,7 @@ export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDa
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="create-event-datetime">
       <FormSection title="Date & Time">
         <DateTimeInput
           label="Start Date"
@@ -51,6 +51,7 @@ export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDa
             checked={isRecurring}
             onChange={(e) => setIsRecurring(e.target.checked)}
             className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500"
+            data-testid="event-recurring-checkbox"
           />
           <div className="flex items-center gap-2">
             <RefreshCw className="w-5 h-5 text-indigo-600" />
@@ -75,11 +76,13 @@ export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDa
                     value={recurrenceInterval}
                     onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
                     className="w-16 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    data-testid="event-recurrence-interval"
                   />
                   <select
                     value={recurrenceType}
                     onChange={(e) => setRecurrenceType(e.target.value as 'daily' | 'weekly' | 'monthly')}
                     className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    data-testid="event-recurrence-type"
                   >
                     <option value="daily">day(s)</option>
                     <option value="weekly">week(s)</option>
@@ -99,6 +102,7 @@ export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDa
                   value={occurrenceCount}
                   onChange={(e) => setOccurrenceCount(parseInt(e.target.value) || 2)}
                   className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  data-testid="event-occurrence-count"
                 />
               </div>
             </div>
@@ -114,6 +118,10 @@ export function StepDateTime({ formData, onUpdate, onNext, onBack }: EventStepDa
         onBack={onBack}
         onNext={handleNext}
         isNextDisabled={!isValid}
+        nextLabel="Continue"
+        backLabel="Back"
+        backTestId="event-datetime-back-button"
+        nextTestId="event-datetime-next-button"
       />
     </div>
   );

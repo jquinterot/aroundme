@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LayoutDashboard, Ticket, MapPin, LogOut, User, Bell, Bookmark, CalendarCheck, Shield, BellRing, BellOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { NotificationBell, DarkModeToggle } from '@/components/ui';
+import { NotificationBell, DarkModeToggle, SearchBar } from '@/components/ui';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export function Header() {
@@ -47,6 +47,10 @@ export function Header() {
             </div>
             <span className="font-bold text-xl text-gray-900 dark:text-white">AroundMe</span>
           </Link>
+
+          <div className="hidden md:block flex-1 max-w-md mx-8">
+            <SearchBar />
+          </div>
 
           <div className="flex items-center gap-3">
             <DarkModeToggle />

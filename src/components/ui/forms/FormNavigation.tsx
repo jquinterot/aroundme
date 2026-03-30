@@ -10,6 +10,9 @@ interface FormNavigationProps {
   isNextDisabled?: boolean;
   isLoading?: boolean;
   colorScheme?: 'indigo' | 'teal';
+  backTestId?: string;
+  nextTestId?: string;
+  submitTestId?: string;
 }
 
 export function FormNavigation({ 
@@ -21,12 +24,15 @@ export function FormNavigation({
   submitLabel = 'Submit',
   isNextDisabled,
   isLoading,
-  colorScheme = 'indigo'
+  colorScheme = 'indigo',
+  backTestId,
+  nextTestId,
+  submitTestId
 }: FormNavigationProps) {
   return (
     <div className="flex gap-4">
       {onBack && (
-        <FormButton onClick={onBack} variant="secondary" fullWidth={false}>
+        <FormButton onClick={onBack} variant="secondary" fullWidth={false} testId={backTestId}>
           {backLabel}
         </FormButton>
       )}
@@ -35,6 +41,7 @@ export function FormNavigation({
           onClick={onSubmit} 
           disabled={isLoading || isNextDisabled}
           colorScheme={colorScheme}
+          testId={submitTestId}
         >
           {isLoading ? 'Loading...' : submitLabel}
         </FormButton>
@@ -43,6 +50,7 @@ export function FormNavigation({
           onClick={onNext} 
           disabled={isNextDisabled}
           colorScheme={colorScheme}
+          testId={nextTestId}
         >
           {nextLabel}
         </FormButton>

@@ -1,0 +1,391 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - generic [ref=e10]:
+      - text: Rendering
+      - generic [ref=e11]:
+        - generic [ref=e12]: .
+        - generic [ref=e13]: .
+        - generic [ref=e14]: .
+  - alert [ref=e15]: Discover places in Bogotá
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e19]:
+        - link "AM AroundMe" [ref=e20] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e22]: AM
+          - generic [ref=e23]: AroundMe
+        - generic [ref=e26]:
+          - img [ref=e27]
+          - textbox "Search events, places..." [ref=e30]
+        - generic [ref=e31]:
+          - button "Switch to dark mode" [ref=e32]:
+            - img [ref=e33]
+          - link "Login" [ref=e35] [cursor=pointer]:
+            - /url: /login
+          - link "Sign Up" [ref=e36] [cursor=pointer]:
+            - /url: /signup
+    - main [ref=e37]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - heading "Discover places in Bogotá" [level=1] [ref=e42]
+            - paragraph [ref=e43]: Restaurants, cafes, bars, and more
+          - button "Bogotá" [ref=e46]:
+            - img [ref=e47]
+            - generic [ref=e50]: Bogotá
+            - img [ref=e51]
+        - generic [ref=e53]:
+          - link "Events" [ref=e54] [cursor=pointer]:
+            - /url: /bogota
+            - img [ref=e55]
+            - text: Events
+          - link "Places" [ref=e57] [cursor=pointer]:
+            - /url: /bogota/places
+            - img [ref=e58]
+            - text: Places
+          - link "Activities" [active] [ref=e61] [cursor=pointer]:
+            - /url: /bogota/activities
+            - img [ref=e62]
+            - text: Activities
+      - generic [ref=e64]:
+        - link "Add Place" [ref=e66] [cursor=pointer]:
+          - /url: /submit-place
+          - img [ref=e67]
+          - text: Add Place
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img [ref=e70]
+            - textbox "Search places..." [ref=e73]
+          - generic [ref=e74]:
+            - button "All" [ref=e75]:
+              - img [ref=e76]
+              - text: All
+            - button "Restaurant" [ref=e78]:
+              - img [ref=e79]
+              - text: Restaurant
+            - button "Café" [ref=e84]:
+              - img [ref=e85]
+              - text: Café
+            - button "Bar" [ref=e87]:
+              - img [ref=e88]
+              - text: Bar
+            - button "Club" [ref=e90]:
+              - img [ref=e91]
+              - text: Club
+            - button "Park" [ref=e97]:
+              - img [ref=e98]
+              - text: Park
+            - button "Museum" [ref=e100]:
+              - img [ref=e101]
+              - text: Museum
+            - button "Shopping" [ref=e103]:
+              - img [ref=e104]
+              - text: Shopping
+            - button "Hotel" [ref=e107]:
+              - img [ref=e108]
+              - text: Hotel
+            - button "Coworking" [ref=e110]:
+              - img [ref=e111]
+              - text: Coworking
+            - button "Other" [ref=e114]:
+              - img [ref=e115]
+              - text: Other
+        - generic [ref=e118]:
+          - paragraph [ref=e119]: 14 places found
+          - generic [ref=e120]:
+            - button "Grid" [ref=e121]
+            - button "Map" [ref=e122]
+        - generic [ref=e123]:
+          - link [ref=e124] [cursor=pointer]:
+            - /url: /place/cmn67xe2s000fjhvdlekgis8h
+            - article [ref=e125]:
+              - generic [ref=e126]:
+                - img "Pan della Sera" [ref=e127]
+                - generic [ref=e128]:
+                  - generic [ref=e129]:
+                    - img [ref=e130]
+                    - generic [ref=e132]: cafe
+                  - generic [ref=e133]:
+                    - img [ref=e134]
+                    - text: Verified
+                - generic [ref=e137]: $
+              - generic [ref=e138]:
+                - heading "Pan della Sera" [level=3] [ref=e139]
+                - 'button "Calle 119 #4-16, Usaquén, Bogotá" [ref=e141]':
+                  - img [ref=e142]
+                  - generic [ref=e145]: "Calle 119 #4-16, Usaquén, Bogotá"
+                - generic [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic [ref=e148]:
+                      - img [ref=e149]
+                      - generic [ref=e151]: "4.9"
+                    - generic [ref=e152]: (521)
+                  - generic [ref=e153]: Claimed
+          - link [ref=e154] [cursor=pointer]:
+            - /url: /place/cmn67xe2q000cjhvdlo2cj8rn
+            - article [ref=e155]:
+              - generic [ref=e156]:
+                - img "Café de los Artistas" [ref=e157]
+                - generic [ref=e158]:
+                  - generic [ref=e159]:
+                    - img [ref=e160]
+                    - generic [ref=e162]: cafe
+                  - generic [ref=e163]:
+                    - img [ref=e164]
+                    - text: Verified
+                - generic [ref=e167]: $$
+              - generic [ref=e168]:
+                - heading "Café de los Artistas" [level=3] [ref=e169]
+                - 'button "Calle 72 #5-41, Zona G, Bogotá" [ref=e171]':
+                  - img [ref=e172]
+                  - generic [ref=e175]: "Calle 72 #5-41, Zona G, Bogotá"
+                - generic [ref=e176]:
+                  - generic [ref=e177]:
+                    - generic [ref=e178]:
+                      - img [ref=e179]
+                      - generic [ref=e181]: "4.7"
+                    - generic [ref=e182]: (234)
+                  - generic [ref=e183]: Claimed
+          - link [ref=e184] [cursor=pointer]:
+            - /url: /place/cmn67xe2r000ejhvdfq8m2lji
+            - article [ref=e185]:
+              - generic [ref=e186]:
+                - img "Parque Simón Bolívar" [ref=e187]
+                - generic [ref=e188]:
+                  - generic [ref=e189]:
+                    - img [ref=e190]
+                    - generic [ref=e192]: park
+                  - generic [ref=e193]:
+                    - img [ref=e194]
+                    - text: Verified
+              - generic [ref=e197]:
+                - heading "Parque Simón Bolívar" [level=3] [ref=e198]
+                - 'button "Av. Caracas #60-00, Bogotá" [ref=e200]':
+                  - img [ref=e201]
+                  - generic [ref=e204]: "Av. Caracas #60-00, Bogotá"
+                - generic [ref=e206]:
+                  - generic [ref=e207]:
+                    - img [ref=e208]
+                    - generic [ref=e210]: "4.6"
+                  - generic [ref=e211]: (1247)
+          - link [ref=e212] [cursor=pointer]:
+            - /url: /place/cmn67xe2q000djhvdxvk9yao9
+            - article [ref=e213]:
+              - generic [ref=e214]:
+                - img "La Tequila" [ref=e215]
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - img [ref=e218]
+                    - generic [ref=e220]: bar
+                  - generic [ref=e221]:
+                    - img [ref=e222]
+                    - text: Verified
+                - generic [ref=e225]: $$
+              - generic [ref=e226]:
+                - heading "La Tequila" [level=3] [ref=e227]
+                - 'button "Carrera 11 #84-09, Zona Rosa, Bogotá" [ref=e229]':
+                  - img [ref=e230]
+                  - generic [ref=e233]: "Carrera 11 #84-09, Zona Rosa, Bogotá"
+                - generic [ref=e234]:
+                  - generic [ref=e235]:
+                    - generic [ref=e236]:
+                      - img [ref=e237]
+                      - generic [ref=e239]: "4.5"
+                    - generic [ref=e240]: (189)
+                  - generic [ref=e241]: Claimed
+          - link [ref=e242] [cursor=pointer]:
+            - /url: /place/cmn87xo5d00088rvdxnjqxi9p
+            - article [ref=e243]:
+              - generic [ref=e244]:
+                - generic [ref=e246]: 🍽️
+                - generic [ref=e248]:
+                  - img [ref=e249]
+                  - generic [ref=e254]: restaurant
+              - generic [ref=e255]:
+                - heading "Get Place 1774574661494" [level=3] [ref=e256]
+                - button "123 Test Street" [ref=e258]:
+                  - img [ref=e259]
+                  - generic [ref=e262]: 123 Test Street
+                - generic [ref=e264]:
+                  - generic [ref=e265]:
+                    - img [ref=e266]
+                    - generic [ref=e268]: "0"
+                  - generic [ref=e269]: (0)
+          - link [ref=e270] [cursor=pointer]:
+            - /url: /place/cmn87xol000098rvdsimsxbit
+            - article [ref=e271]:
+              - generic [ref=e272]:
+                - generic [ref=e274]: 🍽️
+                - generic [ref=e276]:
+                  - img [ref=e277]
+                  - generic [ref=e282]: restaurant
+              - generic [ref=e283]:
+                - heading "Test Place 1774574662046" [level=3] [ref=e284]
+                - button "123 Test Street, Bogota" [ref=e286]:
+                  - img [ref=e287]
+                  - generic [ref=e290]: 123 Test Street, Bogota
+                - generic [ref=e292]:
+                  - generic [ref=e293]:
+                    - img [ref=e294]
+                    - generic [ref=e296]: "0"
+                  - generic [ref=e297]: (0)
+          - link [ref=e298] [cursor=pointer]:
+            - /url: /place/cmn87zov1000a5bvd26z6w9jj
+            - article [ref=e299]:
+              - generic [ref=e300]:
+                - generic [ref=e302]: 🍽️
+                - generic [ref=e304]:
+                  - img [ref=e305]
+                  - generic [ref=e310]: restaurant
+              - generic [ref=e311]:
+                - heading "Get Place 1774574755730" [level=3] [ref=e312]
+                - button "123 Test Street" [ref=e314]:
+                  - img [ref=e315]
+                  - generic [ref=e318]: 123 Test Street
+                - generic [ref=e320]:
+                  - generic [ref=e321]:
+                    - img [ref=e322]
+                    - generic [ref=e324]: "0"
+                  - generic [ref=e325]: (0)
+          - link [ref=e326] [cursor=pointer]:
+            - /url: /place/cmn87zpau000b5bvdvi1qpsmr
+            - article [ref=e327]:
+              - generic [ref=e328]:
+                - generic [ref=e330]: 🍽️
+                - generic [ref=e332]:
+                  - img [ref=e333]
+                  - generic [ref=e338]: restaurant
+              - generic [ref=e339]:
+                - heading "Test Place 1774574756290" [level=3] [ref=e340]
+                - button "123 Test Street, Bogota" [ref=e342]:
+                  - img [ref=e343]
+                  - generic [ref=e346]: 123 Test Street, Bogota
+                - generic [ref=e348]:
+                  - generic [ref=e349]:
+                    - img [ref=e350]
+                    - generic [ref=e352]: "0"
+                  - generic [ref=e353]: (0)
+          - link [ref=e354] [cursor=pointer]:
+            - /url: /place/cmn884uom000bjevd5n230lal
+            - article [ref=e355]:
+              - generic [ref=e356]:
+                - generic [ref=e358]: 🍽️
+                - generic [ref=e360]:
+                  - img [ref=e361]
+                  - generic [ref=e366]: restaurant
+              - generic [ref=e367]:
+                - heading "Test Place 1774574996518" [level=3] [ref=e368]
+                - button "123 Test Street, Bogota" [ref=e370]:
+                  - img [ref=e371]
+                  - generic [ref=e374]: 123 Test Street, Bogota
+                - generic [ref=e376]:
+                  - generic [ref=e377]:
+                    - img [ref=e378]
+                    - generic [ref=e380]: "0"
+                  - generic [ref=e381]: (0)
+          - link [ref=e382] [cursor=pointer]:
+            - /url: /place/cmn884uou000cjevdfeeidxmr
+            - article [ref=e383]:
+              - generic [ref=e384]:
+                - generic [ref=e386]: 🍽️
+                - generic [ref=e388]:
+                  - img [ref=e389]
+                  - generic [ref=e394]: restaurant
+              - generic [ref=e395]:
+                - heading "Get Place 1774574996563" [level=3] [ref=e396]
+                - button "123 Test Street" [ref=e398]:
+                  - img [ref=e399]
+                  - generic [ref=e402]: 123 Test Street
+                - generic [ref=e404]:
+                  - generic [ref=e405]:
+                    - img [ref=e406]
+                    - generic [ref=e408]: "0"
+                  - generic [ref=e409]: (0)
+          - link [ref=e410] [cursor=pointer]:
+            - /url: /place/cmndaik8e000m61vd9pbwfhgs
+            - article [ref=e411]:
+              - generic [ref=e412]:
+                - generic [ref=e414]: 🍽️
+                - generic [ref=e416]:
+                  - img [ref=e417]
+                  - generic [ref=e422]: restaurant
+              - generic [ref=e423]:
+                - heading "Get Place 1774881326310" [level=3] [ref=e424]
+                - button "123 Test Street" [ref=e426]:
+                  - img [ref=e427]
+                  - generic [ref=e430]: 123 Test Street
+                - generic [ref=e432]:
+                  - generic [ref=e433]:
+                    - img [ref=e434]
+                    - generic [ref=e436]: "0"
+                  - generic [ref=e437]: (0)
+          - link [ref=e438] [cursor=pointer]:
+            - /url: /place/cmndaikcy000o61vdw1oy1y8o
+            - article [ref=e439]:
+              - generic [ref=e440]:
+                - generic [ref=e442]: 🍽️
+                - generic [ref=e444]:
+                  - img [ref=e445]
+                  - generic [ref=e450]: restaurant
+              - generic [ref=e451]:
+                - heading "Test Place 1774881326457" [level=3] [ref=e452]
+                - button "123 Test Street, Bogota" [ref=e454]:
+                  - img [ref=e455]
+                  - generic [ref=e458]: 123 Test Street, Bogota
+                - generic [ref=e460]:
+                  - generic [ref=e461]:
+                    - img [ref=e462]
+                    - generic [ref=e464]: "0"
+                  - generic [ref=e465]: (0)
+          - link [ref=e466] [cursor=pointer]:
+            - /url: /place/cmndc8u0z001761vdfnu6u7j2
+            - article [ref=e467]:
+              - generic [ref=e468]:
+                - generic [ref=e470]: 🍽️
+                - generic [ref=e472]:
+                  - img [ref=e473]
+                  - generic [ref=e478]: restaurant
+              - generic [ref=e479]:
+                - heading "Get Place 1774884231674" [level=3] [ref=e480]
+                - button "123 Test Street" [ref=e482]:
+                  - img [ref=e483]
+                  - generic [ref=e486]: 123 Test Street
+                - generic [ref=e488]:
+                  - generic [ref=e489]:
+                    - img [ref=e490]
+                    - generic [ref=e492]: "0"
+                  - generic [ref=e493]: (0)
+          - link [ref=e494] [cursor=pointer]:
+            - /url: /place/cmndc8ul3001861vdmrwtds64
+            - article [ref=e495]:
+              - generic [ref=e496]:
+                - generic [ref=e498]: 🍽️
+                - generic [ref=e500]:
+                  - img [ref=e501]
+                  - generic [ref=e506]: restaurant
+              - generic [ref=e507]:
+                - heading "Test Place 1774884232382" [level=3] [ref=e508]
+                - button "123 Test Street, Bogota" [ref=e510]:
+                  - img [ref=e511]
+                  - generic [ref=e514]: 123 Test Street, Bogota
+                - generic [ref=e516]:
+                  - generic [ref=e517]:
+                    - img [ref=e518]
+                    - generic [ref=e520]: "0"
+                  - generic [ref=e521]: (0)
+    - contentinfo [ref=e522]:
+      - generic [ref=e524]:
+        - paragraph [ref=e525]: © 2026 AroundMe. Discover your city.
+        - generic [ref=e526]:
+          - link "About" [ref=e527] [cursor=pointer]:
+            - /url: "#"
+          - link "Pricing" [ref=e528] [cursor=pointer]:
+            - /url: /pricing
+          - link "Help" [ref=e529] [cursor=pointer]:
+            - /url: /docs
+          - link "Contact" [ref=e530] [cursor=pointer]:
+            - /url: "#"
+```

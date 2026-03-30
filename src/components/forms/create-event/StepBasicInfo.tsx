@@ -8,7 +8,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepB
   const isValid = formData.title && formData.category && formData.description && formData.cityId;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="create-event-basic-info">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Information</h2>
 
       <FormInput
@@ -17,6 +17,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepB
         onChange={(value) => onUpdate('title', value)}
         placeholder="Give your event a catchy title"
         required
+        testId="event-title-input"
       />
 
       <FormSelect
@@ -25,6 +26,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepB
         onChange={(value) => onUpdate('cityId', value)}
         options={cities.map((city) => ({ value: city.slug, label: city.name }))}
         required
+        testId="event-city-select"
       />
 
       <CategorySelector
@@ -32,6 +34,7 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepB
         value={formData.category}
         onChange={(value) => onUpdate('category', value)}
         options={EVENT_CATEGORY_OPTIONS}
+        testId="event-category"
       />
 
       <FormInput
@@ -41,9 +44,10 @@ export function StepBasicInfo({ formData, cities, onUpdate, onNext }: EventStepB
         placeholder="Tell people what your event is about..."
         required
         rows={4}
+        testId="event-description-input"
       />
 
-      <FormButton onClick={onNext} disabled={!isValid}>
+      <FormButton onClick={onNext} disabled={!isValid} testId="event-basic-next-button">
         Continue
       </FormButton>
     </div>

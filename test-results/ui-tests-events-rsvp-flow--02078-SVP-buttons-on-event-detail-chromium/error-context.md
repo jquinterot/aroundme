@@ -1,0 +1,113 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - banner [ref=e13]:
+      - generic [ref=e15]:
+        - link "AM AroundMe" [ref=e16] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e18]: AM
+          - generic [ref=e19]: AroundMe
+        - generic [ref=e22]:
+          - img [ref=e23]
+          - textbox "Search events, places..." [ref=e26]
+        - generic [ref=e27]:
+          - button "Switch to dark mode" [ref=e28]:
+            - img [ref=e29]
+          - link "Login" [ref=e31] [cursor=pointer]:
+            - /url: /login
+          - link "Sign Up" [ref=e32] [cursor=pointer]:
+            - /url: /signup
+    - main [ref=e33]:
+      - link "Back to events" [ref=e34] [cursor=pointer]:
+        - /url: /bogota
+        - img [ref=e35]
+        - text: Back to events
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - img "Yoga in the Park" [ref=e39]
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - text: sports
+            - generic [ref=e48]: Free
+        - generic [ref=e49]:
+          - heading "Yoga in the Park" [level=1] [ref=e50]
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - img [ref=e53]
+              - generic [ref=e55]: Friday, March 20, 2026
+            - generic [ref=e56]:
+              - img [ref=e57]
+              - generic [ref=e60]: 2:00 AM - 3:30 AM
+            - generic [ref=e61]:
+              - img [ref=e62]
+              - generic [ref=e65]: Parque de la 93
+          - paragraph [ref=e66]: Free outdoor yoga session for all levels. Bring your mat and water.
+          - generic [ref=e67]:
+            - generic [ref=e68]: "#yoga"
+            - generic [ref=e69]: "#wellness"
+            - generic [ref=e70]: "#free"
+            - generic [ref=e71]: "#outdoor"
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - img [ref=e76]
+              - paragraph [ref=e83]: Organizer
+            - generic [ref=e84]:
+              - paragraph [ref=e85]: Price
+              - paragraph [ref=e86]: Free
+        - generic [ref=e87]:
+          - heading "Location" [level=3] [ref=e88]
+          - generic [ref=e89]:
+            - paragraph [ref=e90]: "Calle 93 #13-15, Bogotá"
+            - link "Open in Google Maps" [ref=e91] [cursor=pointer]:
+              - /url: https://www.google.com/maps/dir/?api=1&destination=4.6761,-74.0509
+              - img [ref=e92]
+              - text: Open in Google Maps
+          - generic [ref=e96]:
+            - button [ref=e97] [cursor=pointer]:
+              - img [ref=e99]
+            - generic:
+              - generic [ref=e105]:
+                - button "Zoom in" [ref=e106] [cursor=pointer]: +
+                - button "Zoom out" [ref=e107] [cursor=pointer]: −
+              - generic [ref=e108]:
+                - link "Leaflet" [ref=e109] [cursor=pointer]:
+                  - /url: https://leafletjs.com
+                  - img [ref=e110]
+                  - text: Leaflet
+                - text: "| © OpenStreetMap contributors © CARTO"
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - button "Register / Get Tickets" [ref=e116]
+            - button [ref=e117]:
+              - img [ref=e118]
+            - generic [ref=e120]:
+              - button "Share on WhatsApp" [ref=e121]:
+                - img [ref=e122]
+              - button "Add to Calendar" [ref=e124]:
+                - img [ref=e125]
+          - generic [ref=e127]:
+            - img [ref=e128]
+            - text: Event has ended
+          - paragraph [ref=e132]:
+            - link "Login" [ref=e133] [cursor=pointer]:
+              - /url: /login
+            - text: to save events and RSVP
+    - contentinfo [ref=e134]:
+      - generic [ref=e136]:
+        - paragraph [ref=e137]: © 2026 AroundMe. Discover your city.
+        - generic [ref=e138]:
+          - link "About" [ref=e139] [cursor=pointer]:
+            - /url: "#"
+          - link "Pricing" [ref=e140] [cursor=pointer]:
+            - /url: /pricing
+          - link "Help" [ref=e141] [cursor=pointer]:
+            - /url: /docs
+          - link "Contact" [ref=e142] [cursor=pointer]:
+            - /url: "#"
+```
