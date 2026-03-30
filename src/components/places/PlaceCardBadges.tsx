@@ -25,7 +25,7 @@ export function PlaceCategoryBadge({ place }: PlaceCategoryBadgeProps) {
   const darkColorClass = PLACE_CATEGORY_COLORS_DARK[place.category] || 'bg-gray-700 text-gray-300';
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${colorClass} dark:${darkColorClass}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${colorClass} dark:${darkColorClass}`} data-testid="place-category-badge">
       <CategoryIcon size={12} />
       <span className="capitalize">{place.category}</span>
     </span>
@@ -40,7 +40,7 @@ export function PlaceVerifiedBadge({ isVerified }: PlaceVerifiedBadgeProps) {
   if (!isVerified) return null;
 
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
+    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white" data-testid="place-verified-badge">
       <CheckCircle className="w-3 h-3" />
       Verified
     </span>
@@ -55,7 +55,7 @@ export function PlacePriceRange({ priceRange }: PlacePriceRangeProps) {
   if (!priceRange) return null;
 
   return (
-    <div className="absolute bottom-3 right-3 px-2 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-md text-sm font-medium text-gray-700 dark:text-gray-200">
+    <div className="absolute bottom-3 right-3 px-2 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-md text-sm font-medium text-gray-700 dark:text-gray-200" data-testid="place-price-range">
       {priceRange}
     </div>
   );
@@ -68,12 +68,12 @@ interface PlaceRatingProps {
 
 export function PlaceRating({ rating, reviewCount }: PlaceRatingProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" data-testid="place-rating">
       <div className="flex items-center gap-1">
-        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-        <span className="font-medium text-gray-900 dark:text-gray-100">{rating}</span>
+        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" data-testid="place-rating-star" />
+        <span className="font-medium text-gray-900 dark:text-gray-100" data-testid="place-rating-value">{rating}</span>
       </div>
-      <span className="text-gray-400 dark:text-gray-500 text-sm">({reviewCount})</span>
+      <span className="text-gray-400 dark:text-gray-500 text-sm" data-testid="place-review-count">({reviewCount})</span>
     </div>
   );
 }

@@ -85,21 +85,23 @@ export function SearchBar() {
   const totalResults = (results?.events?.length || 0) + (results?.places?.length || 0);
 
   return (
-    <div ref={searchRef} className="relative w-full md:w-96 lg:w-[480px]">
+    <div ref={searchRef} className="relative w-full md:w-96 lg:w-[480px]" data-testid="search-bar">
       <form onSubmit={handleSubmit} className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" data-testid="search-icon" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search events, places..."
           className="w-full pl-10 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 dark:placeholder-gray-500 text-sm"
+          data-testid="search-input"
         />
         {query && (
           <button
             type="button"
             onClick={clearSearch}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-testid="search-clear-button"
           >
             <X className="w-4 h-4" />
           </button>

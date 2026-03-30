@@ -6,6 +6,7 @@ interface FormButtonProps {
   variant?: 'primary' | 'secondary';
   colorScheme?: 'indigo' | 'teal';
   fullWidth?: boolean;
+  testId?: string;
 }
 
 export function FormButton({ 
@@ -15,9 +16,11 @@ export function FormButton({
   disabled,
   variant = 'primary',
   colorScheme = 'indigo',
-  fullWidth = true
+  fullWidth = true,
+  testId
 }: FormButtonProps) {
   const baseClass = fullWidth ? 'w-full' : '';
+  const dataTestId = testId ? { 'data-testid': testId } : {};
   
   if (variant === 'secondary') {
     return (
@@ -26,6 +29,7 @@ export function FormButton({
         onClick={onClick}
         disabled={disabled}
         className={`${baseClass} px-6 py-2.5 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50`}
+        {...dataTestId}
       >
         {children}
       </button>
@@ -42,6 +46,7 @@ export function FormButton({
       onClick={onClick}
       disabled={disabled}
       className={`${baseClass} ${primaryClass} py-2.5 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+      {...dataTestId}
     >
       {children}
     </button>

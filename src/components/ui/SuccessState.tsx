@@ -19,12 +19,13 @@ export function SuccessState({
   }
 
   return (
-    <div className="flex items-center justify-center py-20">
+    <div className="flex items-center justify-center py-20" data-testid="success-state">
       <div className="text-center">
         <div
           className={`w-16 h-16 ${
             colorScheme === 'indigo' ? 'bg-green-100' : 'bg-teal-100'
           } rounded-full flex items-center justify-center mx-auto mb-4`}
+          data-testid="success-icon"
         >
           <svg
             className={`w-8 h-8 ${
@@ -42,8 +43,8 @@ export function SuccessState({
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-        <p className="text-gray-500">{message}</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2" data-testid="success-title">{title}</h2>
+        <p className="text-gray-500" data-testid="success-message">{message}</p>
       </div>
     </div>
   );

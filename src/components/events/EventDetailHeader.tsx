@@ -35,7 +35,7 @@ export function EventDetailHeader({ event }: EventDetailHeaderProps) {
 
   return (
     <>
-      <div className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700">
+      <div className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700" data-testid="event-header-image">
         {event.image ? (
           <Image
             src={event.image}
@@ -50,12 +50,12 @@ export function EventDetailHeader({ event }: EventDetailHeaderProps) {
             <CategoryIconComponent className="w-20 h-20 text-indigo-300 dark:text-indigo-600" />
           </div>
         )}
-        <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm">
+        <div className="absolute top-4 left-4 flex gap-2 flex-wrap" data-testid="event-badges">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm" data-testid="event-category">
             <CategoryIconComponent size={16} /> {event.category}
           </span>
           {event.price?.isFree && (
-            <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white">
+            <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white" data-testid="event-free-badge">
               Free
             </span>
           )}
