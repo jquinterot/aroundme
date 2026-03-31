@@ -2,11 +2,16 @@ import { test, expect } from '@playwright/test';
 import { createApiClient } from '../../utils/api-client';
 import { verifySuccessResponse } from '../../utils/test-helpers';
 
+interface SearchResponse {
+  events?: Array<{ id: string; title: string }>;
+  places?: Array<{ id: string; name: string }>;
+}
+
 test.describe('GET /api/search', () => {
   test('should search events and places', async ({ request }) => {
     const client = createApiClient(request);
     
-    const response = await client.requestWithAuth('GET', '/search?q=music');
+    const response = await client.requestWithAuth<SearchResponse>('GET', '/search?q=music');
     
     verifySuccessResponse(response);
     expect(response.data).toBeDefined();
@@ -17,7 +22,7 @@ test.describe('GET /api/search', () => {
   test('should filter search results', async ({ request }) => {
     const client = createApiClient(request);
     
-    const response = await client.requestWithAuth('GET', '/search?q=concert&type=events');
+    const response = await client.requestWithAuth<SearchResponse>('GET', '/search?q=concert&type=events');
     
     verifySuccessResponse(response);
   });
@@ -25,7 +30,7 @@ test.describe('GET /api/search', () => {
   test('should return empty results for no matches', async ({ request }) => {
     const client = createApiClient(request);
     
-    const response = await client.requestWithAuth('GET', '/search?q=xyznonexistent123');
+    const response = await client.requestWithAuth<SearchResponse>('GET', '/search?q=xyznonexistent123');
     
     verifySuccessResponse(response);
   });

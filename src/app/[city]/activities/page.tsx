@@ -121,7 +121,7 @@ export default function ActivitiesPage() {
           ) : error ? (
             <div data-testid="activities-error" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
               <p className="text-red-600 font-medium mb-2">Error loading activities</p>
-              <p className="text-red-500 text-sm">{error.message}</p>
+              <p className="text-red-500 text-sm">{(error as Error).message || 'Unknown error'}</p>
               <button
                 data-testid="activities-retry-button"
                 onClick={() => window.location.reload()}

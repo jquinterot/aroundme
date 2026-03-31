@@ -145,7 +145,7 @@ export function ReviewForm({ placeId, placeName, onSuccess }: ReviewFormProps) {
 
         {submitReview.isError && (
           <p className="text-sm text-red-500">
-            {submitReview.error?.message || 'Failed to submit review'}
+            {(submitReview.error as Error)?.message || 'Failed to submit review'}
           </p>
         )}
       </form>

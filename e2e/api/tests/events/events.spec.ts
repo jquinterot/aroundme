@@ -138,9 +138,10 @@ test.describe('GET /api/events/:id', () => {
     });
     
     const eventId = createResponse.data?.id;
+    expect(eventId).toBeDefined();
     
     // Get event
-    const response = await api.getEvent(eventId);
+    const response = await api.getEvent(eventId!);
     
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
@@ -178,9 +179,10 @@ test.describe('PUT /api/events/:id', () => {
     });
     
     const eventId = createResponse.data?.id;
+    expect(eventId).toBeDefined();
     
     // Update event
-    const response = await api.updateEvent(eventId, {
+    const response = await api.updateEvent(eventId!, {
       title: `Updated Title ${timestamp}`,
       description: 'Updated description',
     });
@@ -219,14 +221,15 @@ test.describe('DELETE /api/events/:id', () => {
     });
     
     const eventId = createResponse.data?.id;
+    expect(eventId).toBeDefined();
     
     // Delete event
-    const response = await api.deleteEvent(eventId);
+    const response = await api.deleteEvent(eventId!);
     
     expect(response.success).toBe(true);
     
     // Verify event is deleted
-    const getResponse = await api.getEvent(eventId);
+    const getResponse = await api.getEvent(eventId!);
     expect(getResponse.success).toBe(false);
     expect(getResponse.code).toBe('NOT_FOUND');
   });
@@ -260,9 +263,10 @@ test.describe('POST /api/events/:id/rsvp', () => {
     });
     
     const eventId = createResponse.data?.id;
+    expect(eventId).toBeDefined();
     
     // RSVP
-    const response = await api.rsvpToEvent(eventId, 'going');
+    const response = await api.rsvpToEvent(eventId!, 'going');
     
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
@@ -288,11 +292,12 @@ test.describe('POST /api/events/:id/rsvp', () => {
     });
     
     const eventId = createResponse.data?.id;
+    expect(eventId).toBeDefined();
     
     const statuses = ['going', 'interested', 'maybe'];
     
     for (const status of statuses) {
-      const response = await api.rsvpToEvent(eventId, status as 'going' | 'interested' | 'maybe');
+      const response = await api.rsvpToEvent(eventId!, status as 'going' | 'interested' | 'maybe');
       expect(response.success).toBe(true);
       expect(response.data?.rsvp.status).toBe(status);
     }

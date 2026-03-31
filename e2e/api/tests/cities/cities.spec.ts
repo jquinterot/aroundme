@@ -1,25 +1,34 @@
 import { test, expect } from '@playwright/test';
 import { createApiClient } from '../../utils/api-client';
 
+interface City {
+  id: string;
+  name: string;
+  slug: string;
+  country: string;
+  lat: number;
+  lng: number;
+}
+
 test.describe('GET /api/cities', () => {
   test('should return list of cities', async ({ request }) => {
     const api = createApiClient(request);
     
-    const response = await api.requestWithAuth('GET', '/cities');
+    const response = await api.requestWithAuth<City[]>('GET', '/cities');
     
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
     expect(Array.isArray(response.data)).toBe(true);
-    expect(response.data.length).toBeGreaterThan(0);
+    expect(response.data!.length).toBeGreaterThan(0);
   });
 
   test('should return city with required fields', async ({ request }) => {
     const api = createApiClient(request);
     
-    const response = await api.requestWithAuth('GET', '/cities');
+    const response = await api.requestWithAuth<City[]>('GET', '/cities');
     
     expect(response.success).toBe(true);
-    const cities = response.data;
+    const cities = response.data!;
     expect(cities.length).toBeGreaterThan(0);
     
     const firstCity = cities[0];

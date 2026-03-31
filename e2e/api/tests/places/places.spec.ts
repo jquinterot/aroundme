@@ -102,9 +102,10 @@ test.describe('GET /api/places/:id', () => {
     });
     
     const placeId = createResponse.data?.id;
+    expect(placeId).toBeDefined();
     
     // Get place
-    const response = await api.getPlace(placeId);
+    const response = await api.getPlace(placeId!);
     
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();

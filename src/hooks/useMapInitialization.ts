@@ -1,8 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { MapItem } from './BaseMap';
 import { City } from '@/types';
+
+interface MapItem {
+  id: string;
+  category: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  } | null;
+}
 
 interface UseMapInitializationOptions<T extends MapItem> {
   items: T[];
