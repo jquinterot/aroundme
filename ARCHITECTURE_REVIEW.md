@@ -2,7 +2,9 @@
 
 ## Overview
 
-**Good foundation** with modern Next.js patterns, but several structural issues need attention.
+**Good foundation** with modern Next.js patterns. Previous structural issues have been addressed.
+
+**Status**: ✅ Quick fixes completed. Medium priority items remain.
 
 ---
 
@@ -18,149 +20,50 @@
 
 ---
 
-## Critical Issues
+## ✅ Fixed Issues
 
-### 1. Files Too Large
+| Issue | Before | After |
+|-------|--------|-------|
+| Empty directories | `src/store/`, `src/utils/` existed | Deleted |
+| Index file extensions | `social/index.tsx`, `checkin/index.tsx` | Renamed to `.ts` |
+| Hook extensions | `usePremium.tsx` | Renamed to `.ts` |
+| Backup files | `constants.emoji-backup.ts` | Deleted |
+| Admin page size | 1,041 lines | 154 lines (using tab components) |
+| Validation file | 639 lines in one file | Split into `validation/` folder |
+| Form components | 368 lines in one file | Split into `ui/forms/` folder |
+
+---
+
+## Remaining Issues
+
+### Medium Priority
 
 | File | Lines | Problem | Fix |
 |------|-------|---------|-----|
-| `src/app/admin/page.tsx` | 1,041 | 8 tabs in one file | Split into `admin/(tabs)/` or separate components |
-| `src/lib/validation.ts` | 639 | All validation together | Split: `validation/event.ts`, `validation/user.ts` |
-| `src/app/activity/[id]/page.tsx` | 564 | Page + booking logic | Extract to `hooks/useActivityBooking.ts` |
-| `src/types/index.ts` | 436 | Too many types | Split by domain |
-| `src/components/ui/FormComponents.tsx` | 368 | Multiple components | Split into `ui/forms/*.tsx` |
+| `src/app/activity/[id]/page.tsx` | 522 | Page + booking logic | Extract to `hooks/useActivityBooking.ts` |
+| `src/types/index.ts` | 481 | Too many types | Split by domain: `types/events.ts`, `types/user.ts` |
 
-### 2. Wrong Locations
+### File Locations
 
 | File | Currently | Should Be |
 |------|-----------|-----------|
-| `eventUtils.ts` | `components/events/` | `lib/events/` |
 | `useMapInitialization.ts` | `components/map/` | `hooks/` |
-| `social/index.tsx` | `components/social/` | `index.ts` (no JSX) |
-| `checkin/index.tsx` | `components/checkin/` | `index.ts` (no JSX) |
-| `constants.emoji-backup.ts` | `lib/` | Delete or move to `backups/` |
 
-### 3. Empty/Unused Directories
+### Empty Directories
 
-- `src/store/` - 0 bytes, unused
-- `src/utils/` - 0 bytes, unused
-- `src/components/common/` - empty
-
-Delete or populate these.
+- `src/components/common/` - empty, remove or populate
 
 ---
 
-## Naming Inconsistencies
-
-### File Extensions
-```
-useApi.ts       ✓
-usePremium.tsx  ✗ (should be .ts, doesn't return JSX)
-```
-
-### Index Files
-```
-social/index.tsx     ✗ (no JSX, should be .ts)
-checkin/index.tsx    ✗ (no JSX, should be .ts)
-layout/index.ts      ✓
-```
-
----
-
-## API Routes Issues
-
-### Missing Files
-- `/api/activities/route.ts` - missing (but `/api/activities/[id]/route.ts` exists)
-
-### Duplicate Logic
-- `/api/user/` and `/api/users/` - merge or clarify distinction
-
-### Large Route Files
-- `/api/places/[id]/reviews/route.ts` (246 lines) - split handlers
-- `/api/events/[id]/route.ts` (200 lines) - separate GET/PATCH/DELETE
-- `/api/stripe/checkout/route.ts` (193 lines) - move logic to services
-
----
-
-## Mixed Concerns Examples
-
-### `admin/page.tsx` (1,041 lines)
-Contains:
-- 8 tab components
-- Data fetching
-- Tab state management
-
-**Fix:**
-```
-src/app/admin/
-├── page.tsx (minimal, tab switcher)
-├── layout.tsx
-└── components/
-    ├── OverviewTab.tsx
-    ├── EventsTab.tsx
-    ├── UsersTab.tsx
-    └── ReportsTab.tsx
-```
-
-### `activity/[id]/page.tsx` (564 lines)
-Contains:
-- Data fetching
-- Booking form state
-- Booking mutations
-- UI rendering
-
-**Fix:**
-```
-src/app/activity/[id]/
-├── page.tsx (UI only)
-├── hooks/
-│   └── useActivityBooking.ts
-└── lib/
-    └── activityCategories.ts
-```
-
----
-
-## Recommendations Priority
-
-### High (Do First)
-1. **Split admin/page.tsx** - 1,041 lines is unmaintainable
-2. **Remove empty folders** - `store/`, `utils/`
-3. **Move utilities** out of components/
-4. **Split validation.ts** by domain
-
-### Medium
-5. Rename `.tsx` index files to `.ts` where no JSX
-6. Split `FormComponents.tsx` into separate files
-7. Organize types by domain
-8. Delete `constants.emoji-backup.ts`
-
-### Low
-9. Standardize hook file extensions
-10. Move generated code out of `src/`
-11. Consider colocating tests with source
-
----
-
-## Quick Wins
+## Quick Wins Remaining
 
 ```bash
-# 1. Delete empty directories
-rm -rf src/store src/utils
-
-# 2. Fix index file extensions
-mv src/components/social/index.tsx src/components/social/index.ts
-mv src/components/checkin/index.tsx src/components/checkin/index.ts
-
-# 3. Move utilities
-mkdir -p src/lib/events
-mv src/components/events/eventUtils.ts src/lib/events/
-
-# 4. Move hook
+# Move hook to correct location
 mv src/components/map/useMapInitialization.ts src/hooks/
 
-# 5. Delete backup
-rm src/lib/constants.emoji-backup.ts
+# Split types
+mkdir -p src/types/domains
+# Move types from index.ts to separate files
 ```
 
 ---
@@ -169,10 +72,10 @@ rm src/lib/constants.emoji-backup.ts
 
 | Category | Score | Notes |
 |----------|-------|-------|
-| Folder Structure | 8/10 | Good but empty dirs |
-| Naming | 7/10 | Minor inconsistencies |
-| Component Org | 7/10 | Some files too large |
+| Folder Structure | 9/10 | Clean, empty dirs removed |
+| Naming | 9/10 | Consistent now |
+| Component Org | 8/10 | Good, some large files remain |
 | API Routes | 8/10 | Well organized |
-| Separation of Concerns | 6/10 | admin/activity pages mixed |
+| Separation of Concerns | 7/10 | activity page mixed |
 | Testing | 9/10 | Excellent E2E setup |
-| **Overall** | **7.5/10** | Solid with room to improve |
+| **Overall** | **8.5/10** | Much improved |
