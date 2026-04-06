@@ -25,7 +25,7 @@ export function EventList({ events, viewMode, city }: EventListProps) {
 
   if (viewMode === 'map') {
     return (
-      <div className="h-[600px] rounded-xl overflow-hidden shadow-inner bg-white dark:bg-gray-800">
+      <div className="h-150 rounded-xl overflow-hidden shadow-inner bg-white dark:bg-gray-800">
         <EventMap
           events={events}
           city={city}
@@ -39,7 +39,7 @@ export function EventList({ events, viewMode, city }: EventListProps) {
 
   if (viewMode === 'split') {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[600px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-150">
         <div className="overflow-y-auto pr-2 space-y-4">
           {events.map((event) => (
             <div
