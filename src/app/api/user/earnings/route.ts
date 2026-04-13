@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { BUSINESS_CONFIG } from '@/lib/config';
 
 export async function GET(_request: NextRequest) {
   try {
     const session = await getSession();
     
     if (!session) {
-      return errorResponse('Debes iniciar sesión para ver tus ganancias', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your earnings', 401, 'UNAUTHORIZED');
     }
 
     const orders = await prisma.order.findMany({
@@ -47,8 +48,9 @@ export async function GET(_request: NextRequest) {
     let totalOrders = 0;
 
     for (const order of orders) {
-      const payoutAmount = order.payoutAmount || (order.total * 0.9);
-      const fee = order.platformFee || (order.total * 0.1);
+      const feePercent = BUSINESS_CONFIG.platformFeePercent;
+      const payoutAmount = order.payoutAmount || (order.total * (1 - feePercent));
+      const fee = order.platformFee || (order.total * feePercent);
       
       totalEarnings += payoutAmount;
       platformFees += fee;
@@ -73,8 +75,8 @@ export async function GET(_request: NextRequest) {
           id: order.id,
           eventTitle: order.items[0]?.ticketType?.event?.title || 'Unknown',
           total: order.total,
-          payoutAmount: order.payoutAmount || (order.total * 0.9),
-          platformFee: order.platformFee || (order.total * 0.1),
+          payoutAmount: order.payoutAmount || (order.total * (1 - BUSINESS_CONFIG.platformFeePercent)),
+          platformFee: order.platformFee || (order.total * BUSINESS_CONFIG.platformFeePercent),
           status: order.payoutStatus,
           createdAt: order.createdAt,
         })),

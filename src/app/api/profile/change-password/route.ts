@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
 
     if (!session) {
-      return errorResponse('Debes iniciar sesión para cambiar tu contraseña', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to change your password', 401, 'UNAUTHORIZED');
     }
 
     const { currentPassword, newPassword } = await request.json();

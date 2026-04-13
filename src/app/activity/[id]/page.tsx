@@ -15,6 +15,7 @@ import { apiService } from '@/services';
 import { City } from '@/types';
 import { Activity } from '@/types';
 import { categoryColors, skillLevelLabels } from '@/lib/activities/categories';
+import { BUSINESS_CONFIG } from '@/lib/config';
 
 export default function ActivityDetailPage() {
   const params = useParams();
@@ -105,7 +106,7 @@ export default function ActivityDetailPage() {
   } as City : null);
   const spotsLeft = activity?.capacity ? activity.capacity - activity.bookingCount : null;
   const subtotal = activity && !activity.isFree ? activity.price * bookingData.tickets : 0;
-  const commissionAmount = subtotal * (activity?.commission || 0.08);
+  const commissionAmount = subtotal * (activity?.commission || BUSINESS_CONFIG.defaultCommission);
   const total = subtotal + commissionAmount;
 
   const mapActivityData = useMemo(() => activity ? [{

@@ -8,7 +8,7 @@ export async function GET() {
     const session = await getSession();
 
     if (!session) {
-      return errorResponse('Debes iniciar sesión para ver tus lugares', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your places', 401, 'UNAUTHORIZED');
     }
 
     const places = await prisma.place.findMany({

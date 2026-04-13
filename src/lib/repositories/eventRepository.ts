@@ -85,20 +85,19 @@ export async function getEventsByCity(cityId: string, filters?: EventFilters) {
 
   if (filters?.date && filters.date !== 'all') {
     const now = new Date();
-    let dateStart: Date;
     
     switch (filters.date) {
       case 'today':
-        dateStart = new Date(now.setHours(0, 0, 0, 0));
-        where.dateStart = { gte: dateStart };
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        where.dateStart = { gte: todayStart };
         break;
       case 'week':
-        dateStart = new Date(now.setDate(now.getDate() + 7));
-        where.dateStart = { gte: new Date(), lte: dateStart };
+        const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        where.dateStart = { gte: now, lte: weekEnd };
         break;
       case 'month':
-        dateStart = new Date(now.setMonth(now.getMonth() + 1));
-        where.dateStart = { gte: new Date(), lte: dateStart };
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+        where.dateStart = { gte: now, lte: monthEnd };
         break;
     }
   }

@@ -8,7 +8,7 @@ export async function GET() {
     const user = await getSession();
     
     if (!user) {
-      return errorResponse('Debes iniciar sesión para ver tu perfil', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your profile', 401, 'UNAUTHORIZED');
     }
 
     const userData = await prisma.user.findUnique({
@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest) {
     const user = await getSession();
     
     if (!user) {
-      return errorResponse('Debes iniciar sesión para actualizar tu perfil', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to update your profile', 401, 'UNAUTHORIZED');
     }
 
     const { name, cityId } = await request.json();

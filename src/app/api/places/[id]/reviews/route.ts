@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth';
 import type { Review, User } from '@prisma/client';
 import { handleApiError, errorResponse } from '@/lib/api-utils';
 import { calculateAverageRating } from '@/lib/repositories/placeRepository';
+import { validateRequestBody, createReviewValidationRules, formatValidationErrors } from '@/lib/validation';
 
 export async function GET(
   request: NextRequest,
@@ -64,15 +65,13 @@ export async function POST(
       return errorResponse('You must be logged in to leave a review', 401, 'UNAUTHORIZED');
     }
 
-    const { rating, comment } = await request.json();
-
-    if (!rating || rating < 1 || rating > 5) {
-      return errorResponse('Rating must be a number between 1 and 5', 400, 'INVALID_RATING');
+    const validation = await validateRequestBody(request, createReviewValidationRules(), 'POST /api/places/[id]/reviews');
+    
+    if (!validation.success) {
+      return errorResponse(formatValidationErrors(validation.errors), 400, 'VALIDATION_ERROR');
     }
 
-    if (comment !== undefined && typeof comment !== 'string') {
-      return errorResponse('Comment must be a string', 400, 'INVALID_COMMENT');
-    }
+    const { rating, comment } = validation.data;
 
     const existingReview = await prisma.review.findFirst({
       where: { userId: user.id, placeId },
@@ -84,8 +83,8 @@ export async function POST(
 
     const review = await prisma.review.create({
       data: {
-        rating,
-        comment: comment || '',
+        rating: rating as number,
+        comment: (comment as string) || '',
         userId: user.id,
         placeId,
       },

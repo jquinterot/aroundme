@@ -8,7 +8,7 @@ export async function GET() {
     const session = await getSession();
 
     if (!session) {
-      return errorResponse('Debes iniciar sesión para ver tus estadísticas', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your statistics', 401, 'UNAUTHORIZED');
     }
 
     const userId = session.id;

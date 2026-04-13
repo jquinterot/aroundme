@@ -3,7 +3,7 @@ import { createNotification } from './notifications';
 
 export async function followUser(followerId: string, followingId: string) {
   if (followerId === followingId) {
-    throw new Error('No puedes seguirte a ti mismo');
+    throw new Error('You cannot follow yourself');
   }
 
   const existing = await prisma.follow.findUnique({
@@ -16,7 +16,7 @@ export async function followUser(followerId: string, followingId: string) {
   });
 
   if (existing) {
-    throw new Error('Ya sigues a este usuario');
+    throw new Error('You are already following this user');
   }
 
   const follow = await prisma.follow.create({
@@ -50,8 +50,8 @@ export async function followUser(followerId: string, followingId: string) {
   await createNotification({
     userId: followingId,
     type: 'new_follower',
-    title: 'Nuevo Seguidor',
-    message: `${follow.following.name} comenzó a seguirte`,
+    title: 'New Follower',
+    message: `${follow.following.name} started following you`,
     link: `/profile/${followerId}`,
   });
 
@@ -69,7 +69,7 @@ export async function unfollowUser(followerId: string, followingId: string) {
   });
 
   if (!follow) {
-    throw new Error('No sigues a este usuario');
+    throw new Error('You are not following this user');
   }
 
   await prisma.follow.delete({

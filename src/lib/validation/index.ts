@@ -13,6 +13,7 @@ export { createPlaceValidationRules } from './schemas/place';
 export { createUserRegistrationRules } from './schemas/user';
 export { createRSVPValidationRules } from './schemas/rsvp';
 export { createActivityBookingRules } from './schemas/activity';
+export { createReviewValidationRules } from './schemas/review';
 
 /**
  * Validates request body and returns parsed data or error response

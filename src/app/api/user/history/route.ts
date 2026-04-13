@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
 
     if (!session) {
-      return errorResponse('Debes iniciar sesión para ver tu historial', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your history', 401, 'UNAUTHORIZED');
     }
 
     const { searchParams } = new URL(request.url);
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
 
     if (!session) {
-      return errorResponse('Debes iniciar sesión para registrar vistas', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to record views', 401, 'UNAUTHORIZED');
     }
 
     const { type, itemId } = await request.json();

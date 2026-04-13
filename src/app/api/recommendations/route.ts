@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
 
     if (!userId) {
-      return errorResponse('Inicia sesión para ver recomendaciones personalizadas', 401, 'AUTH_REQUIRED');
+      return errorResponse('Please log in to view personalized recommendations', 401, 'AUTH_REQUIRED');
     }
 
     const city = citySlug

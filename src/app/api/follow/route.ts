@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (followingId === session.id) {
-      return errorResponse('No puedes seguirte a ti mismo', 400, 'CANNOT_FOLLOW_SELF');
+      return errorResponse('You cannot follow yourself', 400, 'CANNOT_FOLLOW_SELF');
     }
 
     const follow = await followUser(session.id, followingId);

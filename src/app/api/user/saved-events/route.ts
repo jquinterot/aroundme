@@ -8,7 +8,7 @@ export async function GET() {
     const user = await getSession();
     
     if (!user) {
-      return errorResponse('Debes iniciar sesión para ver tus eventos guardados', 401, 'UNAUTHORIZED');
+      return errorResponse('You must be logged in to view your saved events', 401, 'UNAUTHORIZED');
     }
 
     const saves = await prisma.save.findMany({

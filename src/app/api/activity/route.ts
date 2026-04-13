@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
 
     if (followingOnly && !sessionUserId) {
-      return errorResponse('Inicia sesión para ver actividad de personas que sigues', 401, 'AUTH_REQUIRED');
+      return errorResponse('Please log in to see activity from people you follow', 401, 'AUTH_REQUIRED');
     }
 
     const data = await getActivityFeed(
