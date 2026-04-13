@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
 
 export class ApiError extends Error {
   constructor(
@@ -184,4 +185,41 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
   return 'An unexpected error occurred';
+}
+
+/**
+ * Require authenticated session - returns user or error response
+ */
+export async function requireAuth() {
+  const session = await getSession();
+  if (!session) {
+    return { error: errorResponse('You must be logged in to perform this action', 401, 'UNAUTHORIZED') };
+  }
+  return { user: session };
+}
+
+/**
+ * Parse pagination parameters from URL search params
+ */
+export function parsePagination(searchParams: URLSearchParams) {
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20')));
+  const skip = (page - 1) * limit;
+  return { page, limit, skip };
+}
+
+/**
+ * Format paginated response
+ */
+export function paginatedResponse<T>(data: T[], total: number, page: number, limit: number) {
+  return NextResponse.json({
+    success: true,
+    data,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  });
 }

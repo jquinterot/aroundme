@@ -1,18 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { handleApiError, requireAuth } from '@/lib/api-utils';
 
 export async function GET() {
   try {
-    const user = await getSession();
-    
-    if (!user) {
-      return errorResponse('You must be logged in to view your RSVPs', 401, 'UNAUTHORIZED');
-    }
+    const auth = await requireAuth();
+    if ('error' in auth) return auth.error;
 
     const rsvps = await prisma.rSVP.findMany({
-      where: { userId: user.id },
+      where: { userId: auth.user.id },
       include: {
         event: {
           include: {

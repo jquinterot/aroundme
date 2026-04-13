@@ -1,18 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { handleApiError, requireAuth } from '@/lib/api-utils';
 
 export async function GET() {
   try {
-    const session = await getSession();
-
-    if (!session) {
-      return errorResponse('You must be logged in to view your events', 401, 'UNAUTHORIZED');
-    }
+    const auth = await requireAuth();
+    if ('error' in auth) return auth.error;
 
     const events = await prisma.event.findMany({
-      where: { userId: session.id },
+      where: { userId: auth.user.id },
       include: {
         city: { select: { name: true, slug: true } },
         _count: {
