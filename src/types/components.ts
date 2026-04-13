@@ -1,4 +1,4 @@
-import { City, Event, Place, EventCategory, PlaceCategory, User } from './index';
+import { City, Event, Place, EventCategory, PlaceCategory, User } from './base';
 import type { LucideIcon } from 'lucide-react';
 
 export interface EventCardProps {

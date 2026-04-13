@@ -169,8 +169,7 @@ export async function createActivity(data: {
   eventId?: string;
   placeId?: string;
   targetUserId?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }) {
   const activity = await prisma.userActivity.create({
     data: {

@@ -27,6 +27,27 @@ export interface Activity {
   lng: number | null;
 }
 
+export interface ListingActivity {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  subcategory: string | null;
+  image: string | null;
+  address: string | null;
+  coordinates: {
+    lat: number | null;
+    lng: number | null;
+  } | null;
+  schedule: string;
+  duration: string | null;
+  price: number;
+  currency: string;
+  isFree: boolean;
+  providerName: string;
+  bookingCount: number;
+}
+
 export interface ActivityBookingData {
   guestName: string;
   guestEmail: string;

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import type { Review, User } from '@prisma/client';
 import { handleApiError, errorResponse } from '@/lib/api-utils';
+import { calculateAverageRating } from '@/lib/repositories/placeRepository';
 
 export async function GET(
   request: NextRequest,
@@ -31,6 +32,23 @@ export async function GET(
   } catch (error) {
     return handleApiError(error, 'GET /api/places/[id]/reviews');
   }
+}
+
+async function updatePlaceRating(placeId: string, reviewCount?: number) {
+  const placeReviews = await prisma.review.findMany({
+    where: { placeId },
+    select: { rating: true },
+  });
+
+  const avgRating = calculateAverageRating(placeReviews.map((r) => r.rating));
+
+  await prisma.place.update({
+    where: { id: placeId },
+    data: {
+      rating: avgRating,
+      ...(reviewCount !== undefined && { reviewCount }),
+    },
+  });
 }
 
 export async function POST(
@@ -73,20 +91,7 @@ export async function POST(
       },
     });
 
-    const placeReviews = await prisma.review.findMany({
-      where: { placeId },
-      select: { rating: true },
-    });
-
-    const avgRating = placeReviews.reduce((sum, r) => sum + r.rating, 0) / placeReviews.length;
-
-    await prisma.place.update({
-      where: { id: placeId },
-      data: {
-        rating: Math.round(avgRating * 10) / 10,
-        reviewCount: placeReviews.length,
-      },
-    });
+    await updatePlaceRating(placeId);
 
     return NextResponse.json({
       success: true,
@@ -154,19 +159,7 @@ export async function PATCH(
       },
     });
 
-    const placeReviews = await prisma.review.findMany({
-      where: { placeId },
-      select: { rating: true },
-    });
-
-    const avgRating = placeReviews.reduce((sum, r) => sum + r.rating, 0) / placeReviews.length;
-
-    await prisma.place.update({
-      where: { id: placeId },
-      data: {
-        rating: Math.round(avgRating * 10) / 10,
-      },
-    });
+    await updatePlaceRating(placeId);
 
     return NextResponse.json({
       success: true,
@@ -222,22 +215,7 @@ export async function DELETE(
       where: { id: reviewId },
     });
 
-    const placeReviews = await prisma.review.findMany({
-      where: { placeId },
-      select: { rating: true },
-    });
-
-    const avgRating = placeReviews.length > 0
-      ? placeReviews.reduce((sum, r) => sum + r.rating, 0) / placeReviews.length
-      : 0;
-
-    await prisma.place.update({
-      where: { id: placeId },
-      data: {
-        rating: Math.round(avgRating * 10) / 10,
-        reviewCount: placeReviews.length,
-      },
-    });
+    await updatePlaceRating(placeId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

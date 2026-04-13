@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Clock, Users, MapPin, CheckCircle, 
@@ -107,6 +107,30 @@ export default function ActivityDetailPage() {
   const subtotal = activity && !activity.isFree ? activity.price * bookingData.tickets : 0;
   const commissionAmount = subtotal * (activity?.commission || 0.08);
   const total = subtotal + commissionAmount;
+
+  const mapActivityData = useMemo(() => activity ? [{
+    id: activity.id,
+    title: activity.title,
+    description: activity.description,
+    category: activity.category,
+    subcategory: activity.subcategory,
+    image: activity.image,
+    address: activity.address,
+    coordinates: { lat: activity.lat, lng: activity.lng },
+    schedule: activity.schedule,
+    duration: activity.duration,
+    price: activity.price,
+    currency: activity.currency,
+    isFree: activity.isFree,
+    providerName: activity.providerName,
+    bookingCount: activity.bookingCount,
+  }] : [], [activity]);
+
+  const mapSelectedActivity = useMemo(() => 
+    activity?.lat && activity?.lng 
+      ? { id: activity.id, coordinates: { lat: activity.lat, lng: activity.lng } }
+      : null, 
+  [activity?.id, activity?.lat, activity?.lng]);
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
@@ -340,25 +364,9 @@ export default function ActivityDetailPage() {
                       </div>
                       <div className="h-96 rounded-xl overflow-hidden">
                         <ActivityMap
-                          activities={[{
-                            id: activity.id,
-                            title: activity.title,
-                            description: activity.description,
-                            category: activity.category,
-                            subcategory: activity.subcategory,
-                            image: activity.image,
-                            address: activity.address,
-                            coordinates: { lat: activity.lat, lng: activity.lng },
-                            schedule: activity.schedule,
-                            duration: activity.duration,
-                            price: activity.price,
-                            currency: activity.currency,
-                            isFree: activity.isFree,
-                            providerName: activity.providerName,
-                            bookingCount: activity.bookingCount,
-                          }]}
-                          city={mapCity}
-                          selectedActivity={{ id: activity.id, coordinates: { lat: activity.lat, lng: activity.lng } }}
+                          activities={mapActivityData}
+                          city={mapCity!}
+                          selectedActivity={mapSelectedActivity}
                           className="w-full h-full"
                         />
                       </div>

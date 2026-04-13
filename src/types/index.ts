@@ -1,20 +1,9 @@
-export type EventCategory = 
-  | 'music'
-  | 'food'
-  | 'sports'
-  | 'art'
-  | 'tech'
-  | 'community'
-  | 'nightlife'
-  | 'outdoor'
-  | 'education'
-  | 'other';
+export * from './base';
+export * from './interfaces';
+export * from './components';
+export * from './activities';
 
-export type EventStatus = 'draft' | 'pending' | 'published' | 'cancelled';
-
-export type FeaturedTier = 'none' | 'basic' | 'premium';
-
-export type UserTier = 'free' | 'basic' | 'premium';
+import type { UserTier, User, EventCategory, PlaceCategory } from './base';
 
 export interface PremiumFeatures {
   advancedAnalytics: boolean;
@@ -89,7 +78,7 @@ export const TIER_LIMITS: Record<UserTier, {
     teamMembers: 2,
   },
   premium: {
-    maxEventsPerMonth: -1, // unlimited
+    maxEventsPerMonth: -1,
     maxPlacesPerMonth: -1,
     maxSavedEvents: -1,
     analyticsRetentionDays: 365,
@@ -97,102 +86,6 @@ export const TIER_LIMITS: Record<UserTier, {
     teamMembers: 10,
   },
 };
-
-export type PlaceCategory = 
-  | 'restaurant'
-  | 'cafe'
-  | 'bar'
-  | 'club'
-  | 'park'
-  | 'museum'
-  | 'shopping'
-  | 'hotel'
-  | 'coworking'
-  | 'other';
-
-export interface City {
-  id: string;
-  name: string;
-  country: string;
-  slug: string;
-  lat: number;
-  lng: number;
-  zoom: number;
-  timezone: string;
-  isActive: boolean;
-}
-
-export interface Event {
-  id: string;
-  title: string;
-  description: string;
-  category: EventCategory;
-  status: EventStatus;
-  cityId: string;
-  venue: {
-    name: string;
-    address: string;
-    coordinates: {
-      lat: number;
-      lng: number;
-    };
-  };
-  date: {
-    start: string;
-    end: string;
-  };
-  price?: {
-    min: number;
-    max: number;
-    currency: string;
-    isFree: boolean;
-  };
-  image?: string;
-  organizer: {
-    id: string;
-    name: string;
-    isVerified: boolean;
-  };
-  tags: string[];
-  isFeatured: boolean;
-  featuredUntil?: string;
-  featuredTier: FeaturedTier;
-  maxAttendees?: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Place {
-  id: string;
-  name: string;
-  description: string;
-  category: PlaceCategory;
-  cityId: string;
-  address: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-  image?: string;
-  rating: number;
-  reviewCount: number;
-  priceRange?: '$' | '$$' | '$$$' | '$$$$';
-  isVerified: boolean;
-  isClaimed: boolean;
-  ownerId?: string;
-  hours?: {
-    [key: string]: { open: string; close: string } | null;
-  };
-  contact?: {
-    phone?: string;
-    website?: string;
-    instagram?: string;
-  };
-  features?: string[];
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface Review {
   id: string;
@@ -204,24 +97,7 @@ export interface Review {
   createdAt: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'organizer' | 'user';
-  cityId?: string;
-  isVerified: boolean;
-  avatarUrl?: string;
-  bio?: string;
-  website?: string;
-  instagram?: string;
-  followerCount?: number;
-  followingCount?: number;
-  eventCount?: number;
-  createdAt?: string;
-}
-
-export interface Activity {
+export interface UserActivity {
   id: string;
   userId: string;
   type: 'created_event' | 'rsvp' | 'review' | 'follow' | 'save' | 'check_in';
@@ -414,7 +290,7 @@ export interface PlaceFilterParams {
   limit?: number;
 }
 
-export interface Activity {
+export interface Experience {
   id: string;
   title: string;
   description: string;
@@ -443,7 +319,7 @@ export interface Activity {
   lng: number | null;
 }
 
-export interface ListingActivity {
+export interface ListingExperience {
   id: string;
   title: string;
   description: string;
