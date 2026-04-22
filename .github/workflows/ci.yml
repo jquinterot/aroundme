@@ -11,6 +11,21 @@ jobs:
     name: Lint and Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aroundme_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     strategy:
       matrix:
         node-version: [20.x]
@@ -41,6 +56,16 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
+      - name: Setup database
+        run: npm run db:setup
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aroundme_test?schema=public
+
+      - name: Seed database
+        run: npm run db:seed
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aroundme_test?schema=public
+
       - name: Run ESLint
         run: npm run lint
 
@@ -52,11 +77,14 @@ jobs:
 
       - name: Run API E2E tests
         run: npm run api:test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aroundme_test?schema=public
 
       - name: Build application
         run: npm run build
         env:
           CI: true
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aroundme_test?schema=public
 
   ui-e2e:
     name: UI E2E Tests
