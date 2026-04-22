@@ -115,9 +115,25 @@ export async function getPlacesByCity(cityId: string, filters?: PlaceFilters) {
 }
 
 export async function updatePlace(id: string, data: Partial<Place>) {
+  const { id: _, cityId: __, ownerId, coordinates, hours, contact, features, tags, ...rest } = data;
   return prisma.place.update({
     where: { id },
-    data,
+    data: {
+      ...rest,
+      ...(ownerId !== undefined && { ownerId }),
+      ...(coordinates && {
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+      }),
+      ...(hours && { hours: JSON.stringify(hours) }),
+      ...(contact && {
+        contactPhone: contact.phone,
+        contactWebsite: contact.website,
+        contactInstagram: contact.instagram,
+      }),
+      ...(features && { features: JSON.stringify(features) }),
+      ...(tags && { tags: JSON.stringify(tags) }),
+    },
   });
 }
 

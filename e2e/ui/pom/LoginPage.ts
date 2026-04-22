@@ -5,6 +5,7 @@ import { BasePage } from './BasePage';
  * Login Page Object Model
  */
 export class LoginPage extends BasePage {
+  readonly title!: Locator;
   readonly emailInput!: Locator;
   readonly passwordInput!: Locator;
   readonly submitButton!: Locator;
@@ -15,6 +16,7 @@ export class LoginPage extends BasePage {
   constructor(page: Page) {
     super(page, '/login');
     
+    this.title = page.locator('[data-testid="login-title"]');
     this.emailInput = page.locator('[data-testid="login-email-input"]');
     this.passwordInput = page.locator('[data-testid="login-password-input"]');
     this.submitButton = page.locator('[data-testid="login-submit-button"]');

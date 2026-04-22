@@ -143,9 +143,29 @@ export async function getEventsByCity(cityId: string, filters?: EventFilters) {
 }
 
 export async function updateEvent(id: string, data: Partial<Event>) {
+  const { id: _, cityId: __, tags, venue, date, price, organizer: ___ , ...rest } = data;
   return prisma.event.update({
     where: { id },
-    data,
+    data: {
+      ...rest,
+      ...(tags && { tags: JSON.stringify(tags) }),
+      ...(venue && {
+        venueName: venue.name,
+        venueAddress: venue.address,
+        venueLat: venue.coordinates.lat,
+        venueLng: venue.coordinates.lng,
+      }),
+      ...(date && {
+        dateStart: new Date(date.start),
+        dateEnd: date.end ? new Date(date.end) : undefined,
+      }),
+      ...(price && {
+        priceMin: price.min,
+        priceMax: price.max,
+        currency: price.currency,
+        isFree: price.isFree,
+      }),
+    },
   });
 }
 
