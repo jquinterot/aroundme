@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, Clock, Shield } from 'lucide-react';
+import { CheckCircle, Clock, Shield, Eye } from 'lucide-react';
 
 interface User {
   id: string;
@@ -91,6 +92,9 @@ export function UsersTab() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
+                      <Link href={`/profile/${user.id}`} className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="View Profile">
+                        <Eye className="w-4 h-4" />
+                      </Link>
                       {user.role !== 'admin' && (
                         <button onClick={() => handleAction(user.id, 'changeRole', { role: 'moderator' })} className="p-2 text-blue-600 hover:text-blue-700" title="Make Moderator">
                           <Shield className="w-4 h-4" />

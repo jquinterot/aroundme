@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,6 +18,7 @@ import { EventCountdown } from '@/components/events/EventCountdown';
 import { EventDetailHeader } from '@/components/events/EventDetailHeader';
 import { TicketSection } from '@/components/events/TicketSection';
 import { WaitlistButton } from '@/components/events/WaitlistButton';
+import { useEvent, useEventActions } from '@/hooks/useEvents';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -31,17 +32,13 @@ export default function EventDetailPage() {
     queryFn: () => apiService.getCities(),
   });
 
-  const { data: eventData, isLoading } = useQuery({
-    queryKey: ['event', eventId],
-    queryFn: () => apiService.getEventById(eventId),
-    enabled: !!eventId,
-  });
+  const { data: eventData, isLoading } = useEvent(eventId);
 
-  const { data: analyticsData, refetch: refetchAnalytics } = useQuery({
-    queryKey: ['analytics', eventId],
-    queryFn: () => fetch(`/api/events/${eventId}/analytics`).then(res => res.json()),
-    enabled: !!eventId,
-  });
+const { data: analyticsData } = useQuery({
+  queryKey: ['analytics', eventId],
+  queryFn: () => fetch(`/api/events/${eventId}/analytics`).then(res => res.json()),
+  enabled: !!eventId,
+});
 
   const { data: ticketsData } = useQuery({
     queryKey: ['event-tickets', eventId],
@@ -55,44 +52,7 @@ export default function EventDetailPage() {
     }
   }, [eventId]);
 
-  const saveMutation = useMutation({
-    mutationFn: () => fetch(`/api/events/${eventId}/save`, { method: 'POST' }).then(res => res.json()),
-    onSuccess: () => refetchAnalytics(),
-  });
-
-  const rsvpMutation = useMutation({
-    mutationFn: (status: string) => 
-      fetch(`/api/events/${eventId}/rsvp`, { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      }).then(res => res.json()),
-    onSuccess: () => refetchAnalytics(),
-  });
-
-  const featureMutation = useMutation({
-    mutationFn: (tier: 'basic' | 'premium') => 
-      fetch(`/api/events/${eventId}/feature`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, userId: user?.id }),
-      }).then(res => res.json()),
-    onSuccess: () => {
-      refetchAnalytics();
-      window.location.reload();
-    },
-  });
-
-  const removeFeatureMutation = useMutation({
-    mutationFn: () => 
-      fetch(`/api/events/${eventId}/feature`, {
-        method: 'DELETE',
-      }).then(res => res.json()),
-    onSuccess: () => {
-      refetchAnalytics();
-      window.location.reload();
-    },
-  });
+  const { save, rsvp, feature, removeFeature, isFeaturing, isRemovingFeature } = useEventActions(eventId);
 
   const cities = citiesData?.data || [];
   const event = eventData?.data;
@@ -171,10 +131,10 @@ export default function EventDetailPage() {
               isFeatured={event.isFeatured}
               featuredTier={event.featuredTier}
               featuredUntil={event.featuredUntil}
-              onFeatureBasic={() => featureMutation.mutate('basic')}
-              onFeaturePremium={() => featureMutation.mutate('premium')}
-              onRemoveFeature={() => removeFeatureMutation.mutate()}
-              isPending={featureMutation.isLoading || removeFeatureMutation.isLoading}
+              onFeatureBasic={() => feature({ tier: 'basic', userId: user?.id || '' })}
+              onFeaturePremium={() => feature({ tier: 'premium', userId: user?.id || '' })}
+              onRemoveFeature={() => removeFeature()}
+              isPending={isFeaturing || isRemovingFeature}
             />
           )}
 
@@ -216,7 +176,7 @@ export default function EventDetailPage() {
             <EventActions 
               isSaved={analytics.isSaved} 
               isAuthenticated={!!user} 
-              onSave={() => saveMutation.mutate()}
+              onSave={() => save()}
               event={{
                 id: event.id,
                 title: event.title,
@@ -236,7 +196,8 @@ export default function EventDetailPage() {
             {user ? (
               <RSVPButtons 
                 userRsvp={analytics.userRsvp} 
-                onRsvp={(status) => rsvpMutation.mutate(status)} 
+                onRsvp={(status) => rsvp(status)} 
+                eventId={eventId}
               />
             ) : (
               <LoginPrompt />

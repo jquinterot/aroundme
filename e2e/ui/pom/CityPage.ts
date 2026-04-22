@@ -5,17 +5,17 @@ import { BasePage } from './BasePage';
  * City Page Object Model (Events/Places/Activities listing)
  */
 export class CityPage extends BasePage {
-  readonly pageTitle: Locator;
-  readonly eventsTab: Locator;
-  readonly placesTab: Locator;
-  readonly activitiesTab: Locator;
-  readonly eventCards: Locator;
-  readonly placeCards: Locator;
-  readonly activityCards: Locator;
-  readonly categoryFilter: Locator;
-  readonly dateFilter: Locator;
-  readonly priceFilter: Locator;
-  readonly searchInput: Locator;
+  readonly pageTitle!: Locator;
+  readonly eventsTab!: Locator;
+  readonly placesTab!: Locator;
+  readonly activitiesTab!: Locator;
+  readonly eventCards!: Locator;
+  readonly placeCards!: Locator;
+  readonly activityCards!: Locator;
+  readonly categoryFilter!: Locator;
+  readonly dateFilter!: Locator;
+  readonly priceFilter!: Locator;
+  readonly searchInput!: Locator;
 
   constructor(page: Page, citySlug: string = 'bogota') {
     super(page, `/${citySlug}`);

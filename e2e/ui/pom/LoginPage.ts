@@ -5,12 +5,12 @@ import { BasePage } from './BasePage';
  * Login Page Object Model
  */
 export class LoginPage extends BasePage {
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly submitButton: Locator;
-  readonly signupLink: Locator;
-  readonly forgotPasswordLink: Locator;
-  readonly errorMessage: Locator;
+  readonly emailInput!: Locator;
+  readonly passwordInput!: Locator;
+  readonly submitButton!: Locator;
+  readonly signupLink!: Locator;
+  readonly forgotPasswordLink!: Locator;
+  readonly errorMessage!: Locator;
 
   constructor(page: Page) {
     super(page, '/login');

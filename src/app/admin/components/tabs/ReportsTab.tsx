@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Eye } from 'lucide-react';
 
 interface Report {
   id: string;
@@ -69,6 +71,13 @@ export function ReportsTab() {
                   {report.itemTitle && <p className="text-sm text-gray-500">Item: {report.itemTitle}</p>}
                   {report.description && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{report.description}</p>}
                   <p className="mt-2 text-xs text-gray-400">{new Date(report.createdAt).toLocaleDateString()}</p>
+                  <Link 
+                    href={`/${report.type}/${report.itemId}`} 
+                    className="mt-2 inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View reported item
+                  </Link>
                 </div>
                 {report.status === 'pending' && (
                   <div className="flex gap-2">

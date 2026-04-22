@@ -68,3 +68,7 @@ export async function PATCH(request: NextRequest) {
     return handleApiError(error, 'PATCH /api/users/[id]');
   }
 }
+
+export async function PUT(request: NextRequest) {
+  return PATCH(request);
+}

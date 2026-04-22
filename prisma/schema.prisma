@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model City {
@@ -68,6 +68,8 @@ model User {
   checkIns      CheckIn[]
   recommendationsReceived Recommendation[] @relation("recommendedTo")
   bookings      ActivityBooking[]
+  clickEvents   ClickEvent[]
+  interestEvents InterestEvent[]
 }
 
 model Session {
@@ -155,6 +157,7 @@ model Place {
   imageUrl    String?
   rating      Float    @default(0)
   reviewCount Int      @default(0)
+  viewCount   Int      @default(0)
   priceRange  String?
   isVerified  Boolean  @default(false)
   isClaimed   Boolean  @default(false)
@@ -493,4 +496,83 @@ model ActivityBooking {
   user          User?    @relation(fields: [userId], references: [id])
 
   @@index([activityId])
+  @@index([userId])
+  @@index([status])
+}
+
+// ============================================================
+// ANALYTICS & TRACKING
+// ============================================================
+
+model ClickEvent {
+  id          String   @id @default(cuid())
+  userId      String?  // Null for anonymous users
+  sessionId   String?  // Session identifier for anonymous tracking
+  type        String   // event, place, activity
+  itemId      String   // ID of the clicked item
+  source      String   // listing, detail, search, recommendation, share
+  metadata    String?  // JSON: { position, category, city, device }
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([type, itemId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([source])
+}
+
+model InterestEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // event, place, activity
+  itemId      String
+  action      String   // save, rsvp_interested, rsvp_going, share, view
+  metadata    String?  // JSON: { rsvpStatus, shareTarget }
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type, itemId])
+  @@index([action])
+}
+
+model DailyMetrics {
+  id          String   @id @default(cuid())
+  date        DateTime @unique
+  totalViews  Int      @default(0)
+  totalClicks Int      @default(0)
+  totalRsvps  Int      @default(0)
+  totalSaves  Int      @default(0)
+  totalShares Int      @default(0)
+  totalBookings Int    @default(0)
+  newUsers    Int      @default(0)
+  activeUsers Int      @default(0)
+  topCategories String? // JSON: { music: 150, food: 120 }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+}
+
+model ItemMetrics {
+  id          String   @id @default(cuid())
+  type        String   // event, place, activity
+  itemId      String
+  date        DateTime
+  views       Int      @default(0)
+  clicks      Int      @default(0)
+  saves       Int      @default(0)
+  shares      Int      @default(0)
+  rsvps       Int      @default(0)
+  bookings    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([type, itemId, date])
+  @@index([type, itemId])
+  @@index([date])
 }

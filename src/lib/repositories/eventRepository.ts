@@ -37,8 +37,8 @@ export async function createEvent(data: CreateEventData) {
       cityId: data.cityId,
       venueName: data.venueName.trim(),
       venueAddress: data.venueAddress.trim(),
-      venueLat: data.venueLat,
-      venueLng: data.venueLng,
+      venueLat: data.venueLat ?? 0,
+      venueLng: data.venueLng ?? 0,
       dateStart: data.dateStart,
       dateEnd: data.dateEnd,
       priceMin: data.isFree ? 0 : (data.priceMin || 0),
@@ -169,8 +169,8 @@ export async function getEventAnalytics(eventId: string) {
 
   if (!event) return null;
 
-  const viewCount = await prisma.eventView.count({
-    where: { eventId },
+  const viewCount = await prisma.clickEvent.count({
+    where: { itemId: eventId, type: 'event' },
   });
 
   return {

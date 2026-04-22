@@ -2,8 +2,23 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
+import { MantineProvider, createTheme } from '@mantine/core';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+
+const theme = createTheme({
+  primaryColor: 'indigo',
+  fontFamily: 'Inter, sans-serif',
+  components: {
+    DateTimePicker: {
+      defaultProps: {
+        radius: 'md',
+      },
+    },
+  },
+});
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,11 +40,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </ThemeProvider>
+      <MantineProvider theme={theme}>
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
+      </MantineProvider>
     </QueryClientProvider>
   );
 }

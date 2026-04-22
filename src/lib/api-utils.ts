@@ -166,8 +166,10 @@ function generateErrorId(): string {
 }
 
 export function errorResponse(message: string, status: number = 400, code?: string) {
+  const errorId = generateErrorId();
+  const timestamp = new Date().toISOString();
   return NextResponse.json(
-    { success: false, error: message, code },
+    { success: false, error: message, code, errorId, timestamp },
     { status }
   );
 }

@@ -13,7 +13,7 @@ export async function GET(
     const place = await prisma.place.findUnique({ where: { id } });
 
     if (!place) {
-      return errorResponse('Place not found', 404, 'PLACE_NOT_FOUND');
+      return errorResponse('Place not found', 404, 'NOT_FOUND');
     }
 
     const formattedPlace = {

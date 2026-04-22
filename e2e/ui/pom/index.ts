@@ -1,6 +1,11 @@
 // Export all Page Object Models
 export { BasePage } from './BasePage';
 export { LoginPage } from './LoginPage';
+export { SignupPage } from './SignupPage';
 export { HeaderPage } from './HeaderPage';
 export { CityPage } from './CityPage';
 export { EventDetailPage } from './EventDetailPage';
+export { PlaceDetailPage } from './PlaceDetailPage';
+export { ActivityDetailPage } from './ActivityDetailPage';
+export { CreateEventPage } from './CreateEventPage';
+export { DashboardPage } from './DashboardPage';

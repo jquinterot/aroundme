@@ -10,7 +10,7 @@ AroundMe is a Next.js application for discovering events, places, and activities
 - **React**: 18.3.1 (Note: Downgraded from 19.2.3 for compatibility with TanStack Query)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
-- **Database**: SQLite via Prisma 7 (with support for libsql/better-sqlite3)
+- **Database**: PostgreSQL via Prisma 7 (with @prisma/adapter-pg)
 - **State Management**: TanStack React Query v4.36.1
 - **Maps**: React Leaflet v5.0.0
 - **Icons**: Lucide React
@@ -64,8 +64,46 @@ src/
 │   └── mock-data/         # Mock data for development
 ├── services/              # API service layer
 ├── e2e/                   # Playwright E2E tests
-└── types/                 # TypeScript type definitions
+├── types/                 # TypeScript type definitions
+└── skills/                # Development skill guides
 ```
+
+## Skills Directory
+
+Development skill guides for consistent code patterns. Reference these when implementing features.
+
+```
+skills/
+├── api-development.md        # API routes, error handling, Prisma
+├── database-schema.md        # Prisma schema, relations, migrations
+├── component-builder.md      # React components, Tailwind, dark mode
+├── test-writer.md            # Vitest & Playwright tests, POM
+├── auth-flow.md              # Login, signup, OAuth, sessions
+├── stripe-integration.md     # Payments, webhooks, Connect
+├── email-notifications.md    # Resend emails, push notifications
+├── map-integration.md        # Leaflet maps, address autocomplete
+├── form-builder.md           # Multi-step forms, validation
+├── performance-optimization.md # Caching, ISR, images
+└── senior-frontend/          # External skill (React, Next.js patterns)
+    ├── SKILL.md
+    ├── references/
+    └── scripts/
+```
+
+### When to Use Skills
+
+| Task | Skill to Reference |
+|------|-------------------|
+| Creating API endpoint | `api-development.md` |
+| Adding database model | `database-schema.md` |
+| Building UI component | `component-builder.md` |
+| Writing tests | `test-writer.md` |
+| Auth features | `auth-flow.md` |
+| Payment features | `stripe-integration.md` |
+| Email features | `email-notifications.md` |
+| Map features | `map-integration.md` |
+| Form features | `form-builder.md` |
+| Performance issues | `performance-optimization.md` |
 
 ## Key Features
 
@@ -144,7 +182,7 @@ npm run db:reset     # Force reset DB and re-seed (LOSES ALL DATA)
 ## Database / Prisma Workflow (IMPORTANT)
 
 ### Prisma 7 Configuration
-This project uses Prisma 7 with SQLite. Key files:
+This project uses Prisma 7 with PostgreSQL. Key files:
 - `prisma/schema.prisma` - Schema definition (NO url in datasource - Prisma 7 requirement)
 - `prisma.config.ts` - Database URL configuration
 - `.env` - Contains DATABASE_URL
@@ -394,7 +432,7 @@ Core models:
 Required in `.env`:
 ```bash
 # Database
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://username:password@localhost:5432/aroundme?schema=public"
 
 # App
 NEXT_PUBLIC_APP_URL="http://localhost:3000"

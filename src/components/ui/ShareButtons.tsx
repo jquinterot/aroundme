@@ -19,11 +19,13 @@ interface ShareButtonsProps {
   showWhatsApp?: boolean;
   showCalendar?: boolean;
   showSocial?: boolean;
+  onShare?: (target: string) => void;
 }
 
-export function ShareButtons({ event, url, showWhatsApp = true, showCalendar = true, showSocial = false }: ShareButtonsProps) {
+export function ShareButtons({ event, url, showWhatsApp = true, showCalendar = true, showSocial = false, onShare }: ShareButtonsProps) {
   const handleWhatsApp = () => {
     shareToWhatsApp(event.title, url);
+    onShare?.('whatsapp');
   };
 
   const handleCalendar = () => {
@@ -35,14 +37,17 @@ export function ShareButtons({ event, url, showWhatsApp = true, showCalendar = t
       venueName: event.venue?.name,
       venueAddress: event.venue?.address,
     });
+    onShare?.('calendar');
   };
 
   const handleTwitter = () => {
     shareToTwitter(event.title, url);
+    onShare?.('twitter');
   };
 
   const handleFacebook = () => {
     shareToFacebook(url);
+    onShare?.('facebook');
   };
 
   return (

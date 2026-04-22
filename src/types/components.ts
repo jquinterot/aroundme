@@ -203,6 +203,8 @@ export interface EventStepLocationProps {
 
 export interface PlaceStepLocationContactFormData {
   address: string;
+  lat?: number;
+  lng?: number;
   website: string;
   instagram: string;
   features: string;
@@ -210,7 +212,7 @@ export interface PlaceStepLocationContactFormData {
 
 export interface PlaceStepLocationContactProps {
   formData: PlaceStepLocationContactFormData;
-  onUpdate: (field: string, value: string) => void;
+  onUpdate: (field: string, value: string | number) => void;
   onSubmit: () => void;
   onBack: () => void;
   isLoading: boolean;

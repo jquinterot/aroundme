@@ -131,7 +131,7 @@ export default function ActivityDetailPage() {
     activity?.lat && activity?.lng 
       ? { id: activity.id, coordinates: { lat: activity.lat, lng: activity.lng } }
       : null, 
-  [activity?.id, activity?.lat, activity?.lng]);
+  [activity]);
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,7 +306,7 @@ export default function ActivityDetailPage() {
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Details</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {activity.schedule && (
-                        <div className="flex items-center gap-3">
+                        <div data-testid="activity-schedule" className="flex items-center gap-3">
                           <Calendar className="w-5 h-5 text-gray-400" />
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Schedule</p>
@@ -379,7 +379,7 @@ export default function ActivityDetailPage() {
 
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 sticky top-6">
-                <div className="mb-6">
+                <div data-testid="activity-price" className="mb-6">
                   {activity.isFree ? (
                     <span className="text-3xl font-bold text-green-600 dark:text-green-400">Free</span>
                   ) : (

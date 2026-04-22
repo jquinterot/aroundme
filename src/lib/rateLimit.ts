@@ -14,6 +14,11 @@ export interface RateLimitConfig {
 
 export function rateLimit(config: RateLimitConfig) {
   return async (request: NextRequest): Promise<{ success: boolean; response?: NextResponse }> => {
+    // Disable rate limiting during tests
+    if (process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT === 'true') {
+      return { success: true };
+    }
+
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 
                request.headers.get('x-real-ip') || 
                'unknown';

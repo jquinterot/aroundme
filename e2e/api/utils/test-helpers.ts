@@ -17,15 +17,32 @@ import { TestUser } from '../types';
  */
 export async function createAuthenticatedClient(
   request: APIRequestContext,
-  user: TestUser
+  user: TestUser,
+  baseUrl?: string
 ): Promise<ApiClient> {
-  const client = new ApiClient(request);
+  const client = new ApiClient(request, baseUrl);
   
-  const response = await client.login(user.email, user.password);
-  if (!response.success) {
-    // Register if user doesn't exist
-    await client.register(user.email, user.password, user.name);
-    await client.login(user.email, user.password);
+  // Use unique email to avoid conflicts between parallel tests
+  const uniqueEmail = `${user.email.split('@')[0]}+${Date.now()}@${user.email.split('@')[1]}`;
+  
+  try {
+    const response = await client.login(uniqueEmail, user.password);
+    if (!response.success) {
+      // Register if user doesn't exist
+      await client.register(uniqueEmail, user.password, user.name);
+      await client.login(uniqueEmail, user.password);
+    }
+  } catch {
+    // If login/register fails, try with original email
+    try {
+      const response = await client.login(user.email, user.password);
+      if (!response.success) {
+        await client.register(user.email, user.password, user.name);
+        await client.login(user.email, user.password);
+      }
+    } catch {
+      // Continue without authentication - test will fail with proper error
+    }
   }
   
   return client;

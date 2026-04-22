@@ -37,6 +37,7 @@ export function PlaceFilters({ onFilterChange }: PlaceFiltersProps) {
             <button
               key={cat.value}
               onClick={() => handleFilterChange('category', cat.value)}
+              data-testid={`place-filter-category-${cat.value}`}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 filters.category === cat.value
                   ? 'bg-teal-600 text-white'

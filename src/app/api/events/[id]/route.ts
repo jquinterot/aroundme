@@ -16,7 +16,7 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json({ success: false, error: 'Event not found' }, { status: 404 });
+      return errorResponse('Event not found', 404, 'NOT_FOUND');
     }
 
     const formattedEvent = {

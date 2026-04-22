@@ -5,20 +5,20 @@ import { BasePage } from './BasePage';
  * Event Detail Page Object Model
  */
 export class EventDetailPage extends BasePage {
-  readonly pageContainer: Locator;
-  readonly title: Locator;
-  readonly description: Locator;
-  readonly date: Locator;
-  readonly venue: Locator;
-  readonly venueAddress: Locator;
-  readonly mapContainer: Locator;
-  readonly rsvpGoingButton: Locator;
-  readonly rsvpInterestedButton: Locator;
-  readonly rsvpMaybeButton: Locator;
-  readonly saveButton: Locator;
-  readonly shareButton: Locator;
-  readonly backLink: Locator;
-  readonly ticketSection: Locator;
+  readonly pageContainer!: Locator;
+  readonly title!: Locator;
+  readonly description!: Locator;
+  readonly date!: Locator;
+  readonly venue!: Locator;
+  readonly venueAddress!: Locator;
+  readonly mapContainer!: Locator;
+  readonly rsvpGoingButton!: Locator;
+  readonly rsvpInterestedButton!: Locator;
+  readonly rsvpMaybeButton!: Locator;
+  readonly saveButton!: Locator;
+  readonly shareButton!: Locator;
+  readonly backLink!: Locator;
+  readonly ticketSection!: Locator;
 
   constructor(page: Page, eventId: string) {
     super(page, `/event/${eventId}`);

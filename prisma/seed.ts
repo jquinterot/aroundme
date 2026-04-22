@@ -1,10 +1,10 @@
 import { PrismaClient } from '../src/generated/prisma/client';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
-import path from 'path';
+import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
+import 'dotenv/config';
 
-const dbPath = path.join(process.cwd(), 'dev.db');
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function hashPassword(password: string): Promise<string> {
@@ -390,6 +390,132 @@ async function main() {
   ]);
 
   console.log(`✅ Created ${places.length + pereiraPlaces.length} places`);
+
+  // Create activities
+  const activities = await Promise.all([
+    prisma.activity.create({
+      data: {
+        title: 'Salsa Dance Class',
+        description: 'Learn salsa dancing with professional instructors in a fun group setting. Perfect for beginners and intermediate dancers.',
+        category: 'class',
+        cityId: bogota.id,
+        providerName: 'Bogotá Dance Academy',
+        providerContact: 'dance@example.com',
+        schedule: 'Every Tuesday and Thursday 7pm',
+        price: 50000,
+        currency: 'COP',
+        duration: '2 hours',
+        capacity: 20,
+        isFree: false,
+        address: 'Calle 85 #15-30, Bogotá',
+        lat: 4.6639,
+        lng: -74.0562,
+        imageUrl: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800',
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        title: 'Bogotá Historic Walking Tour',
+        description: 'Explore the historic center of Bogotá with knowledgeable guides who share fascinating stories about the city\'s colonial past.',
+        category: 'tour',
+        cityId: bogota.id,
+        providerName: 'Bogotá Tours Co',
+        providerContact: 'tours@example.com',
+        schedule: 'Daily at 10am and 2pm',
+        price: 80000,
+        currency: 'COP',
+        duration: '3 hours',
+        capacity: 15,
+        isFree: false,
+        address: 'Plaza de Bolívar, Bogotá',
+        lat: 4.5981,
+        lng: -74.0776,
+        imageUrl: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800',
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        title: 'Morning Yoga Session',
+        description: 'Relaxing yoga session for all levels in a beautiful outdoor setting. Start your day with mindfulness and movement.',
+        category: 'wellness',
+        cityId: bogota.id,
+        providerName: 'Zen Yoga Studio',
+        providerContact: 'yoga@example.com',
+        schedule: 'Every Monday, Wednesday, Friday 7am',
+        price: 35000,
+        currency: 'COP',
+        duration: '1.5 hours',
+        capacity: 10,
+        isFree: false,
+        address: 'Parque de la 93, Bogotá',
+        lat: 4.6761,
+        lng: -74.0509,
+        imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        title: 'Street Art Tour',
+        description: 'Discover Bogotá\'s vibrant street art scene with a local artist guide. Visit the best murals in La Candelaria.',
+        category: 'tour',
+        cityId: bogota.id,
+        providerName: 'Street Art Bogotá',
+        providerContact: 'art@example.com',
+        schedule: 'Tuesday, Thursday, Saturday 9am',
+        price: 60000,
+        currency: 'COP',
+        duration: '2.5 hours',
+        capacity: 12,
+        isFree: false,
+        address: 'La Candelaria, Bogotá',
+        lat: 4.5953,
+        lng: -74.0746,
+        imageUrl: 'https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800',
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        title: 'Cooking Class: Colombian Cuisine',
+        description: 'Learn to cook traditional Colombian dishes with a local chef. Includes market visit and hands-on cooking.',
+        category: 'class',
+        cityId: bogota.id,
+        providerName: 'Sabores Colombianos',
+        providerContact: 'cooking@example.com',
+        schedule: 'Every Saturday 10am',
+        price: 120000,
+        currency: 'COP',
+        duration: '4 hours',
+        capacity: 8,
+        isFree: false,
+        address: 'Zona G, Bogotá',
+        lat: 4.6567,
+        lng: -74.0598,
+        imageUrl: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800',
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        title: 'Free Community Dance Night',
+        description: 'Join us for a free community dance night featuring salsa, bachata, and merengue. All levels welcome!',
+        category: 'entertainment',
+        cityId: bogota.id,
+        providerName: 'Bogotá Dance Community',
+        providerContact: 'community@example.com',
+        schedule: 'Every Friday 8pm',
+        price: 0,
+        currency: 'COP',
+        duration: '3 hours',
+        capacity: 100,
+        isFree: true,
+        address: 'Parque Simón Bolívar, Bogotá',
+        lat: 4.6588,
+        lng: -74.0965,
+        imageUrl: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800',
+      },
+    }),
+  ]);
+
+  console.log(`✅ Created ${activities.length} activities`);
 
   console.log(`✅ Created ${places.length} places`);
 

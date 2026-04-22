@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, startTransition } from 'react';
+import { useState, useEffect, startTransition, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
@@ -8,6 +8,7 @@ import { EventCardProps } from '@/types/components';
 import { FeaturedBadge, CategoryBadge, FreeBadge, PriceDisplay, VerifiedBadge } from './EventCardBadges';
 import { formatEventDate, formatEventTime } from '@/lib/events/utils';
 import { PlaceholderImage } from '@/components/ui/Placeholder';
+import { trackEventClick } from '@/lib/analytics';
 
 function getTimeUntilEvent(dateStart: string): { days: number; hours: number; minutes: number; total: number } | null {
   const diff = new Date(dateStart).getTime() - Date.now();
@@ -41,8 +42,12 @@ export function EventCard({ event }: EventCardProps) {
   const hasValidImage = event.image && !imageError;
   const isUpcoming = timeUntil && timeUntil.total > 0 && timeUntil.total <= 7 * 24 * 60 * 60 * 1000;
 
+  const handleClick = useCallback(() => {
+    trackEventClick(event.id, 'listing', { category: event.category });
+  }, [event.id, event.category]);
+
   return (
-    <Link href={`/event/${event.id}`} className="group" data-testid={`event-card-${event.id}`}>
+    <Link href={`/event/${event.id}`} className="group" data-testid={`event-card-${event.id}`} onClick={handleClick}>
       <article className={`bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border transition-all duration-200 hover:shadow-lg ${
         event.isFeatured 
           ? 'border-yellow-300 hover:border-yellow-400 ring-2 ring-yellow-100 dark:ring-yellow-900/50' 

@@ -5,14 +5,14 @@ import { BasePage } from './BasePage';
  * Header Component Page Object Model
  */
 export class HeaderPage extends BasePage {
-  readonly logo: Locator;
-  readonly eventsLink: Locator;
-  readonly placesLink: Locator;
-  readonly activitiesLink: Locator;
-  readonly searchInput: Locator;
-  readonly userMenu: Locator;
-  readonly loginButton: Locator;
-  readonly signupButton: Locator;
+  readonly logo!: Locator;
+  readonly eventsLink!: Locator;
+  readonly placesLink!: Locator;
+  readonly activitiesLink!: Locator;
+  readonly searchInput!: Locator;
+  readonly userMenu!: Locator;
+  readonly loginButton!: Locator;
+  readonly signupButton!: Locator;
 
   constructor(page: Page) {
     super(page);

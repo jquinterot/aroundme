@@ -1,5 +1,7 @@
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+'use client';
+
+import { DateTimePicker } from '@mantine/dates';
+import dayjs from 'dayjs';
 
 interface DateTimeInputProps {
   label: string;
@@ -8,82 +10,90 @@ interface DateTimeInputProps {
   onDateChange: (value: string) => void;
   onTimeChange: (value: string) => void;
   required?: boolean;
+  helperText?: string;
 }
 
-export function DateTimeInput({ 
-  label, 
-  dateValue, 
-  timeValue, 
-  onDateChange, 
-  onTimeChange, 
-  required 
+export function DateTimeInput({
+  label,
+  dateValue,
+  timeValue,
+  onDateChange,
+  onTimeChange,
+  required,
+  helperText,
 }: DateTimeInputProps) {
-  const parseDate = (dateStr: string) => {
-    if (!dateStr) return null;
-    const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? null : date;
+  const getCombinedDate = () => {
+    if (!dateValue) return null;
+    const [year, month, day] = dateValue.split('-').map(Number);
+    if (!timeValue) {
+      return new Date(year, month - 1, day, 12, 0);
+    }
+    const [hours, minutes] = timeValue.split(':').map(Number);
+    return new Date(year, month - 1, day, hours || 12, minutes || 0);
   };
 
-  const parseTime = (timeStr: string) => {
-    if (!timeStr) return new Date();
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    const date = new Date();
-    date.setHours(hours || 0, minutes || 0, 0, 0);
-    return date;
+  const handleChange = (date: Date | null) => {
+    if (!date) return;
+    const d = dayjs(date);
+    onDateChange(d.format('YYYY-MM-DD'));
+    onTimeChange(d.format('HH:mm'));
   };
 
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const getQuickDates = () => {
+    const today = dayjs();
+    const tomorrow = today.add(1, 'day');
+    const nextSaturday = today.day(6).add(7, 'day');
+    const nextWeek = today.add(7, 'day');
 
-  const formatTime = (date: Date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    if (date) onDateChange(formatDate(date));
-  };
-
-  const handleTimeChange = (date: Date | null) => {
-    if (date) onTimeChange(formatTime(date));
+    return [
+      { label: 'Today', date: today.toDate() },
+      { label: 'Tomorrow', date: tomorrow.toDate() },
+      { label: 'This Saturday', date: nextSaturday.toDate() },
+      { label: 'Next Week', date: nextWeek.toDate() },
+    ];
   };
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-        {label} {required && '*'}
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Date</label>
-          <DatePicker
-            selected={parseDate(dateValue)}
-            onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
-            minDate={new Date()}
-            className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            placeholderText="Select date"
-          />
+      {helperText && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{helperText}</p>
+      )}
+
+      <DateTimePicker
+        value={getCombinedDate()}
+        onChange={handleChange}
+        minDate={new Date()}
+        placeholder="Select date and time"
+        valueFormat="EEE, MMM d, yyyy • h:mm a"
+        styles={{
+          input: {
+            backgroundColor: 'transparent',
+            borderColor: 'rgb(209, 213, 219)',
+          },
+        }}
+        classNames={{
+          input: 'w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer',
+        }}
+      />
+
+      {!dateValue && (
+        <div className="flex flex-wrap gap-2 mt-3">
+          <span className="text-xs text-gray-500 dark:text-gray-400">Quick pick:</span>
+          {getQuickDates().map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => onDateChange(dayjs(item.date).format('YYYY-MM-DD'))}
+              className="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Time</label>
-          <DatePicker
-            selected={parseTime(timeValue)}
-            onChange={handleTimeChange}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            dateFormat="HH:mm"
-            className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            placeholderText="Select time"
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 }

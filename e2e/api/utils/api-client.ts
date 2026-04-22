@@ -1,7 +1,5 @@
 import { APIRequestContext } from '@playwright/test';
 
-const BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000/api';
-
 export interface ApiResponse<T = unknown> {
   success: boolean;
   status?: number;
@@ -15,13 +13,33 @@ export interface ApiResponse<T = unknown> {
 export class ApiClient {
   private request: APIRequestContext;
   private sessionCookie?: string;
+  private baseUrl: string;
 
-  constructor(request: APIRequestContext) {
+  constructor(request: APIRequestContext, baseUrl?: string) {
     this.request = request;
+    // Use provided baseUrl, API_BASE_URL env var, or default
+    this.baseUrl = baseUrl || process.env.API_BASE_URL || 'http://localhost:3000/api';
+    // Remove trailing slash if present
+    this.baseUrl = this.baseUrl.replace(/\/$/, '');
   }
 
   setSessionCookie(cookie: string) {
     this.sessionCookie = cookie;
+  }
+
+  private extractSessionCookie(headers: { [key: string]: string | string[] }): void {
+    // Try different header name variations
+    const setCookieHeader = headers['set-cookie'] || headers['Set-Cookie'] || headers['SET-COOKIE'];
+    if (!setCookieHeader) return;
+
+    const cookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+    for (const cookie of cookies) {
+      const match = cookie.match(/aroundme_session=([^;]+)/);
+      if (match) {
+        this.sessionCookie = match[1];
+        break;
+      }
+    }
   }
 
   async requestWithAuth<T>(
@@ -37,29 +55,37 @@ export class ApiClient {
       headers['Cookie'] = `aroundme_session=${this.sessionCookie}`;
     }
 
+    // Ensure endpoint starts with /
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${this.baseUrl}${path}`;
+
     try {
       let response;
       
       switch (method) {
         case 'GET':
-          response = await this.request.get(`${BASE_URL}${endpoint}`, { headers });
+          response = await this.request.get(url, { headers });
           break;
         case 'POST':
-          response = await this.request.post(`${BASE_URL}${endpoint}`, {
+          response = await this.request.post(url, {
             headers,
             data: data ? JSON.stringify(data) : undefined,
           });
           break;
         case 'PUT':
-          response = await this.request.put(`${BASE_URL}${endpoint}`, {
+          response = await this.request.put(url, {
             headers,
             data: data ? JSON.stringify(data) : undefined,
           });
           break;
         case 'DELETE':
-          response = await this.request.delete(`${BASE_URL}${endpoint}`, { headers });
+          response = await this.request.delete(url, { headers });
           break;
       }
+
+      // Capture session cookie from Set-Cookie header
+      const responseHeaders = response.headers();
+      this.extractSessionCookie(responseHeaders);
 
       const responseData = await response.json().catch(() => ({}));
 
@@ -134,6 +160,6 @@ export class ApiClient {
   }
 }
 
-export function createApiClient(request: APIRequestContext): ApiClient {
-  return new ApiClient(request);
+export function createApiClient(request: APIRequestContext, baseUrl?: string): ApiClient {
+  return new ApiClient(request, baseUrl);
 }

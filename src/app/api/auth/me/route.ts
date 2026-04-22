@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, errorResponse } from '@/lib/api-utils';
 
 export async function GET() {
   try {
     const user = await getSession();
     
     if (!user) {
-      return NextResponse.json({
-        success: true,
-        data: null,
-      });
+      return errorResponse('Authentication required', 401, 'UNAUTHORIZED');
     }
 
     return NextResponse.json({

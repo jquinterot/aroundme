@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Playwright E2E tests (fixtures use 'use' which triggers false React hook warnings)
+    "e2e/**",
   ]),
   {
     rules: {

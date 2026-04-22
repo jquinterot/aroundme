@@ -23,12 +23,14 @@ export default function SubmitPlacePage() {
     description: '',
     category: '' as PlaceCategory | '',
     address: '',
+    lat: 0,
+    lng: 0,
     website: '',
     instagram: '',
     features: '',
   });
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -42,6 +44,8 @@ export default function SubmitPlacePage() {
         description: formData.description,
         category: formData.category as string,
         address: formData.address,
+        lat: formData.lat || undefined,
+        lng: formData.lng || undefined,
         website: formData.website || undefined,
         instagram: formData.instagram || undefined,
         features: formData.features || undefined,

@@ -41,6 +41,8 @@ export default function CreateEventPage() {
     recurring: '',
   });
 
+  const activeCityId = formData.cityId || getDefaultCityId();
+
   const updateField = (field: string, value: string | boolean | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -50,7 +52,7 @@ export default function CreateEventPage() {
 
     try {
       const response = await apiService.createEvent({
-        citySlug: formData.cityId,
+        citySlug: activeCityId,
         title: formData.title,
         description: formData.description,
         category: formData.category as string,
@@ -71,7 +73,7 @@ export default function CreateEventPage() {
       if (response.success) {
         setSuccess(true);
         setTimeout(() => {
-          router.push(`/${formData.cityId}`);
+          router.push(`/${activeCityId}`);
         }, 2000);
       } else {
         alert(response.error || 'Failed to submit event');
@@ -87,11 +89,11 @@ export default function CreateEventPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+        <Header />
         <SuccessState
           title="Event Submitted!"
           message="Your event is pending review and will be published soon."
-          redirectTo={`/${formData.cityId}`}
+          redirectTo={`/${activeCityId}`}
           redirectDelay={2000}
           colorScheme="indigo"
         />
@@ -106,7 +108,7 @@ export default function CreateEventPage() {
       <main className="max-w-2xl mx-auto px-4 py-8" data-testid="create-event-page-container">
         <div className="mb-8">
           <Link
-            href={`/${formData.cityId}`}
+            href={`/${activeCityId}`}
             className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-4"
             data-testid="back-link"
           >
@@ -125,7 +127,7 @@ export default function CreateEventPage() {
           <form>
             {step === 1 && (
               <StepBasicInfo
-                formData={formData}
+                formData={{ ...formData, cityId: activeCityId }}
                 cities={cities}
                 onUpdate={updateField}
                 onNext={() => setStep(2)}

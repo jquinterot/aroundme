@@ -4,9 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header, Footer } from '@/components/layout';
-import { ActivityCard } from '@/components/social';
 import { Activity, Users, Loader2 } from 'lucide-react';
-import { Activity as ActivityType } from '@/types';
+import type { Activity as ActivityType } from '@/types/activities';
 
 export default function ActivityFeedPage() {
   const { user } = useAuth();
@@ -137,8 +136,10 @@ export default function ActivityFeedPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {activities.map((activity) => (
-              <ActivityCard key={activity.id} activity={activity} />
+            {activities.map((activity: ActivityType) => (
+              <div key={activity.id} className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+                <p className="text-gray-600 text-sm">{JSON.stringify(activity)}</p>
+              </div>
             ))}
 
             {hasMore && (

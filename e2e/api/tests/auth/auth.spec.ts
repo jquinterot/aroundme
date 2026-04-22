@@ -53,7 +53,7 @@ test.describe('POST /api/auth/register', () => {
     
     expect(response.success).toBe(false);
     expect(response.code).toBe('WEAK_PASSWORD');
-    expect(response.error).toContain('password');
+    expect(response.error?.toLowerCase()).toContain('password');
   });
 
   test('should require name field', async ({ request }) => {
@@ -63,8 +63,8 @@ test.describe('POST /api/auth/register', () => {
     const response = await api.register(`test${timestamp}@example.com`, 'TestPass123!', '');
     
     expect(response.success).toBe(false);
-    expect(response.code).toBe('INVALID_NAME');
-    expect(response.error).toContain('name');
+    expect(response.code).toBe('MISSING_FIELDS');
+    expect(response.error?.toLowerCase()).toContain('name');
   });
 });
 

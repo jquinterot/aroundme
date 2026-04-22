@@ -1,7 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 import { ShareButtons } from '@/components/ui/ShareButtons';
+import { trackEventSave, trackEventRsvp, trackEventShare } from '@/lib/analytics';
 
 interface EventActionsProps {
   isSaved: boolean;
@@ -26,6 +28,19 @@ interface EventActionsProps {
 export function EventActions({ isSaved, isAuthenticated, onSave, event, eventUrl }: EventActionsProps) {
   const router = useRouter();
 
+  const handleSave = useCallback(() => {
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    trackEventSave(event.id);
+    onSave();
+  }, [isAuthenticated, router, event.id, onSave]);
+
+  const handleShare = useCallback((target: string) => {
+    trackEventShare(event.id, target);
+  }, [event.id]);
+
   return (
     <div className="mt-8 flex gap-4" data-testid="event-actions">
       <button 
@@ -36,13 +51,7 @@ export function EventActions({ isSaved, isAuthenticated, onSave, event, eventUrl
         Register / Get Tickets
       </button>
       <button 
-        onClick={() => {
-          if (!isAuthenticated) {
-            router.push('/login');
-            return;
-          }
-          onSave();
-        }}
+        onClick={handleSave}
         className={`px-4 py-3 border rounded-xl transition-colors ${
           isSaved
             ? 'border-pink-300 bg-pink-50 text-pink-600'
@@ -54,7 +63,7 @@ export function EventActions({ isSaved, isAuthenticated, onSave, event, eventUrl
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </button>
-      <ShareButtons event={event} url={eventUrl} showWhatsApp showCalendar />
+      <ShareButtons event={event} url={eventUrl} showWhatsApp showCalendar onShare={handleShare} />
     </div>
   );
 }
@@ -62,9 +71,15 @@ export function EventActions({ isSaved, isAuthenticated, onSave, event, eventUrl
 interface RSVPButtonsProps {
   userRsvp: { status: string } | null;
   onRsvp: (status: string) => void;
+  eventId: string;
 }
 
-export function RSVPButtons({ userRsvp, onRsvp }: RSVPButtonsProps) {
+export function RSVPButtons({ userRsvp, onRsvp, eventId }: RSVPButtonsProps) {
+  const handleRsvp = useCallback((status: string) => {
+    trackEventRsvp(eventId, status as 'going' | 'interested' | 'maybe');
+    onRsvp(status);
+  }, [eventId, onRsvp]);
+
   return (
     <div className="mt-6 bg-gray-50 rounded-lg p-4" data-testid="rsvp-buttons">
       <p className="text-sm font-medium text-gray-700 mb-3">Are you going?</p>
@@ -72,7 +87,7 @@ export function RSVPButtons({ userRsvp, onRsvp }: RSVPButtonsProps) {
         {['going', 'interested', 'maybe'].map((status) => (
           <button
             key={status}
-            onClick={() => onRsvp(status)}
+            onClick={() => handleRsvp(status)}
             className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors ${
               userRsvp?.status === status
                 ? 'bg-indigo-600 text-white'
