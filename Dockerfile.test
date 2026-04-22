@@ -1,0 +1,45 @@
+FROM node:20-alpine AS base
+
+RUN apk add --no-cache libc6-compat
+
+FROM base AS deps
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV PRISMA_GENERATE_DATASOURCE_URL "postgresql://localhost:5432/aroundme_test"
+
+RUN npx prisma generate
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV test
+ENV NEXT_TELEMETRY_DISABLED 1
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/next.config.mjs ./
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["sh", "-c", "npm run db:setup && npm run db:seed && npm run api:test"]
