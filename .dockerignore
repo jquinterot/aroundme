@@ -44,7 +44,7 @@ docker-compose.yml
 docs
 AGENTS.md
 
-# Prisma (will be copied from builder)
+# Prisma (keep schema, exclude migrations)
 prisma/migrations
 
 # Test specific
