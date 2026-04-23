@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PRISMA_GENERATE_DATASOURCE_URL "postgresql://localhost:5432/aroundme"
+ENV PRISMA_GENERATE_DATASOURCE_URL "postgresql://user:pass@localhost:5432/aroundme"
 
 RUN npx prisma generate
 RUN npm run build

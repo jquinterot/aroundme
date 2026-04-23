@@ -48,7 +48,7 @@ services:
         condition: service_healthy
     networks:
       - aroundme-network
-    command: ["npm", "run", "api:test"]
+    command: ["sh", "-c", "npm run db:setup && npm run db:seed && npm run api:test"]
 
 networks:
   aroundme-network:

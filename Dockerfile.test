@@ -17,7 +17,7 @@ COPY playwright.api.config.ts ./playwright.api.config.ts
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PRISMA_GENERATE_DATASOURCE_URL "postgresql://localhost:5432/aroundme_test"
+ENV PRISMA_GENERATE_DATASOURCE_URL "postgresql://user:pass@localhost:5432/aroundme_test"
 
 RUN npx prisma generate
 RUN npm run build
