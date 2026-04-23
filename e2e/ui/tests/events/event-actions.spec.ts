@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures';
 
 test.describe('Event Actions', () => {
   test('should display event actions on event detail', async ({ page }) => {
@@ -20,7 +20,7 @@ test.describe('Event Actions', () => {
 
   test('should show login prompt when saving without authentication', async ({ page }) => {
     // Go to event detail
-    const eventsResponse = await page.request.get('/api/bogota/events?limit=1');
+    const eventsResponse = await page.request.get('/api/cities/bogota/events?limit=1');
     const events = await eventsResponse.json();
     
     if (events.data && events.data.length > 0) {

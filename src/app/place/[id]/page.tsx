@@ -182,11 +182,11 @@ export default function PlaceDetailPage() {
   </div>
 )}
             <div className="absolute top-4 left-4 flex gap-2 z-10">
-              <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(place.category)}`}>
+              <span data-testid="place-category-badge" className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${getCategoryColor(place.category)}`}>
                 {(() => { const Icon = CategoryIcon(place.category); return <Icon size={16} />; })()} {place.category}
               </span>
               {place.isVerified && (
-                <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white">
+                <span data-testid="place-verified-badge" className="px-3 py-1.5 rounded-full text-sm font-medium bg-green-500 text-white">
                   Verified
                 </span>
               )}
@@ -241,7 +241,7 @@ export default function PlaceDetailPage() {
                   )}
                 </div>
               </div>
-              <div className="text-right">
+              <div data-testid="place-rating" className="text-right">
                 <div className="flex items-center gap-1">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                   <span className="text-xl font-bold text-gray-900 dark:text-white">{place.rating}</span>
@@ -252,7 +252,7 @@ export default function PlaceDetailPage() {
 
             <div className="flex flex-wrap gap-6 mb-6 text-gray-600 dark:text-gray-400">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-              <div className="flex items-center gap-2">
+              <div data-testid="place-address" className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-gray-400" />
                 <span>{place.address}</span>
               </div>

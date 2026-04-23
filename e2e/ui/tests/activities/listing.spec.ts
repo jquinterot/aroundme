@@ -154,7 +154,7 @@ test.describe('Activities Listing', () => {
     });
 
     await test.step('Verify activity detail page is displayed', async () => {
-      await expect(page.locator('[data-testid="activity-detail-page"], h1')).toBeVisible();
+      await expect(page.locator('[data-testid="activity-detail-page"]')).toBeVisible();
     });
   });
 

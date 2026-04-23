@@ -20,9 +20,9 @@ export class LoginPage extends BasePage {
     this.emailInput = page.locator('[data-testid="login-email-input"]');
     this.passwordInput = page.locator('[data-testid="login-password-input"]');
     this.submitButton = page.locator('[data-testid="login-submit-button"]');
-    this.signupLink = page.locator('a[href="/signup"]');
+    this.signupLink = page.locator('[data-testid="auth-signup-link"]');
     this.forgotPasswordLink = page.locator('a[href="/forgot-password"]');
-    this.errorMessage = page.locator('.text-red-600');
+    this.errorMessage = page.locator('[data-testid="login-error"]');
   }
 
   async login(email: string, password: string): Promise<void> {

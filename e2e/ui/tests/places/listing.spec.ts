@@ -70,13 +70,13 @@ test.describe('Places Listing', () => {
 
   test('should search for places', async ({ page }) => {
     await test.step('Click on search input', async () => {
-      const searchInput = page.locator('[data-testid="place-search-input"], input[placeholder*="Search"]');
+      const searchInput = page.locator('[data-testid="place-search-input"]');
       await searchInput.click();
     });
 
     await test.step('Type search query', async () => {
-      const searchInput = page.locator('[data-testid="place-search-input"], input[placeholder*="Search"]');
-      await searchInput.fill('restaurant');
+      const searchInput = page.locator('[data-testid="place-search-input"]');
+      await searchInput.fill('coffee');
     });
 
     await test.step('Wait for search results', async () => {

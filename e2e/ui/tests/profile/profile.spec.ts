@@ -1,12 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures';
 
 test.describe('Profile Page', () => {
   test('should display profile page when authenticated', async ({ page }) => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('[data-testid="login-email-input"]', 'test@example.com');
-    await page.fill('[data-testid="login-password-input"]', 'TestPass123!');
+    await page.fill('[data-testid="login-email-input"]', 'admin@aroundme.co');
+    await page.fill('[data-testid="login-password-input"]', 'admin123');
     await page.click('[data-testid="login-submit-button"]');
     await page.waitForURL(/\/(dashboard|bogota)/, { timeout: 10000 }).catch(() => {});
     
@@ -22,8 +22,8 @@ test.describe('Dashboard', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('[data-testid="login-email-input"]', 'test@example.com');
-    await page.fill('[data-testid="login-password-input"]', 'TestPass123!');
+    await page.fill('[data-testid="login-email-input"]', 'admin@aroundme.co');
+    await page.fill('[data-testid="login-password-input"]', 'admin123');
     await page.click('[data-testid="login-submit-button"]');
     await page.waitForURL(/\/(dashboard|bogota)/, { timeout: 10000 }).catch(() => {});
     

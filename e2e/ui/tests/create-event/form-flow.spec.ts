@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures';
 
 test.describe('Create Event Flow', () => {
   test('should navigate to create event page', async ({ page }) => {
@@ -38,7 +38,9 @@ test.describe('Create Event Flow', () => {
     
     // Fill in the form
     await page.fill('[data-testid="event-title-input"]', 'Test Event');
-    await page.selectOption('[data-testid="event-city-select"]', 'bogota');
+    // Click on mantine select to open dropdown and select Bogotá
+    await page.click('[data-testid="event-city-select"]');
+    await page.click('text=Bogotá');
     await page.click('[data-testid="event-category-music"]');
     await page.fill('[data-testid="event-description-input"]', 'This is a test event description');
     

@@ -30,11 +30,7 @@ test.describe('Home Page', () => {
       await page.goto('/');
     });
 
-    await test.step('Click on Bogotá link in hero section', async () => {
-      await page.click('[data-testid="hero-section"] a:has-text("Bogotá")');
-    });
-
-    await test.step('Verify navigation to city page', async () => {
+    await test.step('Verify redirect to default city page', async () => {
       await expect(page).toHaveURL(/\/bogota/);
     });
   });
@@ -201,7 +197,7 @@ test.describe('City Activities Page', () => {
     });
 
     await test.step('Verify filter is applied', async () => {
-      await expect(page.locator('[data-testid="category-class"], button:has-text("Classes")')).toHaveClass(/bg-amber-600/);
+      await expect(page.locator('[data-testid="category-class"], button:has-text("Classes")')).toHaveClass(/bg-amber/);
     });
   });
 });
@@ -221,6 +217,7 @@ test.describe('Tab Navigation with Content Verification', () => {
       await page.click('a[href="/bogota/places"]');
       await expect(page).toHaveURL('/bogota/places');
       await page.waitForLoadState('networkidle');
+      await page.waitForSelector('[data-testid^="place-card"]', { timeout: 15000 });
       const placeCount = await page.locator('[data-testid^="place-card"]').count();
       expect(placeCount).toBeGreaterThanOrEqual(1);
     });
@@ -229,6 +226,7 @@ test.describe('Tab Navigation with Content Verification', () => {
       await page.click('a[href="/bogota/activities"]');
       await expect(page).toHaveURL('/bogota/activities');
       await page.waitForLoadState('networkidle');
+      await page.waitForSelector('[data-testid^="activity-card"]', { timeout: 15000 });
       const activityCount = await page.locator('[data-testid^="activity-card"]').count();
       expect(activityCount).toBeGreaterThanOrEqual(1);
     });

@@ -70,7 +70,7 @@ test.describe('Place Detail Page', () => {
     });
 
     await test.step('Check for rating display', async () => {
-      const ratingElement = page.locator('[data-testid="place-rating"]');
+      const ratingElement = page.locator('[data-testid="place-detail-page"] [data-testid="place-rating"]');
       if (await ratingElement.isVisible()) {
         const ratingText = await ratingElement.textContent();
         expect(ratingText).toMatch(/\d+\.?\d*/);
@@ -84,7 +84,7 @@ test.describe('Place Detail Page', () => {
     });
 
     await test.step('Check for verified badge', async () => {
-      const verifiedBadge = page.locator('[data-testid="place-verified-badge"]');
+      const verifiedBadge = page.locator('[data-testid="place-detail-page"] [data-testid="place-verified-badge"]');
       // Badge may or may not be visible depending on the place
       if (await verifiedBadge.isVisible()) {
         expect(await verifiedBadge.textContent()).toContain('Verified');

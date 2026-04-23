@@ -26,7 +26,7 @@ export class SignupPage extends BasePage {
     this.passwordInput = page.locator('[data-testid="signup-password-input"]');
     this.confirmPasswordInput = page.locator('[data-testid="signup-confirm-password-input"]');
     this.submitButton = page.locator('[data-testid="signup-submit-button"]');
-    this.loginLink = page.locator('[data-testid="login-link"]');
+    this.loginLink = page.locator('[data-testid="auth-login-link"]');
     this.errorMessage = page.locator('[data-testid="signup-error"]');
     this.successMessage = page.locator('[data-testid="signup-success"]');
   }

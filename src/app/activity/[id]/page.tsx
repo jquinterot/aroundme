@@ -16,10 +16,12 @@ import { City } from '@/types';
 import { Activity } from '@/types';
 import { categoryColors, skillLevelLabels } from '@/lib/activities/categories';
 import { BUSINESS_CONFIG } from '@/lib/config';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ActivityDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const activityId = params.id as string;
 
   const [bookingData, setBookingData] = useState({
@@ -41,6 +43,10 @@ export default function ActivityDetailPage() {
 
   const handleSave = async () => {
     if (!activity) return;
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
     try {
       await fetch(`/api/activities/${activityId}/save`, { method: 'POST' });
       setIsSaved(!isSaved);
@@ -401,7 +407,7 @@ export default function ActivityDetailPage() {
                   </div>
                 )}
 
-                <form onSubmit={handleBooking} className="space-y-4">
+                <form data-testid="activity-booking-form" onSubmit={handleBooking} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Your Name

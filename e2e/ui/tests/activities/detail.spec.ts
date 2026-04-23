@@ -74,7 +74,7 @@ test.describe('Activity Detail Page', () => {
     });
 
     await test.step('Verify booking form is visible', async () => {
-      await expect(page.locator('form')).toBeVisible();
+      await expect(page.locator('[data-testid="activity-booking-form"]')).toBeVisible();
     });
 
     await test.step('Verify book button is visible', async () => {
@@ -142,7 +142,7 @@ test.describe('Activity Detail Page', () => {
     });
   });
 
-  test('should show login prompt when saving without auth', async ({ page }) => {
+  test('should redirect to login when saving without auth', async ({ page }) => {
     await test.step('Navigate to activity detail', async () => {
       const activityCards = page.locator('[data-testid^="activity-card"]');
       await activityCards.first().click();
@@ -152,10 +152,8 @@ test.describe('Activity Detail Page', () => {
       await page.click('[data-testid="save-activity-button"]');
     });
 
-    await test.step('Verify redirect to login or login prompt shown', async () => {
-      const isLoginPage = page.url().includes('/login');
-      const hasLoginPrompt = await page.locator('[data-testid="login-prompt"]').isVisible();
-      expect(isLoginPage || hasLoginPrompt).toBeTruthy();
+    await test.step('Verify redirect to login', async () => {
+      await expect(page).toHaveURL(/login/);
     });
   });
 });

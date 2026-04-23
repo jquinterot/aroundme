@@ -74,20 +74,38 @@ Development skill guides for consistent code patterns. Reference these when impl
 
 ```
 skills/
-├── api-development.md        # API routes, error handling, Prisma
-├── database-schema.md        # Prisma schema, relations, migrations
-├── component-builder.md      # React components, Tailwind, dark mode
-├── test-writer.md            # Vitest & Playwright tests, POM
-├── auth-flow.md              # Login, signup, OAuth, sessions
-├── stripe-integration.md     # Payments, webhooks, Connect
-├── email-notifications.md    # Resend emails, push notifications
-├── map-integration.md        # Leaflet maps, address autocomplete
-├── form-builder.md           # Multi-step forms, validation
+├── api-development.md          # API routes, error handling, Prisma
+├── database-schema.md          # Prisma schema, relations, migrations
+├── component-builder.md        # React components, Tailwind, dark mode
+├── test-writer.md              # Vitest & Playwright tests, POM
+├── auth-flow.md                # Login, signup, OAuth, sessions
+├── stripe-integration.md       # Payments, webhooks, Connect
+├── email-notifications.md      # Resend emails, push notifications
+├── map-integration.md          # Leaflet maps, address autocomplete
+├── form-builder.md             # Multi-step forms, validation
 ├── performance-optimization.md # Caching, ISR, images
-└── senior-frontend/          # External skill (React, Next.js patterns)
+├── senior-frontend/            # Expert React/Next.js/Tailwind development
+│   ├── SKILL.md
+│   ├── references/
+│   │   ├── react_patterns.md
+│   │   ├── frontend_best_practices.md
+│   │   └── nextjs_optimization_guide.md
+│   └── scripts/
+│       ├── component_generator.py
+│       ├── bundle_analyzer.py
+│       └── frontend_scaffolder.py
+├── tester/                     # Testing expert (Vitest, Playwright, CI/CD)
+│   ├── SKILL.md
+│   └── references/
+│       ├── ci_cd_testing.md
+│       ├── fixing_tests.md
+│       └── test_architecture.md
+└── architect/                  # SOLID principles, clean architecture, patterns
     ├── SKILL.md
-    ├── references/
-    └── scripts/
+    └── references/
+        ├── solid_principles.md
+        ├── design_patterns.md
+        └── duplication_detection.md
 ```
 
 ### When to Use Skills
@@ -96,7 +114,7 @@ skills/
 |------|-------------------|
 | Creating API endpoint | `api-development.md` |
 | Adding database model | `database-schema.md` |
-| Building UI component | `component-builder.md` |
+| Building UI component | `component-builder.md` or `senior-frontend/` |
 | Writing tests | `test-writer.md` |
 | Auth features | `auth-flow.md` |
 | Payment features | `stripe-integration.md` |
@@ -104,6 +122,15 @@ skills/
 | Map features | `map-integration.md` |
 | Form features | `form-builder.md` |
 | Performance issues | `performance-optimization.md` |
+| Architecture review / refactoring | `architect/` |
+| Code duplication detection | `architect/` |
+| New feature design | `architect/` then `senior-frontend/` |
+| Frontend optimization | `senior-frontend/` |
+| Writing/fixing tests | `tester/` |
+| CI/CD pipeline setup | `tester/` |
+| Debugging test failures | `tester/` |
+| Test coverage analysis | `tester/` |
+| Regression testing | `tester/` |
 
 ## Key Features
 
@@ -404,6 +431,350 @@ Core models:
 - Notification, CheckIn, Waitlist
 - EmailLog, AdminReport, Recommendation
 - EventSeries, ActivityBooking, UserActivity
+
+## AI Agents / Sub-Agents
+
+The project has three specialized agent skills that can be invoked via the `skill` tool followed by the `task` tool. These provide expert-level assistance for frontend development, software architecture, and testing.
+
+### How to Use Agents
+
+In OpenCode, load a skill first, then delegate work to a general subagent with the skill context:
+
+```
+1. Load skill: skill("senior-frontend") or skill("architect")
+2. Delegate: task(subagent_type="general", prompt="...instructions referencing loaded skill...")
+```
+
+The subagent will follow the skill's patterns and return completed work.
+
+### 1. Senior Frontend Agent
+
+**Skill:** `skills/senior-frontend/SKILL.md`
+**Purpose:** Expert React/Next.js/Tailwind component development
+**Use when:**
+- Building new UI components
+- Implementing responsive designs
+- Adding dark mode support
+- Optimizing frontend performance
+- Creating forms with validation
+- Writing component tests
+
+**Example invocation flow:**
+```
+User: "Create a new EventFilterBar component with date range and category filters"
+
+Agent action:
+1. skill("senior-frontend")  -- Load the skill
+2. task(
+     subagent_type="general",
+     description="Create EventFilterBar component",
+     prompt="""
+       Using the senior-frontend skill patterns, create a new EventFilterBar 
+       component in src/components/events/EventFilterBar.tsx.
+       
+       Requirements:
+       - Date range picker (today, this week, this month, custom)
+       - Category multi-select using the category constants
+       - Price filter (free, paid, price range)
+       - Dark mode support
+       - data-testid attributes for E2E testing
+       - Follow the component pattern from SKILL.md
+       - Export from src/components/events/index.ts
+       
+       After creating the component:
+       1. Run npm run lint
+       2. Run npm run test
+       3. Report any errors and fix them
+       4. Return the final component code and test results
+       The component should be fully self-contained and match the existing codebase style (see EventCard.tsx as reference).
+     """
+   )
+```
+
+### 2. Architect Agent
+
+**Skill:** `skills/architect/SKILL.md`
+**References:**
+- `skills/architect/references/solid_principles.md`
+- `skills/architect/references/design_patterns.md`
+- `skills/architect/references/duplication_detection.md`
+
+**Purpose:** SOLID principles enforcement, clean architecture, design patterns, code duplication detection
+**Use when:**
+- Designing new features or modules
+- Refactoring complex components
+- Reviewing code for architecture issues
+- Creating abstractions and shared utilities
+- Detecting and eliminating code duplication
+- Ensuring scalability of new code
+
+**Example invocation flow:**
+```
+User: "Review the admin dashboard for SOLID violations and suggest refactorings"
+
+Agent action:
+1. skill("architect")  -- Load the skill
+2. task(
+     subagent_type="general",
+     description="Review admin dashboard architecture",
+     prompt="""
+       Using the architect skill, review src/app/admin/page.tsx and related files.
+       
+       Tasks:
+       1. Check for SOLID principle violations
+       2. Identify code duplication within admin pages
+       3. Suggest design patterns that would improve maintainability
+       4. Check for layer violations (components importing prisma, etc.)
+       5. Measure complexity (lines per function, nesting depth)
+       
+       Output format:
+       - List each issue with severity (High/Medium/Low)
+       - Cite the specific principle or pattern violated
+       - Provide before/after code examples for top 3 issues
+       - Create a refactoring plan with file names and estimated effort
+       
+       Focus on concrete, actionable changes that improve the codebase without breaking existing functionality.
+     """
+   )
+```
+
+### 3. Tester Agent
+
+**Skill:** `skills/tester/SKILL.md`
+**References:**
+- `skills/tester/references/ci_cd_testing.md`
+- `skills/tester/references/fixing_tests.md`
+- `skills/tester/references/test_architecture.md`
+
+**Purpose:** Expert testing for Vitest, Playwright, and CI/CD pipelines
+**Use when:**
+- Writing or fixing unit tests (Vitest)
+- Writing or fixing E2E tests (Playwright)
+- Debugging test failures in CI or locally
+- Setting up GitHub Actions workflows
+- Analyzing test coverage and quality
+- Regression testing after changes
+- Refactoring tests for maintainability
+
+**Current test suite:**
+- **183 unit tests** (Vitest + jsdom)
+- **45 E2E UI tests** (Playwright + Chromium)
+- **15+ E2E API tests** (Playwright Request)
+- **4 CI workflows** (unit-tests, e2e-ui, e2e-api, lint-build)
+
+**Example invocation flow:**
+```
+User: "The RSVP flow E2E test is failing in CI but passes locally"
+
+Agent action:
+1. skill("tester")  -- Load the skill
+2. task(
+     subagent_type="general",
+     description="Debug failing RSVP E2E test",
+     prompt="""
+       Using the tester skill, debug the failing E2E test in e2e/ui/tests/events/rsvp-flow.spec.ts.
+
+       The test fails in CI (GitHub Actions) but passes locally with --headed.
+       CI error: "Timeout 5000ms exceeded waiting for locator('[data-testid=\"rsvp-confirmation\"]')"
+
+       Tasks:
+       1. Read the failing test file and identify potential issues
+       2. Check playwright.config.ts for CI-specific settings (retries, timeouts)
+       3. Look for timing issues, race conditions, or missing waits
+       4. Check if data-testid selectors match the actual component code
+       5. Suggest fixes with code examples
+       6. Run npx playwright test e2e/ui/tests/events/rsvp-flow.spec.ts --repeat-each=3 locally to verify stability
+
+       Follow the fixing_tests.md reference guide for debugging patterns.
+       Report the root cause and the fix applied.
+     """
+   )
+```
+
+**Example: Adding tests for a new feature:**
+```
+User: "I just added a new event waitlist feature, add tests for it"
+
+Agent action:
+1. skill("tester")
+2. task(
+     subagent_type="general",
+     description="Add tests for waitlist feature",
+     prompt="""
+       Using the tester skill, add comprehensive tests for the new waitlist feature.
+
+       The feature includes:
+       - waitlist/join API endpoint (POST /api/events/:id/waitlist)
+       - waitlist/leave API endpoint (DELETE /api/events/:id/waitlist)
+       - WaitlistButton component in src/components/events/
+       - waitlist count display on event detail page
+
+       Tasks:
+       1. Add unit tests in src/test/waitlist.test.ts for:
+          - waitlist sorting/queue logic
+          - capacity calculations
+          - notification trigger conditions
+       2. Add API tests in e2e/api/tests/events/waitlist.spec.ts for:
+          - Joining waitlist (success, event full, already joined)
+          - Leaving waitlist (success, not on waitlist)
+          - Unauthorized access blocked
+       3. Add E2E tests in e2e/ui/tests/events/waitlist.spec.ts for:
+          - Join waitlist button flow
+          - Leave waitlist flow
+          - Waitlist count updates on UI
+       4. Run all tests: npm run test:run && npm run test:e2e:all
+       5. Report results and fix any failures
+
+       Follow the test architecture and POM patterns from the skill.
+     """
+   )
+```
+
+### Agent Collaboration Pattern
+
+For complex features, use agents in sequence:
+
+1. **Architect first** - Design the component/API structure, interfaces, and data flow
+2. **Senior Frontend second** - Implement the UI following the architect's design
+3. **Architect review** - Review the implementation for any architectural drift
+
+**Example:**
+```
+User: "Build a new waitlist feature for events"
+
+Flow:
+1. skill("architect")
+   -> Design database schema, API routes, hooks, and component structure
+
+2. skill("senior-frontend")
+   -> Implement WaitlistButton, WaitlistModal, WaitlistBadge components
+
+3. skill("architect")
+   -> Review implementation for duplication, SOLID compliance, layer violations
+
+4. skill("tester")
+   -> Add unit tests, API tests, and E2E tests for the waitlist feature
+   -> Debug and fix any failing tests
+   -> Verify all 183+ unit tests and 45+ E2E tests still pass
+
+5. Run full verification: lint + test + build + e2e
+```
+
+## Mandatory Test-After-Work Workflow
+
+Every code change MUST follow this verification flow before being considered complete. This applies to both manual work and agent-delegated work.
+
+### The Flow
+
+```
++-----------+     +--------+     +---------+     +----------+     +--------+
+|   Code    | --> |  Lint  | --> |  Test   | --> |  Build   | --> | Verify |
+|  Change   |     | Check  |     |  Run    |     |  Check   |     |  Done  |
++-----------+     +--------+     +---------+     +----------+     +--------+
+      ^                                                            |
+      +-------------------- Fix Issues ----------------------------+
+```
+
+### Step-by-Step
+
+#### 1. Code Change
+- Make the minimal change needed
+- Follow existing code style and patterns
+- Add/update tests for the changed code
+
+#### 2. Lint Check
+```bash
+npm run lint
+```
+- Fix ALL errors and warnings
+- No exceptions
+
+#### 3. Unit Tests
+```bash
+npm run test
+```
+- All 183 tests must pass
+- If tests fail, fix the code (not the tests, unless tests are wrong)
+- Add new tests for new functionality
+
+#### 4. E2E Tests (if UI changed)
+```bash
+npx playwright test
+```
+- Run if any UI component, page, or interaction was modified
+- All 45 tests must pass
+- Update selectors if data-testid changed
+
+#### 5. Build Check
+```bash
+npm run build
+```
+- Must complete without errors
+- Check for TypeScript errors
+- Verify no missing dependencies
+
+#### 6. Verification
+- Review the change one more time
+- Ensure no console.logs or debug code left
+- Confirm dark mode works (if UI change)
+- Confirm responsive design works (if UI change)
+
+### Enforcing in Agent Delegation
+
+When delegating work to subagents, ALWAYS include this in the prompt:
+
+```
+AFTER completing the implementation, you MUST:
+1. Run `npm run lint` and fix all errors
+2. Run `npm run test` and ensure all tests pass
+3. If you changed any UI components or pages, run `npx playwright test`
+4. Run `npm run build` to verify production build succeeds
+5. Report the results of all commands in your response
+6. If any step fails, fix the issue and re-run until everything passes
+
+Do NOT return until all checks pass.
+```
+
+### Verification Script
+
+For automation, use this script (save as `scripts/verify.sh`):
+
+```bash
+#!/bin/bash
+set -e
+
+echo "=== Step 1: Lint ==="
+npm run lint
+
+echo "=== Step 2: Unit Tests ==="
+npm run test
+
+echo "=== Step 3: Build ==="
+npm run build
+
+echo "=== Step 4: E2E Tests ==="
+npx playwright test
+
+echo "=== ALL CHECKS PASSED ==="
+```
+
+Usage:
+```bash
+chmod +x scripts/verify.sh
+./scripts/verify.sh
+```
+
+### When Tests Are Allowed to Fail (Rare)
+
+Only skip tests when:
+- The test itself is testing the wrong thing (document in commit message)
+- The failure is a known flaky test (document in AGENTS.md known issues)
+- The change is purely documentation
+
+Never skip tests for:
+- "I'll fix tests later"
+- "It works on my machine"
+- "The test is too hard to update"
 
 ## Known Issues & Improvements
 

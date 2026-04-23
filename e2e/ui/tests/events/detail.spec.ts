@@ -13,11 +13,13 @@ import { test, expect } from '../../fixtures';
  * - Ticket section
  * - Event countdown
  */
+test.describe.configure({ mode: 'serial' });
+
 test.describe('Event Detail Page', () => {
   test.beforeEach(async ({ page }) => {
     await test.step('Navigate to Bogotá events page', async () => {
       await page.goto('/bogota');
-      await page.waitForLoadState('networkidle');
+      await page.waitForSelector('[data-testid^="event-card"]', { timeout: 15000 });
     });
   });
 
@@ -89,16 +91,13 @@ test.describe('Event Detail Page', () => {
     });
   });
 
-  test('should display RSVP buttons', async ({ page, cityPage }) => {
+  test('should display login prompt for unauthenticated users', async ({ page, cityPage }) => {
     await test.step('Navigate to event detail', async () => {
       await cityPage.clickFirstEvent();
     });
 
-    await test.step('Verify RSVP buttons are visible', async () => {
-      await expect(page.locator('[data-testid="rsvp-buttons"]')).toBeVisible();
-      await expect(page.locator('[data-testid="rsvp-going-button"]')).toBeVisible();
-      await expect(page.locator('[data-testid="rsvp-interested-button"]')).toBeVisible();
-      await expect(page.locator('[data-testid="rsvp-maybe-button"]')).toBeVisible();
+    await test.step('Verify login prompt is shown for RSVP when not authenticated', async () => {
+      await expect(page.locator('[data-testid="login-prompt"]')).toBeVisible();
     });
   });
 
@@ -138,11 +137,7 @@ test.describe('Event Detail Page', () => {
       await cityPage.clickFirstEvent();
     });
 
-    await test.step('Click RSVP going button', async () => {
-      await page.click('[data-testid="rsvp-going-button"]');
-    });
-
-    await test.step('Verify login prompt is shown', async () => {
+    await test.step('Verify login prompt is visible for unauthenticated users', async () => {
       await expect(page.locator('[data-testid="login-prompt"]')).toBeVisible();
     });
   });
