@@ -46,6 +46,3 @@ AGENTS.md
 
 # Prisma (keep schema, exclude migrations)
 prisma/migrations
-
-# Test specific
-e2e
