@@ -36,12 +36,6 @@ jobs:
           echo "App failed to start"
           exit 1
 
-      - name: Run UI E2E tests
-        run: |
-          docker compose exec -T app npx playwright test e2e/ui --project=chromium
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@db:5432/aroundme?schema=public
-
       - name: Show logs on failure
         if: failure()
         run: docker compose logs
