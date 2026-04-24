@@ -51,7 +51,7 @@ export default function DashboardPlacesPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
@@ -61,14 +61,14 @@ export default function DashboardPlacesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="dashboard-places-page-container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-places-title">Mis Lugares</h1>
-            <p className="text-gray-500">Gestiona tus venues reclamados</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="dashboard-places-title">Mis Lugares</h1>
+            <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Gestiona tus venues reclamados</p>
           </div>
           <Link
             href="/pricing"
@@ -87,7 +87,7 @@ export default function DashboardPlacesPage() {
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-gray-400" />
+                <MapPin className="w-8 h-8 text-gray-400 dark:text-gray-500" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">No tienes venues reclamados</h2>
               <p className="text-gray-500 mb-6">Reclama tu venue para obtener análisis y gestionar tu perfil</p>
@@ -107,7 +107,7 @@ export default function DashboardPlacesPage() {
                 <div key={place.id} className="bg-white rounded-xl shadow-sm p-4 flex gap-4">
                   <div className="relative w-32 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                     {place.image ? (
-                      <Image src={place.image} alt={place.name} fill className="object-cover" unoptimized />
+                      <Image src={place.image} alt={place.name} fill sizes="128px" className="object-cover" unoptimized />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">
                         <Icon className="w-8 h-8 text-teal-300" />
@@ -126,7 +126,7 @@ export default function DashboardPlacesPage() {
                             </span>
                           )}
                         </div>
-                        <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           <span className="flex items-center gap-1">
                             <MapPin className="w-4 h-4" />
                             {place.address}
@@ -159,7 +159,7 @@ export default function DashboardPlacesPage() {
                         </Link>
                       </div>
                     </div>
-                    <div className="flex gap-4 mt-2 text-xs text-gray-400">
+                    <div className="flex gap-4 mt-2 text-xs text-gray-400 dark:text-gray-500">
                       <span className="capitalize">{place.category}</span>
                       <span>{place.city.name}</span>
                     </div>

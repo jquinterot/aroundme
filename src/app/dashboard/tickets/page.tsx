@@ -68,7 +68,7 @@ export default function TicketsPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
@@ -85,14 +85,14 @@ export default function TicketsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="dashboard-tickets-page-container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-tickets-title">My Tickets</h1>
-            <p className="text-gray-500">View your purchased tickets</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="dashboard-tickets-title">My Tickets</h1>
+            <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">View your purchased tickets</p>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ export default function TicketsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                 filter === f.id
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:bg-gray-700'
               }`}
             >
               {f.label}
@@ -148,13 +148,13 @@ export default function TicketsPage() {
                           }`}>
                             {order.status}
                           </span>
-                          <span className="text-sm text-gray-400">#{order.id.slice(-8)}</span>
+                          <span className="text-sm text-gray-400 dark:text-gray-500">#{order.id.slice(-8)}</span>
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           Ordered {format(new Date(order.createdAt), 'MMM d, yyyy')}
                         </p>
                       </div>
-                      <p className="text-xl font-bold text-gray-900">
+                      <p className="text-xl font-bold text-gray-900 dark:text-white">
                         ${order.total.toLocaleString('COP')}
                       </p>
                     </div>
@@ -173,7 +173,7 @@ export default function TicketsPage() {
                         )}
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900 mb-2">{primaryEvent.title}</h3>
-                          <div className="space-y-1 text-sm text-gray-500">
+                          <div className="space-y-1 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4" />
                               {format(new Date(primaryEvent.dateStart), 'EEEE, MMMM d, yyyy')}
@@ -191,7 +191,7 @@ export default function TicketsPage() {
                       </div>
                     )}
 
-                    <div className="border-t border-gray-100 pt-4">
+                    <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
                       <h4 className="text-sm font-medium text-gray-700 mb-2">Tickets</h4>
                       <div className="flex flex-wrap gap-2">
                         {order.items.map((item, index) => (
@@ -210,9 +210,9 @@ export default function TicketsPage() {
                   </div>
 
                   {order.status === 'completed' && (
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 dark:border-gray-700">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           Confirmation sent to {order.email}
                         </p>
                         <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">

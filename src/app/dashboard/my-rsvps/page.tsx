@@ -49,17 +49,17 @@ export default function MyRsvpsPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
         <div className="flex items-center justify-center py-20">
-          <div className="animate-pulse text-gray-500">Loading...</div>
+          <div className="animate-pulse text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="my-rsvps-page-container">
@@ -78,9 +78,9 @@ export default function MyRsvpsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-                <div className="h-32 bg-gray-200 rounded-lg mb-4" />
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2" />
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
               </div>
             ))}
           </div>
@@ -126,6 +126,7 @@ export default function MyRsvpsPage() {
                             src={rsvp.event.imageUrl}
                             alt={rsvp.event.title}
                             fill
+                            sizes="128px"
                             className="object-cover"
                             unoptimized
                           />
@@ -138,7 +139,7 @@ export default function MyRsvpsPage() {
                           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                             {rsvp.event.title}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               {new Date(rsvp.event.dateStart).toLocaleDateString()}

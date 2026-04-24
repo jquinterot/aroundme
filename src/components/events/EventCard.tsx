@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, startTransition, useCallback } from 'react';
+import { useState, useEffect, startTransition, useCallback, memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
@@ -22,7 +22,7 @@ function getTimeUntilEvent(dateStart: string): { days: number; hours: number; mi
   };
 }
 
-export function EventCard({ event }: EventCardProps) {
+function EventCardComponent({ event }: EventCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [timeUntil, setTimeUntil] = useState<{ days: number; hours: number; minutes: number; total: number } | null>(null);
@@ -140,3 +140,5 @@ export function EventCard({ event }: EventCardProps) {
     </Link>
   );
 }
+
+export const EventCard = memo(EventCardComponent);

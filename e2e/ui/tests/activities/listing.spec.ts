@@ -14,7 +14,7 @@ test.describe('Activities Listing', () => {
   test.beforeEach(async ({ page }) => {
     await test.step('Navigate to Bogotá activities page', async () => {
       await page.goto('/bogota/activities');
-      await page.waitForLoadState('networkidle');
+      await expect(page.locator('[data-testid^="activity-card"]').first()).toBeVisible({ timeout: 15000 });
     });
   });
 
@@ -158,16 +158,29 @@ test.describe('Activities Listing', () => {
     });
   });
 
-  test('should navigate to create activity page', async ({ page }) => {
+  test('should navigate to create activity page when authenticated', async ({ page }) => {
+    await test.step('Log in as admin user', async () => {
+      await page.goto('/login');
+      await expect(page.locator('[data-testid="login-email-input"]')).toBeVisible();
+      await page.fill('[data-testid="login-email-input"]', 'admin@aroundme.co');
+      await page.fill('[data-testid="login-password-input"]', 'admin123');
+      await page.click('[data-testid="login-submit-button"]');
+      await page.waitForURL(/\/(dashboard|bogota)/, { timeout: 10000 }).catch(() => {});
+    });
+
+    await test.step('Navigate to activities page', async () => {
+      await page.goto('/bogota/activities');
+      await expect(page.locator('[data-testid="create-activity-button"]')).toBeVisible({ timeout: 15000 });
+    });
+
     await test.step('Click on create activity button', async () => {
-      const createButton = page.locator('[data-testid="create-activity-button"], a[href="/create-activity"]');
-      if (await createButton.isVisible()) {
-        await createButton.click();
-      }
+      const createButton = page.locator('[data-testid="create-activity-button"]');
+      await createButton.click();
     });
 
     await test.step('Verify navigation to create activity page', async () => {
       await expect(page).toHaveURL('/create-activity');
+      await expect(page.locator('[data-testid="create-activity-page-container"]')).toBeVisible();
     });
   });
 
@@ -186,7 +199,7 @@ test.describe('Activities Map View', () => {
   test('should display map with activity markers', async ({ page }) => {
     await test.step('Navigate to activities page', async () => {
       await page.goto('/bogota/activities');
-      await page.waitForLoadState('networkidle');
+      await expect(page.locator('[data-testid^="activity-card"]').first()).toBeVisible({ timeout: 15000 });
     });
 
     await test.step('Switch to map view if available', async () => {

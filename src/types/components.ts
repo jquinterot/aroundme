@@ -259,9 +259,24 @@ export interface EventActionsProps {
   isSaved: boolean;
   isAuthenticated: boolean;
   onSave: () => void;
+  event: {
+    id: string;
+    title: string;
+    description?: string;
+    date: {
+      start: string;
+      end?: string;
+    };
+    venue?: {
+      name?: string;
+      address?: string;
+    };
+  };
+  eventUrl: string;
 }
 
 export interface RSVPButtonsProps {
   userRsvp: { status: string } | null;
   onRsvp: (status: string) => void;
+  eventId: string;
 }

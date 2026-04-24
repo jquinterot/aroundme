@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
@@ -7,7 +8,7 @@ import { PlaceCardProps } from '@/types/components';
 import { PlaceCategoryBadge, PlaceVerifiedBadge, PlacePriceRange, PlaceRating } from './PlaceCardBadges';
 import { PlaceholderImage } from '@/components/ui/Placeholder';
 
-export function PlaceCard({ place }: PlaceCardProps) {
+function PlaceCardComponent({ place }: PlaceCardProps) {
   return (
     <Link href={`/place/${place.id}`} className="group" data-testid={`place-card-${place.id}`}>
       <article className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-200">
@@ -61,3 +62,5 @@ export function PlaceCard({ place }: PlaceCardProps) {
     </Link>
   );
 }
+
+export const PlaceCard = memo(PlaceCardComponent);
