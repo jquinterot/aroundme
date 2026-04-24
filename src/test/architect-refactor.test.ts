@@ -5,11 +5,11 @@ import path from 'path';
 describe('Architect refactoring tests', () => {
   describe('PlaceCardBadges color mapping', () => {
     it('should export all badge components after refactor', async () => {
-      const module = await import('@/components/places/PlaceCardBadges');
-      expect(module.PlaceCategoryBadge).toBeDefined();
-      expect(module.PlaceVerifiedBadge).toBeDefined();
-      expect(module.PlacePriceRange).toBeDefined();
-      expect(module.PlaceRating).toBeDefined();
+      const placeCardBadgesModule = await import('@/components/places/PlaceCardBadges');
+      expect(placeCardBadgesModule.PlaceCategoryBadge).toBeDefined();
+      expect(placeCardBadgesModule.PlaceVerifiedBadge).toBeDefined();
+      expect(placeCardBadgesModule.PlacePriceRange).toBeDefined();
+      expect(placeCardBadgesModule.PlaceRating).toBeDefined();
     });
 
     it('should not use dynamic template literals for dark classes', () => {
