@@ -14,23 +14,23 @@ test.describe('Activities Listing', () => {
   test.beforeEach(async ({ page }) => {
     await test.step('Navigate to Bogotá activities page', async () => {
       await page.goto('/bogota/activities');
-      await expect(page.locator('[data-testid^="activity-card"]').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible({ timeout: 15000 });
     });
   });
 
   test('should display activity cards with proper data', async ({ page }) => {
     await test.step('Wait for activity cards to load', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible({ timeout: 15000 });
     });
 
     await test.step('Verify activity card count is greater than 0', async () => {
-      const count = await page.locator('[data-testid^="activity-card"]').count();
+      const count = await page.getByTestId(/^activity-card/).count();
       expect(count).toBeGreaterThanOrEqual(1);
     });
 
     await test.step('Verify activity cards have required elements', async () => {
-      const firstCard = page.locator('[data-testid^="activity-card"]').first();
+      const firstCard = page.getByTestId(/^activity-card/).first();
       await expect(firstCard).toBeVisible();
       const cardContent = await firstCard.textContent();
       expect(cardContent?.length).toBeGreaterThan(0);
@@ -39,15 +39,15 @@ test.describe('Activities Listing', () => {
 
   test('should filter activities by classes category', async ({ page }) => {
     await test.step('Click on Classes category filter', async () => {
-      await page.click('[data-testid="category-class"], button:has-text("Classes")');
+      await page.locator('[data-testid="category-class"], button:has-text("Classes")').click();
     });
 
     await test.step('Wait for filter to apply', async () => {
-      await page.waitForTimeout(500);
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
     });
 
     await test.step('Verify activities are displayed after filtering', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
 
@@ -59,45 +59,45 @@ test.describe('Activities Listing', () => {
 
   test('should filter activities by tours category', async ({ page }) => {
     await test.step('Click on Tours category filter', async () => {
-      await page.click('[data-testid="category-tour"], button:has-text("Tours")');
+      await page.locator('[data-testid="category-tour"], button:has-text("Tours")').click();
     });
 
     await test.step('Wait for filter to apply', async () => {
-      await page.waitForTimeout(500);
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
     });
 
     await test.step('Verify activities are displayed after filtering', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
   });
 
   test('should filter activities by wellness category', async ({ page }) => {
     await test.step('Click on Wellness category filter', async () => {
-      await page.click('[data-testid="category-wellness"], button:has-text("Wellness")');
+      await page.locator('[data-testid="category-wellness"], button:has-text("Wellness")').click();
     });
 
     await test.step('Wait for filter to apply', async () => {
-      await page.waitForTimeout(500);
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
     });
 
     await test.step('Verify activities are displayed after filtering', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
   });
 
   test('should filter activities by entertainment category', async ({ page }) => {
     await test.step('Click on Entertainment category filter', async () => {
-      await page.click('[data-testid="category-entertainment"], button:has-text("Entertainment")');
+      await page.locator('[data-testid="category-entertainment"], button:has-text("Entertainment")').click();
     });
 
     await test.step('Wait for filter to apply', async () => {
-      await page.waitForTimeout(500);
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
     });
 
     await test.step('Verify activities are displayed after filtering', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
   });
@@ -114,20 +114,20 @@ test.describe('Activities Listing', () => {
       const searchInput = page.locator('[data-testid="activity-search-input"], input[placeholder*="Search"]');
       if (await searchInput.isVisible()) {
         await searchInput.fill('yoga');
-        await page.waitForTimeout(500);
+        await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
       }
     });
 
     await test.step('Verify search results are displayed', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
   });
 
   test('should clear category filter', async ({ page }) => {
     await test.step('Apply Classes category filter', async () => {
-      await page.click('[data-testid="category-class"], button:has-text("Classes")');
-      await page.waitForTimeout(500);
+      await page.locator('[data-testid="category-class"], button:has-text("Classes")').click();
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible();
     });
 
     await test.step('Click on All categories or clear filter', async () => {
@@ -138,14 +138,14 @@ test.describe('Activities Listing', () => {
     });
 
     await test.step('Verify all activities are shown again', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await expect(activityCards.first()).toBeVisible();
     });
   });
 
   test('should navigate to activity detail', async ({ page }) => {
     await test.step('Click on first activity card', async () => {
-      const activityCards = page.locator('[data-testid^="activity-card"]');
+      const activityCards = page.getByTestId(/^activity-card/);
       await activityCards.first().click();
     });
 
@@ -154,39 +154,39 @@ test.describe('Activities Listing', () => {
     });
 
     await test.step('Verify activity detail page is displayed', async () => {
-      await expect(page.locator('[data-testid="activity-detail-page"]')).toBeVisible();
+      await expect(page.getByTestId('activity-detail-page')).toBeVisible();
     });
   });
 
   test('should navigate to create activity page when authenticated', async ({ page }) => {
     await test.step('Log in as admin user', async () => {
       await page.goto('/login');
-      await expect(page.locator('[data-testid="login-email-input"]')).toBeVisible();
-      await page.fill('[data-testid="login-email-input"]', 'admin@aroundme.co');
-      await page.fill('[data-testid="login-password-input"]', 'admin123');
-      await page.click('[data-testid="login-submit-button"]');
+      await expect(page.getByTestId('login-email-input')).toBeVisible();
+      await page.getByTestId('login-email-input').fill('admin@aroundme.co');
+      await page.getByTestId('login-password-input').fill('admin123');
+      await page.getByTestId('login-submit-button').click();
       await page.waitForURL(/\/(dashboard|bogota)/, { timeout: 10000 }).catch(() => {});
     });
 
     await test.step('Navigate to activities page', async () => {
       await page.goto('/bogota/activities');
-      await expect(page.locator('[data-testid="create-activity-button"]')).toBeVisible({ timeout: 15000 });
+      await expect(page.getByTestId('create-activity-button')).toBeVisible({ timeout: 15000 });
     });
 
     await test.step('Click on create activity button', async () => {
-      const createButton = page.locator('[data-testid="create-activity-button"]');
+      const createButton = page.getByTestId('create-activity-button');
       await createButton.click();
     });
 
     await test.step('Verify navigation to create activity page', async () => {
       await expect(page).toHaveURL('/create-activity');
-      await expect(page.locator('[data-testid="create-activity-page-container"]')).toBeVisible();
+      await expect(page.getByTestId('create-activity-page-container')).toBeVisible();
     });
   });
 
   test('should display activities count', async ({ page }) => {
     await test.step('Verify activities count is displayed', async () => {
-      const activitiesCount = page.locator('[data-testid="activities-count"]');
+      const activitiesCount = page.getByTestId('activities-count');
       if (await activitiesCount.isVisible()) {
         const countText = await activitiesCount.textContent();
         expect(countText).toMatch(/\d+/);
@@ -199,7 +199,7 @@ test.describe('Activities Map View', () => {
   test('should display map with activity markers', async ({ page }) => {
     await test.step('Navigate to activities page', async () => {
       await page.goto('/bogota/activities');
-      await expect(page.locator('[data-testid^="activity-card"]').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.getByTestId(/^activity-card/).first()).toBeVisible({ timeout: 15000 });
     });
 
     await test.step('Switch to map view if available', async () => {

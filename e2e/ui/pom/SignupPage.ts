@@ -19,16 +19,16 @@ export class SignupPage extends BasePage {
   constructor(page: Page) {
     super(page, '/signup');
 
-    this.pageContainer = page.locator('[data-testid="signup-page"]');
-    this.title = page.locator('[data-testid="signup-title"]');
-    this.nameInput = page.locator('[data-testid="signup-name-input"]');
-    this.emailInput = page.locator('[data-testid="signup-email-input"]');
-    this.passwordInput = page.locator('[data-testid="signup-password-input"]');
-    this.confirmPasswordInput = page.locator('[data-testid="signup-confirm-password-input"]');
-    this.submitButton = page.locator('[data-testid="signup-submit-button"]');
-    this.loginLink = page.locator('[data-testid="auth-login-link"]');
-    this.errorMessage = page.locator('[data-testid="signup-error"]');
-    this.successMessage = page.locator('[data-testid="signup-success"]');
+    this.pageContainer = page.getByTestId('signup-page');
+    this.title = page.getByTestId('signup-title');
+    this.nameInput = page.getByTestId('signup-name-input');
+    this.emailInput = page.getByTestId('signup-email-input');
+    this.passwordInput = page.getByTestId('signup-password-input');
+    this.confirmPasswordInput = page.getByTestId('signup-confirm-password-input');
+    this.submitButton = page.getByTestId('signup-submit-button');
+    this.loginLink = page.getByTestId('auth-login-link');
+    this.errorMessage = page.getByTestId('signup-error');
+    this.successMessage = page.getByTestId('signup-success');
   }
 
   async signup(name: string, email: string, password: string): Promise<void> {

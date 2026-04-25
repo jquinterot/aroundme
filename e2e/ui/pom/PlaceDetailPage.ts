@@ -30,18 +30,18 @@ export class PlaceDetailPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.pageContainer = page.locator('[data-testid="place-detail-page"]');
-    this.loading = page.locator('[data-testid="place-loading"]');
-    this.notFound = page.locator('[data-testid="place-not-found"]');
+    this.pageContainer = page.getByTestId('place-detail-page');
+    this.loading = page.getByTestId('place-loading');
+    this.notFound = page.getByTestId('place-not-found');
     this.title = page.locator('h1');
-    this.backLink = page.locator('[data-testid="back-to-places"]');
-    this.backToPlacesLink = page.locator('[data-testid="back-to-places-link"]');
+    this.backLink = page.getByTestId('back-to-places');
+    this.backToPlacesLink = page.getByTestId('back-to-places-link');
     this.mapContainer = page.locator('.leaflet-container');
-    this.rating = page.locator('[data-testid="place-rating"]');
-    this.reviewCount = page.locator('[data-testid="place-review-count"]');
-    this.priceRange = page.locator('[data-testid="place-price-range"]');
-    this.category = page.locator('[data-testid="place-category-badge"]');
-    this.verifiedBadge = page.locator('[data-testid="place-verified-badge"]');
+    this.rating = page.getByTestId('place-rating');
+    this.reviewCount = page.getByTestId('place-review-count');
+    this.priceRange = page.getByTestId('place-price-range');
+    this.category = page.getByTestId('place-category-badge');
+    this.verifiedBadge = page.getByTestId('place-verified-badge');
   }
 
   async isPageLoaded(): Promise<boolean> {

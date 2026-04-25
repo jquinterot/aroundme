@@ -21,16 +21,16 @@ export class CityPage extends BasePage {
     super(page, `/${citySlug}`);
     
     this.pageTitle = page.locator('h1');
-    this.eventsTab = page.locator('[data-testid="tab-events"]');
-    this.placesTab = page.locator('[data-testid="tab-places"]');
-    this.activitiesTab = page.locator('[data-testid="tab-activities"]');
-    this.eventCards = page.locator('[data-testid^="event-card-"]');
-    this.placeCards = page.locator('[data-testid^="place-card-"]');
-    this.activityCards = page.locator('[data-testid^="activity-card-"]');
-    this.categoryFilter = page.locator('[data-testid="event-filter-category-all"]');
-    this.dateFilter = page.locator('[data-testid="event-filter-date"]');
-    this.priceFilter = page.locator('[data-testid="event-filter-price"]');
-    this.searchInput = page.locator('[data-testid="event-search-input"]');
+    this.eventsTab = page.getByTestId('tab-events');
+    this.placesTab = page.getByTestId('tab-places');
+    this.activitiesTab = page.getByTestId('tab-activities');
+    this.eventCards = page.getByTestId(/^event-card-/);
+    this.placeCards = page.getByTestId(/^place-card-/);
+    this.activityCards = page.getByTestId(/^activity-card-/);
+    this.categoryFilter = page.getByTestId('event-filter-category-all');
+    this.dateFilter = page.getByTestId('event-filter-date');
+    this.priceFilter = page.getByTestId('event-filter-price');
+    this.searchInput = page.getByTestId('event-search-input');
   }
 
   async switchToPlaces(): Promise<void> {
@@ -72,6 +72,6 @@ export class CityPage extends BasePage {
   }
 
   async filterByCategory(category: string): Promise<void> {
-    await this.page.click(`[data-testid="event-filter-category-${category}"]`);
+    await this.page.getByTestId(`event-filter-category-${category}`).click();
   }
 }

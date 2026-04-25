@@ -17,14 +17,14 @@ export class HeaderPage extends BasePage {
   constructor(page: Page) {
     super(page);
     
-    this.logo = page.locator('[data-testid="header-logo"]');
-    this.eventsLink = page.locator('[data-testid="nav-events-link"]');
-    this.placesLink = page.locator('[data-testid="nav-places-link"]');
-    this.activitiesLink = page.locator('[data-testid="nav-activities-link"]');
-    this.searchInput = page.locator('[data-testid="search-input"]');
-    this.userMenu = page.locator('[data-testid="user-menu-button"]');
-    this.loginButton = page.locator('[data-testid="login-button"]');
-    this.signupButton = page.locator('[data-testid="signup-button"]');
+    this.logo = page.getByTestId('header-logo');
+    this.eventsLink = page.getByTestId('nav-events-link');
+    this.placesLink = page.getByTestId('nav-places-link');
+    this.activitiesLink = page.getByTestId('nav-activities-link');
+    this.searchInput = page.getByTestId('search-input');
+    this.userMenu = page.getByTestId('user-menu-button');
+    this.loginButton = page.getByTestId('login-button');
+    this.signupButton = page.getByTestId('signup-button');
   }
 
   async navigateToEvents(): Promise<void> {

@@ -23,20 +23,20 @@ export class EventDetailPage extends BasePage {
   constructor(page: Page, eventId: string) {
     super(page, `/event/${eventId}`);
     
-    this.pageContainer = page.locator('[data-testid="event-detail-page"]');
+    this.pageContainer = page.getByTestId('event-detail-page');
     this.title = page.locator('h1');
-    this.description = page.locator('[data-testid="event-description"]');
-    this.date = page.locator('[data-testid="event-date"]');
-    this.venue = page.locator('[data-testid="event-venue-name"]');
-    this.venueAddress = page.locator('[data-testid="event-venue-address"]');
+    this.description = page.getByTestId('event-description');
+    this.date = page.getByTestId('event-date');
+    this.venue = page.getByTestId('event-venue-name');
+    this.venueAddress = page.getByTestId('event-venue-address');
     this.mapContainer = page.locator('.leaflet-container');
-    this.rsvpGoingButton = page.locator('[data-testid="rsvp-going-button"]');
-    this.rsvpInterestedButton = page.locator('[data-testid="rsvp-interested-button"]');
-    this.rsvpMaybeButton = page.locator('[data-testid="rsvp-maybe-button"]');
-    this.saveButton = page.locator('[data-testid="save-event-button"]');
-    this.shareButton = page.locator('[data-testid="share-event-button"]');
-    this.backLink = page.locator('[data-testid="back-to-events"]');
-    this.ticketSection = page.locator('[data-testid="ticket-section"]');
+    this.rsvpGoingButton = page.getByTestId('rsvp-going-button');
+    this.rsvpInterestedButton = page.getByTestId('rsvp-interested-button');
+    this.rsvpMaybeButton = page.getByTestId('rsvp-maybe-button');
+    this.saveButton = page.getByTestId('save-event-button');
+    this.shareButton = page.getByTestId('share-event-button');
+    this.backLink = page.getByTestId('back-to-events');
+    this.ticketSection = page.getByTestId('ticket-section');
   }
 
   async rsvp(status: 'going' | 'interested' | 'maybe'): Promise<void> {

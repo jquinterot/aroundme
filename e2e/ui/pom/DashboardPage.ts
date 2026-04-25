@@ -30,14 +30,14 @@ export class DashboardPage extends BasePage {
   constructor(page: Page) {
     super(page, '/dashboard');
 
-    this.pageContainer = page.locator('[data-testid="dashboard-page-container"]');
+    this.pageContainer = page.getByTestId('dashboard-page-container');
     this.title = page.locator('h1');
-    this.myEventsLink = page.locator('[data-testid="my-events-link"]');
-    this.myPlacesLink = page.locator('[data-testid="my-places-link"]');
-    this.myTicketsLink = page.locator('[data-testid="my-tickets-link"]');
-    this.savedEventsLink = page.locator('[data-testid="saved-events-link"]');
-    this.myRsvpsLink = page.locator('[data-testid="my-rsvps-link"]');
-    this.profileLink = page.locator('[data-testid="profile-link"]');
+    this.myEventsLink = page.getByTestId('my-events-link');
+    this.myPlacesLink = page.getByTestId('my-places-link');
+    this.myTicketsLink = page.getByTestId('my-tickets-link');
+    this.savedEventsLink = page.getByTestId('saved-events-link');
+    this.myRsvpsLink = page.getByTestId('my-rsvps-link');
+    this.profileLink = page.getByTestId('profile-link');
     this.createEventButton = page.locator('a[href="/create-event"]');
     this.createActivityButton = page.locator('a[href="/create-activity"]');
     this.submitPlaceButton = page.locator('a[href="/submit-place"]');

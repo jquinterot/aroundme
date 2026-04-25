@@ -37,16 +37,16 @@ export class ActivityDetailPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.pageContainer = page.locator('[data-testid="activity-detail-page"]');
-    this.loading = page.locator('[data-testid="activity-loading"]');
-    this.notFound = page.locator('[data-testid="activity-not-found"]');
-    this.bookingSuccess = page.locator('[data-testid="booking-success"]');
-    this.title = page.locator('[data-testid="activity-title"]');
-    this.provider = page.locator('[data-testid="activity-provider"]');
-    this.backLink = page.locator('[data-testid="back-to-activities"]');
-    this.browseActivitiesLink = page.locator('[data-testid="browse-activities-link"]');
-    this.saveButton = page.locator('[data-testid="save-activity-button"]');
-    this.shareButton = page.locator('[data-testid="share-activity-button"]');
+    this.pageContainer = page.getByTestId('activity-detail-page');
+    this.loading = page.getByTestId('activity-loading');
+    this.notFound = page.getByTestId('activity-not-found');
+    this.bookingSuccess = page.getByTestId('booking-success');
+    this.title = page.getByTestId('activity-title');
+    this.provider = page.getByTestId('activity-provider');
+    this.backLink = page.getByTestId('back-to-activities');
+    this.browseActivitiesLink = page.getByTestId('browse-activities-link');
+    this.saveButton = page.getByTestId('save-activity-button');
+    this.shareButton = page.getByTestId('share-activity-button');
     this.mapContainer = page.locator('.leaflet-container');
 
     // Booking Form

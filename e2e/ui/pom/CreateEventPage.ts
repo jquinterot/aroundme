@@ -46,23 +46,23 @@ export class CreateEventPage extends BasePage {
   constructor(page: Page) {
     super(page, '/create-event');
 
-    this.pageContainer = page.locator('[data-testid="create-event-page-container"]');
-    this.title = page.locator('[data-testid="create-event-title"]');
-    this.backLink = page.locator('[data-testid="back-link"]');
+    this.pageContainer = page.getByTestId('create-event-page-container');
+    this.title = page.getByTestId('create-event-title');
+    this.backLink = page.getByTestId('back-link');
 
     // Step 1
-    this.stepBasicInfo = page.locator('[data-testid="create-event-basic-info"]');
-    this.eventTitleInput = page.locator('[data-testid="event-title-input"]');
-    this.citySelect = page.locator('[data-testid="event-city-select"]');
-    this.categorySelector = page.locator('[data-testid="event-category"]');
-    this.descriptionInput = page.locator('[data-testid="event-description-input"]');
-    this.basicInfoNextButton = page.locator('[data-testid="event-basic-next-button"]');
+    this.stepBasicInfo = page.getByTestId('create-event-basic-info');
+    this.eventTitleInput = page.getByTestId('event-title-input');
+    this.citySelect = page.getByTestId('event-city-select');
+    this.categorySelector = page.getByTestId('event-category');
+    this.descriptionInput = page.getByTestId('event-description-input');
+    this.basicInfoNextButton = page.getByTestId('event-basic-next-button');
 
     // Step 2
-    this.stepDateTime = page.locator('[data-testid="create-event-datetime"]');
-    this.recurringCheckbox = page.locator('[data-testid="event-recurring-checkbox"]');
-    this.dateTimeBackButton = page.locator('[data-testid="event-datetime-back-button"]');
-    this.dateTimeNextButton = page.locator('[data-testid="event-datetime-next-button"]');
+    this.stepDateTime = page.getByTestId('create-event-datetime');
+    this.recurringCheckbox = page.getByTestId('event-recurring-checkbox');
+    this.dateTimeBackButton = page.getByTestId('event-datetime-back-button');
+    this.dateTimeNextButton = page.getByTestId('event-datetime-next-button');
 
     // Step 3
     this.venueNameInput = page.locator('input[placeholder*="Parque"]').first();
@@ -76,7 +76,7 @@ export class CreateEventPage extends BasePage {
   async fillBasicInfo(title: string, city: string, category: string, description: string): Promise<void> {
     await this.fill(this.eventTitleInput, title);
     await this.citySelect.selectOption(city);
-    await this.page.click(`[data-testid="event-category-${category}"]`);
+    await this.page.getByTestId(`event-category-${category}`).click();
     await this.fill(this.descriptionInput, description);
   }
 
@@ -85,7 +85,7 @@ export class CreateEventPage extends BasePage {
   }
 
   async selectCategory(category: string): Promise<void> {
-    await this.page.click(`[data-testid="event-category-${category}"]`);
+    await this.page.getByTestId(`event-category-${category}`).click();
   }
 
   async setStartDate(date: string): Promise<void> {

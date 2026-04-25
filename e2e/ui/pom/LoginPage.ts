@@ -16,13 +16,13 @@ export class LoginPage extends BasePage {
   constructor(page: Page) {
     super(page, '/login');
     
-    this.title = page.locator('[data-testid="login-title"]');
-    this.emailInput = page.locator('[data-testid="login-email-input"]');
-    this.passwordInput = page.locator('[data-testid="login-password-input"]');
-    this.submitButton = page.locator('[data-testid="login-submit-button"]');
-    this.signupLink = page.locator('[data-testid="auth-signup-link"]');
+    this.title = page.getByTestId('login-title');
+    this.emailInput = page.getByTestId('login-email-input');
+    this.passwordInput = page.getByTestId('login-password-input');
+    this.submitButton = page.getByTestId('login-submit-button');
+    this.signupLink = page.getByTestId('auth-signup-link');
     this.forgotPasswordLink = page.locator('a[href="/forgot-password"]');
-    this.errorMessage = page.locator('[data-testid="login-error"]');
+    this.errorMessage = page.getByTestId('login-error');
   }
 
   async login(email: string, password: string): Promise<void> {
